@@ -5,11 +5,11 @@ app.config(function ($routeProvider) {
     })
     .when("/account", {
       templateUrl: "/views/account/table.html",
-      controller: "accountFormCtrl",
+      controller: "accountListCtrl",
     })
     .when("/account/create", {
       templateUrl: "/views/account/form.html",
-      controller: "accountListCtrl",
+      controller: "accountFormCtrl",
     })
     .when("/login", {
       templateUrl: "/views/login.html",

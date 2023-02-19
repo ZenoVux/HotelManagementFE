@@ -1,0 +1,111 @@
+<app-layout name="">
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+
+                        <table id="customer-table" class="table table-bordered dt-responsive  nowrap w-100">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Phone</th>
+                                    <th>Email</th>
+                                    <th>Type</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="customer in customers">
+                                    <th scope="row">{{$index + 1}}</th>
+                                    <td>{{customer.fullName}}</td>
+                                    <td>{{customer.phoneNumber}}</td>
+                                    <td>{{customer.email}}</td>
+                                    <td>
+                                        <span class="badge rounded-pill"
+                                            ng-class="{'bg-warning': customer.customerType.id == 1, 'bg-success': customer.customerType.id != 1}">
+                                            {{customer.customerType.name}}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-outline-secondary btn-sm edit" title="View"
+                                            ng-click="viewCustomer(customer)">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a class="btn btn-outline-secondary btn-sm edit" title="Edit"
+                                            href="#!/customers/edit/{{customer.id}}">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="customer-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="customer-modal-label">{{ selectedCustomer.fullName }}
+                            <span class="badge rounded-pill"
+                                ng-class="{'bg-warning': selectedCustomer.customerType.id == 1, 'bg-success': selectedCustomer.customerType.id != 1}">
+                                {{selectedCustomer.customerType.name}}
+                            </span>
+                        </h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <!-- Left column with photos -->
+                            <div class="col-md-4">
+                                <img src="https://www.w3schools.com/images/picture.jpg" alt="Front of ID">
+                                <img src="https://www.w3schools.com/images/picture.jpg" alt="Back of ID">
+                            </div>
+                            <div class="col-md-4">
+                                <img src="https://www.w3schools.com/images/picture.jpg" alt="Front of ID">
+                            </div>
+                            <!-- Right column with customer information -->
+                            <div class="col-md-4">
+                                <table class="table table-bordered dt-responsive  nowrap w-100">
+                                    <tr>
+                                        <td><strong>Id:</strong></td>
+                                        <td>{{ selectedCustomer.peopleId }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Dob:</strong></td>
+                                        <td>{{ selectedCustomer.dateOfBirth | date:'dd-MM-yyyy' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Phone:</strong></td>
+                                        <td>{{ selectedCustomer.phoneNumber }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Email:</strong></td>
+                                        <td>{{ selectedCustomer.email }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Address:</strong></td>
+                                        <td>{{ selectedCustomer.address }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Place of birth:</strong></td>
+                                        <td>{{ selectedCustomer.placeOfBirth }}</td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</app-layout>

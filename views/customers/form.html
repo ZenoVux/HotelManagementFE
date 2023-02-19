@@ -1,0 +1,108 @@
+<app-layout name="">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Edit customer</h4>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <img ng-src="https://www.w3schools.com/images/picture.jpg"
+                            style="max-width: 100%; max-height: 200px;">
+                        <p></p>
+                        <input type="file" id="peopleIdFrontImage" accept="image/*" capture="camera"
+                            ng-model="customer.peopleIdFrontImage">
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <img ng-src="https://www.w3schools.com/images/picture.jpg"
+                            style="max-width: 100%; max-height: 200px;">
+                        <p></p>
+                        <input type="file" id="peopleIdFrontImage" accept="image/*"
+                            ng-model="customer.peopleIdFrontImage">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <img ng-src="https://www.w3schools.com/images/picture.jpg"
+                            style="max-width: 100%; max-height: 200px;">
+                        <p></p>
+                        <input type="file" id="peopleIdBackImage" accept="image/*"
+                            ng-model="customer.peopleIdBackImage">
+                    </div>
+                </div>
+            </div>
+
+            <form ng-submit="updateCustomer()">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="fullName" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="fullName" placeholder="Full Name"
+                                ng-model="customer.fullName" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="phoneNumber" class="form-label">Phone Number</label>
+                            <input type="text" class="form-control" id="phoneNumber" placeholder="Phone Number"
+                                ng-model="customer.phoneNumber" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Address</label>
+                            <input type="text" class="form-control" id="address" placeholder="Address"
+                                ng-model="customer.address" required>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="placeOfBirth" class="form-label">Place of Birth</label>
+                            <input type="text" class="form-control" id="placeOfBirth" placeholder="Place of Birth"
+                                ng-model="customer.placeOfBirth" required>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="text" class="form-control" id="email" placeholder="Email"
+                                ng-model="customer.email" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="type" class="form-label">Type</label>
+                            <input type="text" class="form-control" id="type" placeholder="Type"
+                                ng-model="customer.customerType.name" required>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="dateOfBirth" class="form-label">Date of Birth</label>
+                            <input type="date" class="form-control" id="dateOfBirth" placeholder="Date of Birth"
+                                ng-model="customer.dateOfBirth" ng-value="customer.dateOfBirth | date:'yyyy-MM-dd'"
+                                ng-model-options="{timezone: 'UTC'}" required>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="peopleId" class="form-label">People ID</label>
+                            <input type="text" class="form-control" id="peopleId" placeholder="People ID"
+                                ng-model="customer.peopleId" required>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <button class="btn btn-primary" type="submit">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</app-layout>

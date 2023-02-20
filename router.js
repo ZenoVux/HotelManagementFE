@@ -8,13 +8,21 @@ app.config(function ($routeProvider) {
       controller: "accountListCtrl",
     })
     .when("/account/create", {
-      templateUrl: "/views/account/form.html",
-      controller: "accountFormCtrl",
+      templateUrl: "/views/account/create.html",
+      controller: "accountCreateCtrl",
+    })
+    .when("/account/update/:id", {
+      templateUrl: "/views/account/update.html",
+      controller: "accountUpdateCtrl",
+    })
+    .when("/hotel-room", {
+      templateUrl: "/views/hotel-room/list.html",
+      // controller: "accountUpdateCtrl",
     })
     .when("/login", {
       templateUrl: "/views/login.html",
     })
     .otherwise({
-      redirectTo: "/",
+      templateUrl: "/views/404.html",
     });
 });

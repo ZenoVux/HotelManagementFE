@@ -11,6 +11,14 @@ app.config(function ($routeProvider) {
       templateUrl: "/views/account/form.html",
       controller: "accountFormCtrl",
     })
+    .when("/service", {
+      templateUrl: "/views/service/serviceView.html",
+      controller: "serviceCtrl",
+    })
+    .when("/service/type", {
+      templateUrl: "/views/service-type/service-typeView.html",
+      controller: "service-typeCtrl",
+    })
     .when("/login", {
       templateUrl: "/views/login.html",
     })

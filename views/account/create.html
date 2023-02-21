@@ -52,6 +52,19 @@
                         </div>
                     </div>
                     
+
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="mb-3">
+                                <label for="formrow-email-input" class="form-label">Status</label>
+                                <select ng-model="account.status" class="form-select">
+                                    <option ng-value="true">Activate</option>
+                                    <option ng-value="false">Deactivate</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="mb-3">
                         <label for="formrow-address-input">Address</label>
                         <textarea ng-model="account.address" id="formrow-address-input" class="form-control" rows="3" placeholder="Enter Address"></textarea>

@@ -6,9 +6,10 @@ app.controller("accountCreateCtrl", function ($scope, $location, $http) {
         fullName: null,
         phoneNumber: null,
         email: null,
-        address: null
+        address: null,
+        status: true
     };
-    
+
     $scope.create = function () {
         // alert("Update success");
         if ($scope.account.password) {
@@ -19,7 +20,7 @@ app.controller("accountCreateCtrl", function ($scope, $location, $http) {
             alert("Error");
             return;
         }
-        $http.post("http://localhost:8000/api/accounts", $scope.account).then(function(resp) {
+        $http.post("http://localhost:8000/api/accounts", $scope.account).then(function (resp) {
             $scope.account = resp.data;
             alert("Create success");
             $location.path("/account");
@@ -28,40 +29,23 @@ app.controller("accountCreateCtrl", function ($scope, $location, $http) {
 });
 
 app.controller("accountUpdateCtrl", function ($scope, $routeParams, $http, $location) {
-    
+
     $scope.account = {};
-    $scope.roles = [];
-    $scope.userRoles = [];
 
     $scope.init = async function () {
         await $scope.loadForm();
-        await $scope.loadUserRole();
-        await $scope.loadRole();
-    }
-
-    $scope.loadUserRole = async function () {
-        await $http.get("http://localhost:8000/api/user-roles/by-account?id=" + $routeParams.id)
-        .then(function(resp) {
-            $scope.userRoles = resp.data;
-            console.log($scope.userRoles);
-        });
     }
 
     $scope.loadForm = async function () {
         await $http.get("http://localhost:8000/api/accounts/" + $routeParams.id)
-        .then(function(resp) {
-            $scope.account = resp.data;
-        }, function (resp) {
-            alert(resp.data);
-            $location.path("/account");
-        });
-    }
-
-    $scope.loadRole = async function () {
-        await $http.get("http://localhost:8000/api/roles").then(function(resp) {
-            $scope.roles = resp.data;
-            $(".select2").select2();
-        });
+            .then(function (resp) {
+                if (resp.status == 200) {
+                    $scope.account = resp.data;
+                }
+            }, function (resp) {
+                alert("Can't find account by id " + $routeParams.id);
+                $location.path("/account");
+            });
     }
 
     $scope.checkRole = function (role) {
@@ -71,15 +55,17 @@ app.controller("accountUpdateCtrl", function ($scope, $routeParams, $http, $loca
         }
         return false;
     }
-    
+
     $scope.update = function () {
         if ($scope.account.password != $scope.account.confirmPassword) {
             alert("Error");
             return;
         }
-        $http.put("http://localhost:8000/api/accounts", $scope.account).then(function(resp) {
-            $scope.account = resp.data;
-            alert("Update success");
+        $http.put("http://localhost:8000/api/accounts", $scope.account).then(function (resp) {
+            if (resp.status == 200) {
+                $scope.account = resp.data;
+                alert("Update success");
+            }
         });
     };
 
@@ -96,14 +82,94 @@ app.controller("accountListCtrl", function ($scope, $window, $http) {
         $('#myModal').modal('show');
     }
 
-    $scope.initTable = function() {
-        $http.get("http://localhost:8000/api/accounts").then(function(resp) {
+    $scope.initTable = function () {
+        $http.get("http://localhost:8000/api/accounts").then(function (resp) {
             $scope.accounts = resp.data;
-            $(document).ready(function() {
+            $(document).ready(function () {
                 $('#datatable-accounts').DataTable();
             });
         });
     }
 
     $scope.initTable();
+});
+
+app.controller("accountRoleCtrl", function ($scope, $window, $http) {
+
+    $scope.accounts = [];
+    $scope.roles = [];
+    $scope.userRoles = [];
+
+    $scope.init = async function () {
+        await $scope.loadRole();
+        await $scope.loadUserRole();
+        await $scope.loadAccount();
+    }
+
+    $scope.loadAccount = async function () {
+        await $http.get("http://localhost:8000/api/accounts")
+            .then(resp => {
+                if (resp.status == 200) {
+                    $scope.accounts = resp.data;
+                    $(document).ready(function () {
+                        $('#datatable-accounts').DataTable();
+                    });
+                }
+            });
+    }
+
+    $scope.loadRole = async function () {
+        await $http.get("http://localhost:8000/api/roles")
+            .then(resp => {
+                if (resp.status == 200) {
+                    $scope.roles = resp.data;
+                }
+            });
+    }
+
+    $scope.loadUserRole = async function () {
+        await $http.get("http://localhost:8000/api/user-roles")
+            .then(resp => {
+                if (resp.status == 200) {
+                    $scope.userRoles = resp.data;
+                }
+            });
+    }
+
+    $scope.userRoleOf = function (account, role) {
+        return $scope.userRoles.find(userRole => userRole.account.id == account.id && userRole.role.id == role.id);
+    }
+
+    $scope.userRoleChanged = (account, role) => {
+        const userRole = $scope.userRoleOf(account, role);
+        if (userRole) {
+            $scope.revokeUserRole(userRole);
+        } else {
+            $scope.grantUserRole({
+                account: account,
+                role: role
+            });
+        }
+    }
+
+    $scope.grantUserRole = function (userRole) {
+        $http.post("http://localhost:8000/api/user-roles", userRole).then(resp => {
+            $scope.userRoles.push(resp.data);
+            alert("Cấp quyền thành công");
+        }, error => {
+            alert("Cấp quyền thất bại");
+        });
+    }
+
+    $scope.revokeUserRole = function (userRole) {
+        $http.delete("http://localhost:8000/api/user-roles/" + userRole.id).then(resp => {
+            const index = $scope.userRoles.findIndex(item => item.id == userRole.id);
+            $scope.userRoles.splice(index, 1);
+            alert("Thu hồi quyền thành công");
+        }, error => {
+            alert("Thu hồi quyền thất bại");
+        });
+    }
+
+    $scope.init();
 });

@@ -3,17 +3,21 @@ app.config(function ($routeProvider) {
     .when("/", {
       templateUrl: "/views/dashboard.html",
     })
-    .when("/account", {
+    .when("/accounts", {
       templateUrl: "/views/account/table.html",
       controller: "accountListCtrl",
     })
-    .when("/account/create", {
+    .when("/accounts/create", {
       templateUrl: "/views/account/create.html",
       controller: "accountCreateCtrl",
     })
-    .when("/account/update/:id", {
+    .when("/accounts/update/:id", {
       templateUrl: "/views/account/update.html",
       controller: "accountUpdateCtrl",
+    })
+    .when("/accounts/role", {
+      templateUrl: "/views/account/role.html",
+      controller: "accountRoleCtrl",
     })
     .when("/hotel-room", {
       templateUrl: "/views/hotel-room/list.html",

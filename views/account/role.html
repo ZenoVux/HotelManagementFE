@@ -1,0 +1,35 @@
+<app-layout name="">
+    <!-- DataTables -->
+    <link href="assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link href="assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+
+    <!-- Responsive datatable examples -->
+    <link href="assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" /> 
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <table id="datatable-accounts" class="table table-bordered dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Username</th>
+                                <th ng-repeat="role in roles">{{role.name}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="account in accounts">
+                                <th scope="row">{{account.id}}</th>
+                                <td>{{account.username}}</td>
+                                <td ng-repeat="role in roles">
+                                    <input type="checkbox" ng-checked="userRoleOf(account, role)"
+                                        ng-click="userRoleChanged(account, role)">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div><!--end col-->
+    </div><!--end row-->
+</app-layout>

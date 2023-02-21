@@ -33,7 +33,7 @@
                                     <a ng-click="view(item)" class="btn btn-outline-secondary btn-sm edit" title="View">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <a href="/#!/account/update/{{item.id}}" class="btn btn-outline-secondary btn-sm edit" title="Edit">
+                                    <a href="/#!/accounts/update/{{item.id}}" class="btn btn-outline-secondary btn-sm edit" title="Edit">
                                         <i class="fas fa-pencil-alt"></i>
                                     </a>
                                 </td>
@@ -107,7 +107,7 @@
                                         <h6 class="m-0 text-right">Status:</h6>
                                     </td>
                                     <td>
-                                        {{account.status}}
+                                        <span class="badge rounded-pill " ng-class="account.status ? 'bg-success' : 'bg-primary'">{{account.status ? 'Hoạt động' : 'Ngừng hoạt động'}}</span>
                                     </td>
                                 </tr>
                             </tbody>

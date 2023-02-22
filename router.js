@@ -31,6 +31,18 @@ app.config(function ($routeProvider) {
       templateUrl: "/views/service-type/service-typeView.html",
       controller: "service-typeCtrl",
     })
+    .when("/customers", {
+      templateUrl: "/views/customers/table.html",
+      controller: "customerCtrl",
+    })
+    .when("/customers/edit/:customerId", {
+      templateUrl: "/views/customers/form.html",
+      controller: "customerEditCtrl",
+    })
+    .when("/customers/types", {
+      templateUrl: "/views/customers/type.html",
+      controller: "customerTypeCtrl",
+    })
     .when("/login", {
       templateUrl: "/views/login.html",
     })

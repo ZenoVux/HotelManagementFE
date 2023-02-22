@@ -1,0 +1,58 @@
+<app-layout name="">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-body">
+                        <form ng-submit="updateCustomerType(customerType)">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="name" placeholder="Name"
+                                    ng-model="customerType.name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <input type="text" class="form-control" id="description" placeholder="Description"
+                                    ng-model="customerType.description" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-body">
+
+                        <table id="customer-type-table" class="table table-bordered dt-responsive  nowrap w-100">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Num of customers</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="type in customerTypes">
+                                    <th scope="row">{{$index + 1}}</th>
+                                    <td>{{type.name}}</td>
+                                    <td>{{type.description}}</td>
+                                    <td>{{type.numOfCustomers}}</td>
+                                    <td>
+                                        <a class="btn btn-outline-secondary btn-sm edit" title="Edit"
+                                            ng-click="editType(type)">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</app-layout>

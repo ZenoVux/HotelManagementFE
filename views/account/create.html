@@ -1,0 +1,83 @@
+<app-layout name="">
+  <div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title mb-4">Create Account Form</h4>
+
+                <form>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="formrow-username-input" class="form-label">Username</label>
+                                <input ng-model="account.username" type="text" class="form-control" id="formrow-username-input" placeholder="Enter Username">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="formrow-fullname-input" class="form-label">Full Name</label>
+                                <input ng-model="account.fullName" type="text" class="form-control" id="formrow-fullname-input" placeholder="Enter Full Name">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="formrow-password-input" class="form-label">Password</label>
+                                <input ng-model="account.password" type="password" class="form-control" id="formrow-password-input" placeholder="Enter Password">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="formrow-confirmpassword-input" class="form-label">Confirm Password</label>
+                                <input ng-model="account.confirmPassword" type="password" class="form-control" id="formrow-confirmpassword-input" placeholder="Enter Confirm Password">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="formrow-phonenumber-input" class="form-label">Phone Number</label>
+                                <input ng-model="account.phoneNumber" type="text" class="form-control" id="formrow-phonenumber-input" placeholder="Enter Phone Number">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="formrow-email-input" class="form-label">Email</label>
+                                <input ng-model="account.email" type="text" class="form-control" id="formrow-email-input" placeholder="Enter Email">
+                            </div>
+                        </div>
+                    </div>
+                    
+
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="mb-3">
+                                <label for="formrow-email-input" class="form-label">Status</label>
+                                <select ng-model="account.status" class="form-select">
+                                    <option ng-value="true">Activate</option>
+                                    <option ng-value="false">Deactivate</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="formrow-address-input">Address</label>
+                        <textarea ng-model="account.address" id="formrow-address-input" class="form-control" rows="3" placeholder="Enter Address"></textarea>
+                    </div>
+
+                    <div>
+                        <button ng-click="create()" class="btn btn-primary w-md">Create</button>
+                    </div>
+                </form>
+            </div>
+            <!-- end card body -->
+        </div>
+        <!-- end card -->
+    </div>
+  </div>
+</app-layout>

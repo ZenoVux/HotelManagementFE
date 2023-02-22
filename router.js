@@ -3,13 +3,25 @@ app.config(function ($routeProvider) {
     .when("/", {
       templateUrl: "/views/dashboard.html",
     })
-    .when("/account", {
+    .when("/accounts", {
       templateUrl: "/views/account/table.html",
       controller: "accountListCtrl",
     })
-    .when("/account/create", {
-      templateUrl: "/views/account/form.html",
-      controller: "accountFormCtrl",
+    .when("/accounts/create", {
+      templateUrl: "/views/account/create.html",
+      controller: "accountCreateCtrl",
+    })
+    .when("/accounts/update/:id", {
+      templateUrl: "/views/account/update.html",
+      controller: "accountUpdateCtrl",
+    })
+    .when("/accounts/role", {
+      templateUrl: "/views/account/role.html",
+      controller: "accountRoleCtrl",
+    })
+    .when("/hotel-room", {
+      templateUrl: "/views/hotel-room/list.html",
+      // controller: "accountUpdateCtrl",
     })
     .when("/service", {
       templateUrl: "/views/service/serviceView.html",
@@ -23,6 +35,6 @@ app.config(function ($routeProvider) {
       templateUrl: "/views/login.html",
     })
     .otherwise({
-      redirectTo: "/",
+      templateUrl: "/views/404.html",
     });
 });

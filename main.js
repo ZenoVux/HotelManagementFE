@@ -3,7 +3,6 @@ app.component("appLayout", {
   templateUrl: "layout.html",
   transclude: true,
   controller: function () {
-    this.name = "";
     (function ($) {
       "use strict";
 

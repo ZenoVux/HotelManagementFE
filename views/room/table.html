@@ -1,0 +1,186 @@
+<app-layout name="">
+    <!-- DataTables -->
+    <link href="assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link href="assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+
+    <!-- Responsive datatable examples -->
+    <link href="assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" /> 
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="mb-4">List Room</h4>
+                    <!--Search room-->
+                    <div class="row mb-2">
+                        <div class="col-sm-4">
+                            <div class="search-box me-2 mb-2 d-inline-block">
+                                <div class="position-relative">
+                                    <input type="text" class="form-control" placeholder="Search...">
+                                    <i class="bx bx-search-alt search-icon"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-sm-8">
+                            <div class="text-sm-end">
+                                <a href="/#!/room/create" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2"><i class="mdi mdi-plus me-1"></i> Add New Room</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- table content -->
+                    <table id="datatable-room" class="table table-hover table-reponsive dt-responsive ">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Room number</th>
+                                <th>Price</th>
+                                <th>Area</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                                <th>View Other</th>
+                                <th>Supply</th>
+                                <th>Active</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat = "room in rooms">
+                                <td>{{room.code}}</td>
+                                <td>{{room.price}}</td>
+                                <td>{{room.area}}</td>
+                                <td>{{room.description}}</td>
+                                <td>{{room.status}}</td>
+                                <td>
+                                    <a class="text-secondary btn waves-light" title="View" data-bs-toggle="modal" data-bs-target="#viewOther">
+                                        <i class="fas fa-eye font-size-18"></i>
+                                    </a>
+                                    <!-- Model view other room -->
+                                    <div class="modal fade" id="viewOtherRoom" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="viewOtherRoomLabel">View Other</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="table-reponsive">
+                                                        <table class="table table-hover align-middle">
+                                                            <thead class="table-light">
+                                                                <tr>
+                                                                    <th>Max Adults</th>
+                                                                    <th>Max adults add</th>
+                                                                    <th>Max children</th>
+                                                                    <th>Max child add</th>
+                                                                    <th>Is smoking</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>{{room.maxAdult}}</td>
+                                                                    <td>{{room.maxAdultAdd}}</td>
+                                                                    <td>{{room.maxChild}}</td>
+                                                                    <td>{{room.maxChildAdd}}</td>
+                                                                    <td>{{room.isSmoking}}</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- End model -->
+                                </td>
+                                <td class="align-middle">
+                                    <a class="text-secondary btn waves-light" title="View" data-bs-toggle="modal" data-bs-target="#listSupplyRoom" ng-click="loadSupplyRoom(room.code)">
+                                        <i class="fas fa-eye font-size-18"></i>
+                                    </a>
+                                    <!-- Model supplyRoom -->
+                                    <div class="modal fade" id="listSupplyRoom" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="listSupplyRoomLabel">Supply room</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="table-reponsive">
+                                                        <table class="table table-hover align-middle">
+                                                            <thead class="table-light">
+                                                                <tr>
+                                                                    <th>Name</th>
+                                                                    <th>Quantity</th>
+                                                                    <th>Unit</th>
+                                                                    <th>Description</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr ng-repeat="supplyRoom in supplyRooms">
+                                                                    <td>{{supplyRoom.supply.name}}</td>
+                                                                    <td>{{supplyRoom.quantity}}</td>
+                                                                    <td>{{supplyRoom.supply.unit}}</td>
+                                                                    <td>{{supplyRoom.supply.description}}</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- End model -->
+                                </td>
+                                <td class="align-middle">
+                                    <button ng-click="edit(room)" class="btn">
+                                        <a  class="text-success" href="/#!/room/update/{{room.id}}" title="Edit">
+                                            <i class="fas fa-pencil-alt font-size-18"></i>
+                                        </a>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <ul class="pagination pagination-rounded justify-content-center my-4">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="javascript: void(0);" aria-label="Previous">
+                                <i class="mdi mdi-chevron-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="javascript: void(0);">1</a></li>
+                        <li class="page-item"><a class="page-link" href="javascript: void(0);">2</a></li>
+                        <li class="page-item"><a class="page-link" href="javascript: void(0);">3</a></li>
+                        <li class="page-item"><a class="page-link" href="javascript: void(0);">4</a></li>
+                        <li class="page-item"><a class="page-link" href="javascript: void(0);">5</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="javascript: void(0);" aria-label="Next">
+                                <i class="mdi mdi-chevron-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <!-- Required datatable js -->
+    <script src="assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <!-- Buttons examples -->
+    <script src="assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
+    <script src="assets/libs/jszip/jszip.min.js"></script>
+    <script src="assets/libs/pdfmake/build/pdfmake.min.js"></script>
+    <script src="assets/libs/pdfmake/build/vfs_fonts.js"></script>
+    <script src="assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
+    <script src="assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
+    <script src="assets/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
+    
+    <!-- Responsive examples -->
+    <script src="assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+</app-layout>

@@ -59,6 +59,33 @@ app.config(function ($routeProvider) {
       templateUrl: "/views/payment/update.html",
       controller: "paymentUpdateCtrl",
     })
+//Room
+    .when("/room",{
+      templateUrl: "/views/room/table.html",
+      controller: "roomListCtrl",
+    })
+    .when("/room/create",{
+      templateUrl: "/views/room/createForm.html",
+      controller: "roomCreateFormCtrl",
+    })
+    .when("/room/update/:id",{
+      templateUrl: "/views/room/updateForm.html",
+      controller: "roomUpdateFormCtrl",
+    })
+//Room type
+    .when("/room-type",{
+      templateUrl: "/views/roomType/table.html",
+      controller: "roomTypeListCtrl",
+    })
+    .when("/room-type/create",{
+      templateUrl: "/views/roomType/createForm.html",
+      controller: "roomTypeCreateFormCtrl",
+    })
+    .when("/room-type/update/:id",{
+      templateUrl: "/views/roomType/updateForm.html",
+      controller: "roomTypeUpdateFormCtrl",
+    })
+//Login
     .when("/login", {
       templateUrl: "/views/login.html",
     })

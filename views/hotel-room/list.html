@@ -1,20 +1,14 @@
-<app-layout name="">
+<app-layout>
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <button type="button" class="btn btn-success">
-                        Trống <span class="badge rounded-pill bg-dark">16</span>
-                    </button>
-                    <button type="button" class="btn btn-danger">
-                        Nhận phòng <span class="badge rounded-pill bg-dark">0</span>
-                    </button>
-                    <button type="button" class="btn btn-warning">
-                        Quá hạn <span class="badge rounded-pill bg-dark">0</span>
-                    </button>
-                    <button type="button" class="btn btn-primary">
-                        Đã đặt <span class="badge rounded-pill bg-dark">0</span>
-                    </button>
+                    <span ng-repeat="item in statuses">
+                        <button type="button" class="btn"
+                            ng-class="item.id == 0 ? 'btn-success' : (item.id == 1 ? 'btn-danger' : (item.id == 2 ? 'btn-primary' : 'btn-warning'))">
+                            {{item.name}} <span class="badge rounded-pill bg-dark">{{checkStatusCount(item.id)}}</span>
+                        </button>
+                    </span>
                 </div>
             </div>
         </div>
@@ -25,672 +19,248 @@
                 <h5 class="card-header bg-transparent border-bottom text-uppercase">1st Floor</h5>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-xl-2 col-sm-3">
-                            <div class="card border">
-                                <div class="card-body p-3">
+                        <div ng-repeat="item in rooms" class="col-xl-2 col-sm-3">
+                            <div class="card border border-2" ng-dblclick="roomDetail(item)"
+                                ng-class="item.status == 0 ? 'border-success' : (item.status == 1 ? 'border-danger' : 'border-warning')">
+                                <div class="card-body p-2">
                                     <div class="">
                                         <div class="float-end ms-2">
                                             <div class="dropdown mb-2">
-                                                <a class="font-size-16 text-muted" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    <i class="mdi mdi-dots-horizontal"></i>
-                                                </a>
-                                                
-                                                <div class="dropdown-menu dropdown-menu-start">
-                                                    <a class="dropdown-item" href="#">Open</a>
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item" href="#">Rename</a>
+                                                <button id="dropdownMenuButton1{{item.code}}"
+                                                    class="btn btn-sm btn-soft-primary rounded-pill"
+                                                    data-bs-toggle="dropdown" aria-expanded="false"><i
+                                                        class="mdi mdi-dots-horizontal"></i></button>
+
+                                                <div aria-labelledby="dropdownMenuButton1{{item.code}}"
+                                                    class="dropdown-menu dropdown-menu-start">
+                                                    <button ng-show="item.status == 1" ng-click="checkinRoom(item)"
+                                                        class="dropdown-item">Checkin</button>
+                                                    <button ng-show="item.status == 1"
+                                                        class="dropdown-item">Checkout</button>
+                                                    <button ng-show="item.status == 1"
+                                                        class="dropdown-item">Cancel</button>
                                                     <div class="dropdown-divider"></div>
-                                                    <a class="dropdown-item" href="#">Remove</a>
+                                                    <button class="dropdown-item">Room detail</button>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="avatar-xs me-3 mb-3">
                                             <div class="avatar-title bg-transparent rounded">
-                                                <i class="bx bx-hotel font-size-24 text-success"></i>
+                                                <i class="bx bx-hotel font-size-24"
+                                                    ng-class="item.status == 0 ? 'text-success' : (item.status == 1 ? 'text-danger' : 'text-warning')"></i>
                                             </div>
                                         </div>
                                         <div class="d-flex">
                                             <div class="overflow-hidden me-auto">
-                                                <h5 class="font-size-14 text-truncate mb-1"><a href="javascript: void(0);" class="text-body">101</a></h5>
-                                                <p class="text-muted text-truncate mb-0">---</p>
+                                                <h5 class="font-size-14 text-truncate mb-1"><a
+                                                        href="javascript: void(0);" class="text-body">{{item.code}}</a>
+                                                </h5>
+                                                <p class="text-muted text-truncate mb-0">{{item.status == 1 ? '25/02' :
+                                                    '---'}}</p>
                                             </div>
                                             <div class="align-self-end ms-2">
-                                                <p class="text-muted mb-0">---</p>
+                                                <p class="text-muted mb-0">{{item.status == 1 ? '26/02' : '---'}}</p>
                                             </div>
                                         </div>
-                                        
+
                                     </div>
                                 </div>
-                                
+
                             </div>
                         </div>
                         <!-- end col -->
-
-                        <div class="col-xl-2 col-sm-3">
-                            <div class="card border">
-                                <div class="card-body p-3">
-                                    <div class="">
-                                        <div class="float-end ms-2">
-                                            <div class="dropdown mb-2">
-                                                <a class="font-size-16 text-muted" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    <i class="mdi mdi-dots-horizontal"></i>
-                                                </a>
-                                                
-                                                <div class="dropdown-menu dropdown-menu-start">
-                                                    <a class="dropdown-item" href="#">Open</a>
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item" href="#">Rename</a>
-                                                    <div class="dropdown-divider"></div>
-                                                    <a class="dropdown-item" href="#">Remove</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="avatar-xs me-3 mb-3">
-                                            <div class="avatar-title bg-transparent rounded">
-                                                <i class="bx bx-hotel font-size-24 text-success"></i>
-                                            </div>
-                                        </div>
-                                        <div class="d-flex">
-                                            <div class="overflow-hidden me-auto">
-                                                <h5 class="font-size-14 text-truncate mb-1"><a href="javascript: void(0);" class="text-body">102</a></h5>
-                                                <p class="text-muted text-truncate mb-0">---</p>
-                                            </div>
-                                            <div class="align-self-end ms-2">
-                                                <p class="text-muted mb-0">---</p>
-                                            </div>
-                                        </div>
-                                        
-                                    </div>
-                                </div>
-                                
-                            </div>
-                        </div>
-                        <!-- end col -->
-
-                        <div class="col-xl-2 col-sm-3">
-                            <div class="card border">
-                                <div class="card-body p-3">
-                                    <div class="">
-                                        <div class="float-end ms-2">
-                                            <div class="dropdown mb-2">
-                                                <a class="font-size-16 text-muted" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
-                                                    <i class="mdi mdi-dots-horizontal"></i>
-                                                </a>
-                                                
-                                                <div class="dropdown-menu dropdown-menu-start">
-                                                    <a class="dropdown-item" href="#">Open</a>
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item" href="#">Rename</a>
-                                                    <div class="dropdown-divider"></div>
-                                                    <a class="dropdown-item" href="#">Remove</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="avatar-xs me-3 mb-3">
-                                            <div class="avatar-title bg-transparent rounded">
-                                                <i class="bx bx-hotel font-size-24 text-success"></i>
-                                            </div>
-                                        </div>
-                                        <div class="d-flex">
-                                            <div class="overflow-hidden me-auto">
-                                                <h5 class="font-size-14 text-truncate mb-1"><a href="javascript: void(0);" class="text-body">103</a></h5>
-                                                <p class="text-muted text-truncate mb-0">---</p>
-                                            </div>
-                                            <div class="align-self-end ms-2">
-                                                <p class="text-muted mb-0">---</p>
-                                            </div>
-                                        </div>
-                                        
-                                    </div>
-                                </div>
-                                
-                            </div>
-                        </div>
-                        <!-- end col -->
-
-                        <div class="col-xl-2 col-sm-3">
-                            <div class="card border">
-                                <div class="card-body p-3">
-                                    <div class="">
-                                        <div class="float-end ms-2">
-                                            <div class="dropdown mb-2">
-                                                <a class="font-size-16 text-muted" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
-                                                    <i class="mdi mdi-dots-horizontal"></i>
-                                                </a>
-                                                
-                                                <div class="dropdown-menu dropdown-menu-start">
-                                                    <a class="dropdown-item" href="#">Open</a>
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item" href="#">Rename</a>
-                                                    <div class="dropdown-divider"></div>
-                                                    <a class="dropdown-item" href="#">Remove</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="avatar-xs me-3 mb-3">
-                                            <div class="avatar-title bg-transparent rounded">
-                                                <i class="bx bx-hotel font-size-24 text-success"></i>
-                                            </div>
-                                        </div>
-                                        <div class="d-flex">
-                                            <div class="overflow-hidden me-auto">
-                                                <h5 class="font-size-14 text-truncate mb-1"><a href="javascript: void(0);" class="text-body">104</a></h5>
-                                                <p class="text-muted text-truncate mb-0">---</p>
-                                            </div>
-                                            <div class="align-self-end ms-2">
-                                                <p class="text-muted mb-0">---</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                            </div>
-                        </div>
-                        <!-- end col -->
-
-                        <div class="col-xl-2 col-sm-3">
-                            <div class="card border">
-                                <div class="card-body p-3">
-                                    <div class="">
-                                        <div class="float-end ms-2">
-                                            <div class="dropdown mb-2">
-                                                <a class="font-size-16 text-muted" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
-                                                    <i class="mdi mdi-dots-horizontal"></i>
-                                                </a>
-                                                
-                                                <div class="dropdown-menu dropdown-menu-start">
-                                                    <a class="dropdown-item" href="#">Open</a>
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item" href="#">Rename</a>
-                                                    <div class="dropdown-divider"></div>
-                                                    <a class="dropdown-item" href="#">Remove</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="avatar-xs me-3 mb-3">
-                                            <div class="avatar-title bg-transparent rounded">
-                                                <i class="bx bx-hotel font-size-24 text-success"></i>
-                                            </div>
-                                        </div>
-                                        <div class="d-flex">
-                                            <div class="overflow-hidden me-auto">
-                                                <h5 class="font-size-14 text-truncate mb-1"><a href="javascript: void(0);" class="text-body">105</a></h5>
-                                                <p class="text-muted text-truncate mb-0">---</p>
-                                            </div>
-                                            <div class="align-self-end ms-2">
-                                                <p class="text-muted mb-0">---</p>
-                                            </div>
-                                        </div>
-                                        
-                                    </div>
-                                </div>
-                                
-                            </div>
-                        </div>
-                        <!-- end col -->
-
-                        <div class="col-xl-2 col-sm-3">
-                            <div class="card border">
-                                <div class="card-body p-3">
-                                    <div class="">
-                                        <div class="float-end ms-2">
-                                            <div class="dropdown mb-2">
-                                                <a class="font-size-16 text-muted" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
-                                                    <i class="mdi mdi-dots-horizontal"></i>
-                                                </a>
-                                                
-                                                <div class="dropdown-menu dropdown-menu-start">
-                                                    <a class="dropdown-item" href="#">Open</a>
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item" href="#">Rename</a>
-                                                    <div class="dropdown-divider"></div>
-                                                    <a class="dropdown-item" href="#">Remove</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="avatar-xs me-3 mb-3">
-                                            <div class="avatar-title bg-transparent rounded">
-                                                <i class="bx bx-hotel font-size-24 text-success"></i>
-                                            </div>
-                                        </div>
-                                        <div class="d-flex">
-                                            <div class="overflow-hidden me-auto">
-                                                <h5 class="font-size-14 text-truncate mb-1"><a href="javascript: void(0);" class="text-body">106</a></h5>
-                                                <p class="text-muted text-truncate mb-0">---</p>
-                                            </div>
-                                            <div class="align-self-end ms-2">
-                                                <p class="text-muted mb-0">---</p>
-                                            </div>
-                                        </div>
-                                        
-                                    </div>
-                                </div>
-                                
-                            </div>
-                        </div>
-                        <!-- end col -->
-
-                        <div class="col-xl-2 col-sm-3">
-                            <div class="card border">
-                                <div class="card-body p-3">
-                                    <div class="">
-                                        <div class="float-end ms-2">
-                                            <div class="dropdown mb-2">
-                                                <a class="font-size-16 text-muted" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
-                                                    <i class="mdi mdi-dots-horizontal"></i>
-                                                </a>
-                                                
-                                                <div class="dropdown-menu dropdown-menu-start">
-                                                    <a class="dropdown-item" href="#">Open</a>
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item" href="#">Rename</a>
-                                                    <div class="dropdown-divider"></div>
-                                                    <a class="dropdown-item" href="#">Remove</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="avatar-xs me-3 mb-3">
-                                            <div class="avatar-title bg-transparent rounded">
-                                                <i class="bx bx-hotel font-size-24 text-success"></i>
-                                            </div>
-                                        </div>
-                                        <div class="d-flex">
-                                            <div class="overflow-hidden me-auto">
-                                                <h5 class="font-size-14 text-truncate mb-1"><a href="javascript: void(0);" class="text-body">107</a></h5>
-                                                <p class="text-muted text-truncate mb-0">---</p>
-                                            </div>
-                                            <div class="align-self-end ms-2">
-                                                <p class="text-muted mb-0">---</p>
-                                            </div>
-                                        </div>
-                                        
-                                    </div>
-                                </div>
-                                
-                            </div>
-                        </div>
-                        <!-- end col -->
-
-                        <div class="col-xl-2 col-sm-3">
-                            <div class="card border">
-                                <div class="card-body p-3">
-                                    <div class="">
-                                        <div class="float-end ms-2">
-                                            <div class="dropdown mb-2">
-                                                <a class="font-size-16 text-muted" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
-                                                    <i class="mdi mdi-dots-horizontal"></i>
-                                                </a>
-                                                
-                                                <div class="dropdown-menu dropdown-menu-start">
-                                                    <a class="dropdown-item" href="#">Open</a>
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item" href="#">Rename</a>
-                                                    <div class="dropdown-divider"></div>
-                                                    <a class="dropdown-item" href="#">Remove</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="avatar-xs me-3 mb-3">
-                                            <div class="avatar-title bg-transparent rounded">
-                                                <i class="bx bx-hotel font-size-24 text-success"></i>
-                                            </div>
-                                        </div>
-                                        <div class="d-flex">
-                                            <div class="overflow-hidden me-auto">
-                                                <h5 class="font-size-14 text-truncate mb-1"><a href="javascript: void(0);" class="text-body">108</a></h5>
-                                                <p class="text-muted text-truncate mb-0">---</p>
-                                            </div>
-                                            <div class="align-self-end ms-2">
-                                                <p class="text-muted mb-0">---</p>
-                                            </div>
-                                        </div>
-                                        
-                                    </div>
-                                </div>
-                                
-                            </div>
-                        </div>
-                        <!-- end col -->
-
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <h5 class="card-header bg-transparent border-bottom text-uppercase">2nd Floor</h5>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-xl-2 col-sm-3">
-                            <div class="card border">
-                                <div class="card-body p-3">
-                                    <div class="">
-                                        <div class="float-end ms-2">
-                                            <div class="dropdown mb-2">
-                                                <a class="font-size-16 text-muted" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    <i class="mdi mdi-dots-horizontal"></i>
-                                                </a>
-                                                
-                                                <div class="dropdown-menu dropdown-menu-start">
-                                                    <a class="dropdown-item" href="#">Open</a>
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item" href="#">Rename</a>
-                                                    <div class="dropdown-divider"></div>
-                                                    <a class="dropdown-item" href="#">Remove</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="avatar-xs me-3 mb-3">
-                                            <div class="avatar-title bg-transparent rounded">
-                                                <i class="bx bx-hotel font-size-24 text-success"></i>
-                                            </div>
-                                        </div>
-                                        <div class="d-flex">
-                                            <div class="overflow-hidden me-auto">
-                                                <h5 class="font-size-14 text-truncate mb-1"><a href="javascript: void(0);" class="text-body">201</a></h5>
-                                                <p class="text-muted text-truncate mb-0">---</p>
-                                            </div>
-                                            <div class="align-self-end ms-2">
-                                                <p class="text-muted mb-0">---</p>
-                                            </div>
-                                        </div>
-                                        
-                                    </div>
-                                </div>
-                                
-                            </div>
+    <!-- Checkin Modal -->
+    <div class="modal modal-lg fade" id="checkinModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="checkinModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="checkinModalLabel">Checkin room {{selectRoom.code}}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex align-items-center">
+                        <h5 class="fw-semibold flex-grow-1">Booking Info</h5>
+                        <div class="flex-shrink-0">
+                            <button class="btn btn-sm btn-soft-info"><i class="mdi mdi-pencil-outline"></i></button>
                         </div>
-                        <!-- end col -->
-
-                        <div class="col-xl-2 col-sm-3">
-                            <div class="card border">
-                                <div class="card-body p-3">
-                                    <div class="">
-                                        <div class="float-end ms-2">
-                                            <div class="dropdown mb-2">
-                                                <a class="font-size-16 text-muted" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    <i class="mdi mdi-dots-horizontal"></i>
-                                                </a>
-                                                
-                                                <div class="dropdown-menu dropdown-menu-start">
-                                                    <a class="dropdown-item" href="#">Open</a>
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item" href="#">Rename</a>
-                                                    <div class="dropdown-divider"></div>
-                                                    <a class="dropdown-item" href="#">Remove</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="avatar-xs me-3 mb-3">
-                                            <div class="avatar-title bg-transparent rounded">
-                                                <i class="bx bx-hotel font-size-24 text-success"></i>
-                                            </div>
-                                        </div>
-                                        <div class="d-flex">
-                                            <div class="overflow-hidden me-auto">
-                                                <h5 class="font-size-14 text-truncate mb-1"><a href="javascript: void(0);" class="text-body">202</a></h5>
-                                                <p class="text-muted text-truncate mb-0">---</p>
-                                            </div>
-                                            <div class="align-self-end ms-2">
-                                                <p class="text-muted mb-0">---</p>
-                                            </div>
-                                        </div>
-                                        
-                                    </div>
-                                </div>
-                                
-                            </div>
-                        </div>
-                        <!-- end col -->
-
-                        <div class="col-xl-2 col-sm-3">
-                            <div class="card border">
-                                <div class="card-body p-3">
-                                    <div class="">
-                                        <div class="float-end ms-2">
-                                            <div class="dropdown mb-2">
-                                                <a class="font-size-16 text-muted" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
-                                                    <i class="mdi mdi-dots-horizontal"></i>
-                                                </a>
-                                                
-                                                <div class="dropdown-menu dropdown-menu-start">
-                                                    <a class="dropdown-item" href="#">Open</a>
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item" href="#">Rename</a>
-                                                    <div class="dropdown-divider"></div>
-                                                    <a class="dropdown-item" href="#">Remove</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="avatar-xs me-3 mb-3">
-                                            <div class="avatar-title bg-transparent rounded">
-                                                <i class="bx bx-hotel font-size-24 text-success"></i>
-                                            </div>
-                                        </div>
-                                        <div class="d-flex">
-                                            <div class="overflow-hidden me-auto">
-                                                <h5 class="font-size-14 text-truncate mb-1"><a href="javascript: void(0);" class="text-body">203</a></h5>
-                                                <p class="text-muted text-truncate mb-0">---</p>
-                                            </div>
-                                            <div class="align-self-end ms-2">
-                                                <p class="text-muted mb-0">---</p>
-                                            </div>
-                                        </div>
-                                        
-                                    </div>
-                                </div>
-                                
-                            </div>
-                        </div>
-                        <!-- end col -->
-
-                        <div class="col-xl-2 col-sm-3">
-                            <div class="card border">
-                                <div class="card-body p-3">
-                                    <div class="">
-                                        <div class="float-end ms-2">
-                                            <div class="dropdown mb-2">
-                                                <a class="font-size-16 text-muted" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
-                                                    <i class="mdi mdi-dots-horizontal"></i>
-                                                </a>
-                                                
-                                                <div class="dropdown-menu dropdown-menu-start">
-                                                    <a class="dropdown-item" href="#">Open</a>
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item" href="#">Rename</a>
-                                                    <div class="dropdown-divider"></div>
-                                                    <a class="dropdown-item" href="#">Remove</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="avatar-xs me-3 mb-3">
-                                            <div class="avatar-title bg-transparent rounded">
-                                                <i class="bx bx-hotel font-size-24 text-success"></i>
-                                            </div>
-                                        </div>
-                                        <div class="d-flex">
-                                            <div class="overflow-hidden me-auto">
-                                                <h5 class="font-size-14 text-truncate mb-1"><a href="javascript: void(0);" class="text-body">204</a></h5>
-                                                <p class="text-muted text-truncate mb-0">---</p>
-                                            </div>
-                                            <div class="align-self-end ms-2">
-                                                <p class="text-muted mb-0">---</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                            </div>
-                        </div>
-                        <!-- end col -->
-
-                        <div class="col-xl-2 col-sm-3">
-                            <div class="card border">
-                                <div class="card-body p-3">
-                                    <div class="">
-                                        <div class="float-end ms-2">
-                                            <div class="dropdown mb-2">
-                                                <a class="font-size-16 text-muted" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
-                                                    <i class="mdi mdi-dots-horizontal"></i>
-                                                </a>
-                                                
-                                                <div class="dropdown-menu dropdown-menu-start">
-                                                    <a class="dropdown-item" href="#">Open</a>
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item" href="#">Rename</a>
-                                                    <div class="dropdown-divider"></div>
-                                                    <a class="dropdown-item" href="#">Remove</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="avatar-xs me-3 mb-3">
-                                            <div class="avatar-title bg-transparent rounded">
-                                                <i class="bx bx-hotel font-size-24 text-success"></i>
-                                            </div>
-                                        </div>
-                                        <div class="d-flex">
-                                            <div class="overflow-hidden me-auto">
-                                                <h5 class="font-size-14 text-truncate mb-1"><a href="javascript: void(0);" class="text-body">205</a></h5>
-                                                <p class="text-muted text-truncate mb-0">---</p>
-                                            </div>
-                                            <div class="align-self-end ms-2">
-                                                <p class="text-muted mb-0">---</p>
-                                            </div>
-                                        </div>
-                                        
-                                    </div>
-                                </div>
-                                
-                            </div>
-                        </div>
-                        <!-- end col -->
-
-                        <div class="col-xl-2 col-sm-3">
-                            <div class="card border">
-                                <div class="card-body p-3">
-                                    <div class="">
-                                        <div class="float-end ms-2">
-                                            <div class="dropdown mb-2">
-                                                <a class="font-size-16 text-muted" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
-                                                    <i class="mdi mdi-dots-horizontal"></i>
-                                                </a>
-                                                
-                                                <div class="dropdown-menu dropdown-menu-start">
-                                                    <a class="dropdown-item" href="#">Open</a>
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item" href="#">Rename</a>
-                                                    <div class="dropdown-divider"></div>
-                                                    <a class="dropdown-item" href="#">Remove</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="avatar-xs me-3 mb-3">
-                                            <div class="avatar-title bg-transparent rounded">
-                                                <i class="bx bx-hotel font-size-24 text-success"></i>
-                                            </div>
-                                        </div>
-                                        <div class="d-flex">
-                                            <div class="overflow-hidden me-auto">
-                                                <h5 class="font-size-14 text-truncate mb-1"><a href="javascript: void(0);" class="text-body">206</a></h5>
-                                                <p class="text-muted text-truncate mb-0">---</p>
-                                            </div>
-                                            <div class="align-self-end ms-2">
-                                                <p class="text-muted mb-0">---</p>
-                                            </div>
-                                        </div>
-                                        
-                                    </div>
-                                </div>
-                                
-                            </div>
-                        </div>
-                        <!-- end col -->
-
-                        <div class="col-xl-2 col-sm-3">
-                            <div class="card border">
-                                <div class="card-body p-3">
-                                    <div class="">
-                                        <div class="float-end ms-2">
-                                            <div class="dropdown mb-2">
-                                                <a class="font-size-16 text-muted" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
-                                                    <i class="mdi mdi-dots-horizontal"></i>
-                                                </a>
-                                                
-                                                <div class="dropdown-menu dropdown-menu-start">
-                                                    <a class="dropdown-item" href="#">Open</a>
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item" href="#">Rename</a>
-                                                    <div class="dropdown-divider"></div>
-                                                    <a class="dropdown-item" href="#">Remove</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="avatar-xs me-3 mb-3">
-                                            <div class="avatar-title bg-transparent rounded">
-                                                <i class="bx bx-hotel font-size-24 text-success"></i>
-                                            </div>
-                                        </div>
-                                        <div class="d-flex">
-                                            <div class="overflow-hidden me-auto">
-                                                <h5 class="font-size-14 text-truncate mb-1"><a href="javascript: void(0);" class="text-body">207</a></h5>
-                                                <p class="text-muted text-truncate mb-0">---</p>
-                                            </div>
-                                            <div class="align-self-end ms-2">
-                                                <p class="text-muted mb-0">---</p>
-                                            </div>
-                                        </div>
-                                        
-                                    </div>
-                                </div>
-                                
-                            </div>
-                        </div>
-                        <!-- end col -->
-
-                        <div class="col-xl-2 col-sm-3">
-                            <div class="card border">
-                                <div class="card-body p-3">
-                                    <div class="">
-                                        <div class="float-end ms-2">
-                                            <div class="dropdown mb-2">
-                                                <a class="font-size-16 text-muted" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
-                                                    <i class="mdi mdi-dots-horizontal"></i>
-                                                </a>
-                                                
-                                                <div class="dropdown-menu dropdown-menu-start">
-                                                    <a class="dropdown-item" href="#">Open</a>
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item" href="#">Rename</a>
-                                                    <div class="dropdown-divider"></div>
-                                                    <a class="dropdown-item" href="#">Remove</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="avatar-xs me-3 mb-3">
-                                            <div class="avatar-title bg-transparent rounded">
-                                                <i class="bx bx-hotel font-size-24 text-success"></i>
-                                            </div>
-                                        </div>
-                                        <div class="d-flex">
-                                            <div class="overflow-hidden me-auto">
-                                                <h5 class="font-size-14 text-truncate mb-1"><a href="javascript: void(0);" class="text-body">208</a></h5>
-                                                <p class="text-muted text-truncate mb-0">---</p>
-                                            </div>
-                                            <div class="align-self-end ms-2">
-                                                <p class="text-muted mb-0">---</p>
-                                            </div>
-                                        </div>
-                                        
-                                    </div>
-                                </div>
-                                
-                            </div>
-                        </div>
-                        <!-- end col -->
-
                     </div>
+                    <form>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="formrow-fullname-input" class="form-label">Full Name</label>
+                                    <input ng-value="people.fullName" class="form-control" id="formrow-fullname-input"
+                                        readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="formrow-email-input" class="form-label">Phone Number</label>
+                                    <input ng-value="people.phoneNumber" class="form-control" id="formrow-email-input"
+                                        readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="formrow-firstname-input" class="form-label">Email</label>
+                                    <input ng-value="people.email" class="form-control" id="formrow-firstname-input"
+                                        readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="formrow-password-input" class="form-label">Date of Birth</label>
+                                    <input ng-value="people.dateOfBirth" class="form-control"
+                                        id="formrow-password-input" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="formrow-firstname-input" class="form-label">Giới tính</label>
+                                    <input ng-value="people.gender" class="form-control" id="formrow-firstname-input"
+                                        readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="formrow-password-input" class="form-label">People ID</label>
+                                    <input ng-value="people.peopleId" class="form-control" id="formrow-password-input"
+                                        readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="formrow-firstname-input" class="form-label">Place of Birth</label>
+                                    <input ng-value="people.placeOfBirth" class="form-control"
+                                        id="formrow-firstname-input" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="formrow-firstname-input" class="form-label">Address</label>
+                                    <input ng-value="people.address" class="form-control" id="formrow-firstname-input"
+                                        readonly>
+                                </div>
+                            </div>
+                        </div> -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="formrow-firstname-input" class="form-label">Checkin Date</label>
+                                    <input ng-value="people.checkinDate" class="form-control"
+                                        id="formrow-firstname-input" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="formrow-firstname-input" class="form-label">Checkout Date</label>
+                                    <input ng-value="people.checkoutDate" class="form-control"
+                                        id="formrow-firstname-input" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="d-flex align-items-center">
+                        <h5 class="fw-semibold flex-grow-1">People Lists</h5>
+                        <div class="flex-shrink-0">
+                            <button ng-click="addPeople()" class="btn btn-sm btn-soft-primary"><i
+                                    class="mdi mdi-plus"></i></button>
+                            <button class="btn btn-sm btn-light"><i class="mdi mdi-refresh"></i></button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table align-middle table-nowrap">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Full Name</th>
+                                    <th scope="col">Phone Number</th>
+                                    <th scope="col">Gender</th>
+                                    <th scope="col">Date of Birth</th>
+                                    <th scope="col">People ID</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="overflow-auto" style="max-height: 50px;">
+                                <tr ng-repeat="item in peoples">
+                                    <th scope="row">
+                                        {{item.fullName}}
+                                    </th>
+                                    <td>{{item.phoneNumber}}</td>
+                                    <td>{{item.gender}}</td>
+                                    <td>{{item.dateOfBirth}}</td>
+                                    <td>{{item.peopleId}}</td>
+                                    <td>
+                                        <ul class="list-unstyled hstack gap-1 mb-0">
+                                            <li>
+                                                <button class="btn btn-sm btn-soft-primary"><i
+                                                        class="mdi mdi-eye-outline"></i></button>
+                                            </li>
+                                            <!-- <li>
+                                                <button class="btn btn-sm btn-soft-info"><i
+                                                        class="mdi mdi-pencil-outline"></i></button>
+                                            </li> -->
+                                            <li>
+                                                <button ng-click="removePeople(item)"
+                                                    class="btn btn-sm btn-soft-danger"><i
+                                                        class="mdi mdi-delete-outline"></i></button>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Checkin</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Checkin Modal -->
+    <div class="modal modal-lg fade" id="checkoutModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="checkoutModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="checkoutModalLabel">Trả Phòng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Next</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal modal-lg fade" id="secondmodal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="checkoutModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add people</h5>
+                </div>
+                <div class="modal-body">
+                    <div id="my_camera" style="width: 320px; height: 240px;">
+                        <div></div><video autoplay="autoplay" style="width: 320px; height: 240px;"></video>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button ng-click="checkinRoom(selectRoom)" class="btn btn-primary">Add people</button>
                 </div>
             </div>
         </div>

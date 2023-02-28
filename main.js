@@ -409,3 +409,4 @@ app.component("appLayout", {
     })(jQuery);
   },
 });
+app.directive('datepicker', function () { return { restrict: 'A', require: 'ngModel', link: function (scope, element, attrs, ngModelCtrl) { $(element).datepicker({ format: 'dd-mm-yyyy', autoclose: true, todayHighlight: true }).on('changeDate', function (e) { ngModelCtrl.$setViewValue(e.date); scope.$apply(); }); } }; });

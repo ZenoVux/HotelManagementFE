@@ -1,0 +1,198 @@
+<app-layout name="">
+
+    <h1>Booking</h1>
+
+    <form>
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-3">
+                <div class="input-daterange input-group" id="datepicker6" data-date-format="dd-mm-yyyy"
+                    data-date-autoclose="true" data-provide="datepicker" data-date-container='#datepicker6'>
+                    <input datepicker type="text" class="form-control" ng-model="booking.checkinDate" name="start"
+                        placeholder="Ngày checkin" readonly />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="input-daterange input-group" id="datepicker6" data-date-format="dd-mm-yyyy"
+                    data-date-autoclose="true" data-provide="datepicker" data-date-container='#datepicker6'>
+                    <input datepicker type="text" class="form-control" ng-model="booking.checkoutDate" name="end"
+                        placeholder="Ngày checkout" readonly />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="dropdown-center">
+                    <input type="text" class="form-control" placeholder="1 phòng : 2 người lớn : 0 trẻ em" readonly
+                        ng-value="booking.roomCount + ' phòng : ' + booking.adults + ' người lớn : ' + booking.children + ' trẻ em'"
+                        role="button" data-bs-toggle="dropdown" data-bs-auto-close="false" />
+                    <ul class="dropdown-menu">
+                        <li>
+                            <div class="row">
+                                <div class="col-md-1"></div>
+                                <div class="col-md-4">
+                                    <label style="margin-top: 9px;">Số phòng</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <input class="form-control" type="number" ng-model="booking.roomCount" min="1">
+                                    </div>
+                                </div>
+                                <div class="col-md-1"></div>
+                            </div>
+                        </li>
+                        <p></p>
+                        <li>
+                            <div class="row">
+                                <div class="col-md-1"></div>
+                                <div class="col-md-4">
+                                    <label style="margin-top: 9px;">Người lớn</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <input class="form-control" type="number" ng-model="booking.adults" min="1">
+                                    </div>
+                                </div>
+                                <div class="col-md-1"></div>
+                            </div>
+                        </li>
+                        <p></p>
+                        <li>
+                            <div class="row">
+                                <div class="col-md-1"></div>
+                                <div class="col-md-4">
+                                    <label style="margin-top: 9px;">Trẻ em</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <input class="form-control" type="number" ng-model="booking.children" min="0">
+                                    </div>
+                                </div>
+                                <div class="col-md-1"></div>
+                            </div>
+                        </li>
+                        <p></p>
+                        <li>
+                            <div class="row">
+                                <div class="col-md-12 text-center">
+                                    <button class="btn btn-primary" type="button"
+                                        ng-click="closeDropdown()">Done</button>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-md-1">
+                <button type="button" class="btn btn-primary" ng-click="checkRoom()">Kiểm tra</button>
+            </div>
+            <div class="col-md-1"></div>
+        </div>
+        <p></p>
+        <div class="row">
+            <div class="col-11">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <h5 class="card-header bg-transparent border-bottom text-uppercase">Standard : 1 giường đôi:
+                                20m2
+                            </h5>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <img src="https://www.w3schools.com/images/picture.jpg" alt="Front of ID">
+                                    </div>
+                                    <div class="col-md-4" style="border: 1px solid red">
+                                        <h3>Ô này cho thông tin phòng</h3>
+                                    </div>
+                                    <div class="col-md-2" style="border: 1px solid red">
+                                        <h3>300.000vnd</h3>
+                                    </div>
+                                    <div class="col-md-2" style="border: 1px solid red">
+                                        <div class="input-group">
+                                            <input class="form-control" type="number" ng-model="booking.roomCount"
+                                                min="1">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <h5 class="card-header bg-transparent border-bottom text-uppercase">Standard : 1 giường đôi:
+                                20m2
+                            </h5>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <img src="https://www.w3schools.com/images/picture.jpg" alt="Front of ID">
+                                    </div>
+                                    <div class="col-md-4" style="border: 1px solid red">
+                                        <h3>Ô này cho thông tin phòng</h3>
+                                    </div>
+                                    <div class="col-md-2" style="border: 1px solid red">
+                                        <h3>300.000vnd</h3>
+                                    </div>
+                                    <div class="col-md-2" style="border: 1px solid red">
+                                        <div class="input-group">
+                                            <input class="form-control" type="number" ng-model="booking.roomCount"
+                                                min="1">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <h5 class="card-header bg-transparent border-bottom text-uppercase">Standard : 1 giường đôi:
+                                20m2
+                            </h5>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <img src="https://www.w3schools.com/images/picture.jpg" alt="Front of ID">
+                                    </div>
+                                    <div class="col-md-4" style="border: 1px solid red">
+                                        <h3>Ô này cho thông tin phòng</h3>
+                                    </div>
+                                    <div class="col-md-2" style="border: 1px solid red">
+                                        <h3>300.000vnd</h3>
+                                    </div>
+                                    <div class="col-md-2" style="border: 1px solid red">
+                                        <div class="input-group">
+                                            <input class="form-control" type="number" ng-model="booking.roomCount"
+                                                min="1">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-1" style="position: fixed;
+  bottom: 600px;
+  right: 10px;
+  z-index: 9999;">
+                <button type="button" class="btn btn-primary btn-lg" ng-click="checkRoom()" style="display: block;
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: #fff;
+  width: 120px;
+  height: 100px;
+  font-size: 25px;
+  border-radius: 4px;">Next</button>
+            </div>
+        </div>
+
+
+
+    </form>
+
+
+</app-layout>

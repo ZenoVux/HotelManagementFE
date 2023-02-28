@@ -3,6 +3,10 @@ app.config(function ($routeProvider) {
     .when("/", {
       templateUrl: "/views/dashboard.html",
     })
+    .when("/bookings", {
+      templateUrl: "/views/booking/booking.html",
+      controller: "bookingCtrl",
+    })
     .when("/accounts", {
       templateUrl: "/views/account/table.html",
       controller: "accountListCtrl",

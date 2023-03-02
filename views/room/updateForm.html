@@ -28,33 +28,16 @@
                             <div class="col-md-6 mb-3">
                                 <label for="formrow-price-input" class="form-label">Price</label>
                                 <div class="input-group">
-                                    <input ng-model="form.price" type="text" class="form-control" id="formrow-price-input"
-                                        placeholder="Choose room type">
+                                    <input ng-model="form.price" type="text" class="form-control" id="formrow-price-input">
                                 </div>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="formrow-maxAdult-input" class="form-label">Max Adults</label>
-                                    <input ng-model="form.maxAdult" type="text" class="form-control" id="formrow-maxAdult-input"
-                                        placeholder="Enter max adults">
-                                </div>
-                            </div>
                             <div class="col-md-6 mb-3">
                                 <label for="formrow-maxAdultAdd-input" class="form-label">Max adults add</label>
                                 <div class="input-group">
                                     <input ng-model="form.maxAdultAdd" type="text" class="form-control" id="formrow-maxAdultAdd-input"
                                         placeholder="Enter max adults add">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="formrow-maxChild-input" class="form-label">Max children</label>
-                                    <input ng-model="form.maxChild" type="text" class="form-control" id="formrow-maxChild-input"
-                                        placeholder="Enter max children">
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
@@ -73,7 +56,13 @@
                                         placeholder="Enter area">
                                 </div>
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-3 mb-3">
+                                <label for="formrow-floor-input" class="form-label">Floor</label>
+                                <select ng-model="form.floor.id" id="formrow-floor-select" class="form-select">
+                                    <option ng-repeat= "floor in floors" ng-value = "floor.id">{{floor.name}}</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-3">
                                 <label for="formrow-isSmoking-input" class="form-label">Is smoking</label>
                                 <select ng-model="form.isSmoking" id="formrow-isSmoking-select" class="form-select">
                                     <option ng-value = "true">Có</option>
@@ -82,24 +71,27 @@
                             </div>
                         </div>
                         <div class="row mb-3">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label for="formrow-roomType-select" class="form-label">Room type</label>
                                 <select ng-model="form.roomType.id" id="formrow-roomType-select" class="form-select">
                                     <option ng-repeat= "room in roomTypes" ng-value = "room.id">{{room.name}}</option>
                                 </select>
                             </div>
-                            <div class="col-md-2 mb-3 mt-auto d-grid">
-                                <a href="/#!/room-type/create" class="btn btn-outline-primary waves-effect waves-light"><i class="fas fa-plus me-3"></i>Create room type</a>
-                            </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="mb-3">
                                     <label for="formrow-status-input">Status</label>
                                     <select ng-model="form.status" id="formrow-status-input" class="form-select">
                                         <option ng-value="0">Trống</option>
                                         <option ng-value="1">Đang ở</option>
+                                        <option ng-value="2">Đã đặt</option>
+                                        <option ng-value="3">Quá hạn</option>
                                     </select>
                                 </div>
                             </div>
+                            <div class="col-md-2 mb-3 mt-auto">
+                                <a href="/#!/room-type/create" class="btn btn-outline-primary waves-effect waves-light"><i class="fas fa-plus me-3"></i>Create room type</a>
+                            </div>
+                            
                             <!-- Model supply-->
                             <div class="col-md-2 mb-3 mt-auto d-grid">
                                 <a class="btn btn-outline-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#chooseSupply">
@@ -132,13 +124,13 @@
                                                             <tr ng-repeat="supply in supplys">
                                                                 <td style="width: 20px;" class="align-middle">
                                                                     <div class="form-check form-check-success font-size-16">
-                                                                        <input class="form-check-input" type="checkbox" ng-model="supply.checked" ng-click="supplyChanged(supply)">
+                                                                        <input class="form-check-input" type="checkbox" ng-model="supply.checked" ng-change="supplyChanged(supply)">
                                                                     </div>
                                                                 </td>
                                                                 <td>{{supply.name}}</td>
                                                                 <td>{{supply.description}}</td>
                                                                 <td>
-                                                                    <input type="number" class="form-control" ng-model="supply.quantity" ng-disabled="!supply.checked">
+                                                                    <input type="number" class="form-control" ng-model="supply.count" ng-disabled="!supply.checked" ng-change="supplyChanged(supply)">
                                                                 </td>
                                                                 <td>{{supply.unit}}</td>
                                                             </tr>  
@@ -153,6 +145,64 @@
                                     </div>
                                 </div>
                             </div>
+                            <!-- End Model supply-->
+
+                            <!-- Model bed-->
+                            <div class="col-md-2 mb-3 mt-auto d-grid">
+                                <a class="btn btn-outline-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#chooseBed">
+                                    <i class="bx bxs-bed mx-auto font-size-15 me-3"></i>Choose bed
+                                </a>
+                                <div class="modal fade" id="chooseBed" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="chooseBedLabel">List bed</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body ">
+                                                <div class="table-reponsive">
+                                                    <table class="table table-hover align-middle mb-0">
+                                                        <thead class="table-light">
+                                                            <tr>
+                                                                <th style="width: 20px;" class="align-middle">
+                                                                    <div class="form-check form-check-success font-size-16">
+                                                                        <input class="form-check-input" type="checkbox" id="checkAll" ng-model="checkAll">
+                                                                    </div>
+                                                                </th>
+                                                                <th>Name</th>
+                                                                <th>Max adults</th>
+                                                                <th>Max childs</th>
+                                                                <th>Description</th>
+                                                                <th>Quantity</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr ng-repeat="bedType in bedTypes">
+                                                                <td style="width: 20px;" class="align-middle">
+                                                                    <div class="form-check form-check-success font-size-16">
+                                                                        <input class="form-check-input" type="checkbox" ng-model="bedType.checked" ng-change="bedTypeChanged(bedType)">
+                                                                    </div>
+                                                                </td>
+                                                                <td>{{bedType.name}}</td>
+                                                                <td>{{bedType.maxAdults}}</td>
+                                                                <td>{{bedType.maxChilds}}</td>
+                                                                <td>{{bedType.description}}</td>
+                                                                <td>
+                                                                    <input type="number" class="form-control" ng-model="bedType.count" ng-disabled="!bedType.checked" ng-change="bedTypeChanged(bedType)">
+                                                                </td>
+                                                            </tr>  
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- End model bed -->
                         </div>
                         <div class="row">
                             <div class="mb-3">

@@ -5,6 +5,9 @@ app.controller("roomTypeListCtrl", function ($scope, $http) {
     $scope.initialize = function(){
         $http.get("http://localhost:8000/api/room-types").then(resp =>{
             $scope.roomTypes = resp.data;
+            $(document).ready(function () {
+                $('#datatable-room-types').DataTable();
+            });
         }).catch(error =>{
             alert("Error load data room type")
             console.log("Error", error);

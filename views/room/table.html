@@ -13,12 +13,6 @@
                     <!--Search room-->
                     <div class="row mb-2">
                         <div class="col-sm-4">
-                            <div class="search-box me-2 mb-2 d-inline-block">
-                                <div class="position-relative">
-                                    <input type="text" class="form-control" placeholder="Search...">
-                                    <i class="bx bx-search-alt search-icon"></i>
-                                </div>
-                            </div>
                         </div>
                         
                         <div class="col-sm-8">
@@ -28,16 +22,15 @@
                         </div>
                     </div>
                     <!-- table content -->
-                    <table id="datatable-room" class="table table-hover table-reponsive dt-responsive ">
+                    <table id="datatable-rooms" class="table table-hover table-reponsive">
                         <thead class="table-light">
                             <tr>
                                 <th>Room number</th>
                                 <th>Price</th>
-                                <th>Area</th>
-                                <th>Description</th>
+                                <th>Room Type</th>
+                                <th>Floor</th>
                                 <th>Status</th>
                                 <th>View Other</th>
-                                <th>Supply</th>
                                 <th>Active</th>
                             </tr>
                         </thead>
@@ -45,127 +38,162 @@
                             <tr ng-repeat = "room in rooms">
                                 <td>{{room.code}}</td>
                                 <td>{{room.price}}</td>
-                                <td>{{room.area}}</td>
-                                <td>{{room.description}}</td>
-                                <td>{{room.status}}</td>
+                                <td>{{room.roomType.name}}</td>
+                                <td>{{room.floor.name}}</td>
                                 <td>
-                                    <a class="text-secondary btn waves-light" title="View" data-bs-toggle="modal" data-bs-target="#viewOther">
-                                        <i class="fas fa-eye font-size-18"></i>
-                                    </a>
-                                    <!-- Model view other room -->
-                                    <div class="modal fade" id="viewOtherRoom" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="viewOtherRoomLabel">View Other</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div class="table-reponsive">
-                                                        <table class="table table-hover align-middle">
-                                                            <thead class="table-light">
-                                                                <tr>
-                                                                    <th>Max Adults</th>
-                                                                    <th>Max adults add</th>
-                                                                    <th>Max children</th>
-                                                                    <th>Max child add</th>
-                                                                    <th>Is smoking</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                <tr>
-                                                                    <td>{{room.maxAdult}}</td>
-                                                                    <td>{{room.maxAdultAdd}}</td>
-                                                                    <td>{{room.maxChild}}</td>
-                                                                    <td>{{room.maxChildAdd}}</td>
-                                                                    <td>{{room.isSmoking}}</td>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- End model -->
+                                    <span ng-if="room.status == 0" class="badge badge-pill badge-soft-success font-size-12">Trống</span>
+                                    <span ng-if="room.status == 1" class="badge badge-pill badge-soft-danger font-size-12">Đang ở</span>
+                                    <span ng-if="room.status == 2" class="badge badge-pill badge-soft-primary font-size-12">Đã đặt</span>
+                                    <span ng-if="room.status == 3" class="badge badge-pill badge-soft-warning font-size-12">Quá hạn</span>
                                 </td>
-                                <td class="align-middle">
-                                    <a class="text-secondary btn waves-light" title="View" data-bs-toggle="modal" data-bs-target="#listSupplyRoom" ng-click="loadSupplyRoom(room.code)">
-                                        <i class="fas fa-eye font-size-18"></i>
-                                    </a>
-                                    <!-- Model supplyRoom -->
-                                    <div class="modal fade" id="listSupplyRoom" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="listSupplyRoomLabel">Supply room</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div class="table-reponsive">
-                                                        <table class="table table-hover align-middle">
-                                                            <thead class="table-light">
-                                                                <tr>
-                                                                    <th>Name</th>
-                                                                    <th>Quantity</th>
-                                                                    <th>Unit</th>
-                                                                    <th>Description</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                <tr ng-repeat="supplyRoom in supplyRooms">
-                                                                    <td>{{supplyRoom.supply.name}}</td>
-                                                                    <td>{{supplyRoom.quantity}}</td>
-                                                                    <td>{{supplyRoom.supply.unit}}</td>
-                                                                    <td>{{supplyRoom.supply.description}}</td>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
+                                <td>
+                                    <div class="dropdown">
+                                        <button id="dropdownMenuButton"
+                                            class="btn ms-3"
+                                            data-bs-toggle="dropdown" aria-expanded="false"><i
+                                                class="bx bx-dots-horizontal-rounded font-size-20"></i></button>
+
+                                        <div aria-labelledby="dropdownMenuButton" class="dropdown-menu dropdown-menu-start">
+                                            <button class="dropdown-item" title="View" data-bs-toggle="modal" data-bs-target="#viewBedRoom" ng-click="loadBedRoom(room.code)">Bed Room</button>
+                                            <div class="dropdown-divider"></div>
+                                            <button class="dropdown-item btn waves-light" title="View" data-bs-toggle="modal" data-bs-target="#listSupplyRoom" ng-click="loadSupplyRoom(room.code)">Supply</button>
+                                            <div class="dropdown-divider"></div>
+                                            <button class="dropdown-item btn waves-light" title="View" data-bs-toggle="modal" data-bs-target="#viewOtherRoom">View Other</button>
+                                        </div>
+                                        <!-- Model view other room -->
+                                        <div class="modal fade" id="viewOtherRoom" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="viewOtherRoomLabel">View Other</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                                    <div class="modal-body">
+                                                        <div class="table-reponsive">
+                                                            <table class="table table-hover align-middle">
+                                                                <thead class="table-light">
+                                                                    <tr>
+                                                                        <th>Area</th>
+                                                                        <th>Max adults add</th>
+                                                                        <th>Max child add</th>
+                                                                        <th>Is smoking</th>
+                                                                        <th>Description</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td>{{room.area}} M<sup>2</sup></td>
+                                                                        <td>{{room.maxAdultAdd}}</td>
+                                                                        <td>{{room.maxChildAdd}}</td>
+                                                                        <td>{{room.isSmoking}}</td>
+                                                                        <td>{{room.description}}</td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
+                                        <!-- End model -->
+                                        
                                     </div>
-                                    <!-- End model -->
                                 </td>
                                 <td class="align-middle">
                                     <button ng-click="edit(room)" class="btn">
-                                        <a  class="text-success" href="/#!/room/update/{{room.id}}" title="Edit">
-                                            <i class="fas fa-pencil-alt font-size-18"></i>
+                                        <a class="text-success" href="/#!/room/update/{{room.id}}" title="Edit">
+                                            <i class="bx bxs-edit-alt font-size-20"></i>
                                         </a>
                                     </button>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
-                    <ul class="pagination pagination-rounded justify-content-center my-4">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="javascript: void(0);" aria-label="Previous">
-                                <i class="mdi mdi-chevron-left"></i>
-                            </a>
-                        </li>
-                        <li class="page-item active"><a class="page-link" href="javascript: void(0);">1</a></li>
-                        <li class="page-item"><a class="page-link" href="javascript: void(0);">2</a></li>
-                        <li class="page-item"><a class="page-link" href="javascript: void(0);">3</a></li>
-                        <li class="page-item"><a class="page-link" href="javascript: void(0);">4</a></li>
-                        <li class="page-item"><a class="page-link" href="javascript: void(0);">5</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="javascript: void(0);" aria-label="Next">
-                                <i class="mdi mdi-chevron-right"></i>
-                            </a>
-                        </li>
-                    </ul>
+                    <!-- Model supplyRoom -->
+                    <div class="modal fade" id="listSupplyRoom" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="listSupplyRoomLabel">Supply room</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="table-reponsive">
+                                        <table class="table table-hover align-middle">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Quantity</th>
+                                                    <th>Unit</th>
+                                                    <th>Description</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="supplyRoom in supplyRooms">
+                                                    <td>{{supplyRoom.supply.name}}</td>
+                                                    <td>{{supplyRoom.quantity}}</td>
+                                                    <td>{{supplyRoom.supply.unit}}</td>
+                                                    <td>{{supplyRoom.supply.description}}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End model -->
+
+                    <!-- Model view bed room -->
+                    <div class="modal fade" id="viewBedRoom" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="viewBedRoomLabel">Bed room</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="table-reponsive">
+                                        <table class="table table-hover align-middle">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Max adults</th>
+                                                    <th>Max child</th>
+                                                    <th>Quantity</th>
+                                                    <th>Description</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="bedRoom in bedRooms">
+                                                    <td>{{bedRoom.bedType.name}}</td>
+                                                    <td>{{bedRoom.bedType.maxAdult}}</td>
+                                                    <td>{{bedRoom.bedType.maxChild}}</td>
+                                                    <td>{{bedRoom.quantityBed}}</td>
+                                                    <td>{{bedRoom.bedType.description}}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End model bed room -->
                 </div>
             </div>
         </div>
+        
     </div>
-    
 
     <!-- Required datatable js -->
     <script src="assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>

@@ -1,4 +1,10 @@
 <app-layout name="">
+    <!-- DataTables -->
+    <link href="assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link href="assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+
+    <!-- Responsive datatable examples -->
+    <link href="assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" /> 
     <div class="row">
         <div class="col-12">
             <div class="card">
@@ -22,7 +28,7 @@
                         </div>
                     </div>
                     <!-- table content -->
-                    <table class="table table-hover table-reponsive align-middle mb-0">
+                    <table id="datatable-room-types" class="table table-hover table-reponsive align-middle mb-0">
                         <thead class="table-light">
                             <tr>
                                 <th>Name</th>
@@ -45,32 +51,32 @@
                                 <td class="align-middle"> 
                                     <button ng-click="edit(room)" class="btn">
                                         <a  class="text-success" href="/#!/room-type/update/{{item.id}}" title="Edit">
-                                            <i class="fas fa-pencil-alt font-size-18"></i>
+                                            <i class="bx bxs-edit-alt font-size-20"></i>
                                         </a>
                                     </button>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
-                    <ul class="pagination pagination-rounded justify-content-center my-4">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="javascript: void(0);" aria-label="Previous">
-                                <i class="mdi mdi-chevron-left"></i>
-                            </a>
-                        </li>
-                        <li class="page-item active"><a class="page-link" href="javascript: void(0);">1</a></li>
-                        <li class="page-item"><a class="page-link" href="javascript: void(0);">2</a></li>
-                        <li class="page-item"><a class="page-link" href="javascript: void(0);">3</a></li>
-                        <li class="page-item"><a class="page-link" href="javascript: void(0);">4</a></li>
-                        <li class="page-item"><a class="page-link" href="javascript: void(0);">5</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="javascript: void(0);" aria-label="Next">
-                                <i class="mdi mdi-chevron-right"></i>
-                            </a>
-                        </li>
-                    </ul>
                 </div>
             </div>
         </div>
     </div>
+    
+    <!-- Required datatable js -->
+    <script src="assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <!-- Buttons examples -->
+    <script src="assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
+    <script src="assets/libs/jszip/jszip.min.js"></script>
+    <script src="assets/libs/pdfmake/build/pdfmake.min.js"></script>
+    <script src="assets/libs/pdfmake/build/vfs_fonts.js"></script>
+    <script src="assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
+    <script src="assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
+    <script src="assets/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
+    
+    <!-- Responsive examples -->
+    <script src="assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
 </app-layout>

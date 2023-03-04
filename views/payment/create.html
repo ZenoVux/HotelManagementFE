@@ -17,8 +17,8 @@
                                 <div class="mb-3">
                                     <label for="formrow-status-input">Status</label>
                                     <select ng-model="form.status" id="formrow-status-input" class="form-select">
-                                        <option ng-value="0">Hoạt động</option>
-                                        <option ng-value="1">Dừng hoạt động</option>
+                                        <option ng-value="0">Đang hoạt động</option>
+                                        <option ng-value="1">Ngừng hoạt động</option>
                                     </select>
                                 </div>
                             </div>
@@ -35,9 +35,9 @@
                                 <button ng-click="create()"
                                     class="btn btn-success waves-effect waves-light btn-rounded mb-2">Create</button>
                                 <button ng-click="reset()"
-                                    class="btn btn-danger waves-effect waves-light btn-rounded mb-2">Reset</button>
+                                    class="btn btn-danger waves-effect waves-light btn-rounded mb-2">Reset</button> <a href="/#!/payment" class="btn btn-primary waves-effect waves-light btn-rounded mb-2">Cancel</a>
                             </div>
-
+                        </div>
                     </form>
                 </div>
             </div>

@@ -55,6 +55,33 @@ app.config(function ($routeProvider) {
       templateUrl: "/views/payment/update.html",
       controller: "paymentUpdateCtrl",
     })
+    //
+    .when("/supply", {
+      templateUrl: "/views/supply/table.html",
+      controller: "supplyCtrl",
+    })
+    .when("/supply/create", {
+      templateUrl: "/views/supply/createSupply.html",
+      controller: "supplyCreateCtrl",
+    })
+    .when("/supply/update/:id", {
+      templateUrl: "/views/supply/updateSupply.html",
+      controller: "supplyUpdateCtrl",
+    })
+    //
+    .when("/supply/type", {
+      templateUrl: "/views/supply/tableType.html",
+      controller: "supply-typeCtrl",
+    })
+    .when("/supply/createType", {
+      templateUrl: "/views/supply/createType.html",
+      controller: "supplyCreate-typeCtrl",
+    })
+    .when("/supply/updateType/:id", {
+      templateUrl: "/views/supply/updateType.html",
+      controller: "supplyUpdate-typeCtrl",
+    })
+    //
     .when("/login", {
       templateUrl: "/views/login.html",
     })

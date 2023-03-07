@@ -13,7 +13,9 @@ app.controller("service-typeCtrl", function ($scope,$http) {
   $scope.create = function(){ //create a new service 
 		var item = angular.copy($scope.form);
 		$http.post("http://localhost:8000/api/service-types",item).then(resp=>{
+			$scope.initialize();
 			alert("Adding success !")
+			$scope.close();
       $scope.initialize();
 		}).catch(error=>{
 			alert("Adding failed !")
@@ -28,6 +30,7 @@ app.controller("service-typeCtrl", function ($scope,$http) {
 			var index = $scope.serTypes.findIndex(p=>p.id==item.id)
 			$scope.serTypes[index] = item;
 			alert("Update success!")
+			$scope.close();
 		}).catch(error=>{
 			alert("Update failed!")
 			console.log("Error",error)
@@ -41,6 +44,9 @@ app.controller("service-typeCtrl", function ($scope,$http) {
 			$scope.form=angular.copy(s);
     }
 	$scope.close = function () {
+		var myModalEl = document.getElementById('exampleModal');
+		var modal = bootstrap.Modal.getInstance(myModalEl);
+		modal.hide();
 		$scope.showbut = true;
 		$scope.form={}
 }

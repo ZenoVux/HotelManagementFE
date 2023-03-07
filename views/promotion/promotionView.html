@@ -21,59 +21,70 @@
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 ng-if="showbut" class="modal-title fs-5" id="exampleModalLabel">Create Service</h1>
-                    <h1 ng-if="!showbut" class="modal-title fs-5" id="exampleModalLabel">Update Service</h1>
+                    <h1 ng-if="showbut" class="modal-title fs-5" id="exampleModalLabel">Create Promotion</h1>
+                    <h1 ng-if="!showbut" class="modal-title fs-5" id="exampleModalLabel">Update Promotion</h1>
                     <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
                 </div>
                 <div class="modal-body">
                     <form>
+
                         <div class="row">
 
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="formrow-username-input" class="form-label">Name</label>
                                     <input ng-model="form.name" type="text" class="form-control"
-                                        id="formrow-username-input" placeholder="Enter Your  Service Name">
+                                        id="formrow-username-input" placeholder="Enter Your  Promotion Name">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="formrow-password-input" class="form-label">Price</label>
-                                    <input ng-model="form.price" type="number" class="form-control"
-                                        id="formrow-password-input" placeholder="Enter Your Service Price">
+                                    <label for="formrow-password-input" class="form-label">Percent %</label>
+                                    <input  type="number" class="form-control" ng-model="form.percent"
+                                        id="formrow-password-input" placeholder="Enter Your Promotion Percent">
                                 </div>
                             </div>
                         </div>
 
                         <div class="row">
+                          
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="formrow-password-input" class="form-label">Max Discount</label>
+                                    <input  type="number" class="form-control" ng-model="form.maxDiscount"
+                                        id="formrow-password-input" placeholder="Enter Your Max Discount">
+                                </div>
+                            </div>
 
                             <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="formrow-password-input" class="form-label">Min Amount</label>
+                                    <input  type="number" class="form-control" ng-model="form.minAmount"
+                                        id="formrow-password-input" placeholder="Enter Your Max Discount">
+                                </div>
+                            </div>
+                        </div>
 
+                        <div class="row">
+                            <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="formrow-fullname-input" class="form-label">Status</label><br>
                                     <input ng-model="form.status" ng-value="true" style="margin-left: 3px;" type="radio"
                                         class="form-check-input" name="anvaliable" />
-                                    <label style="margin-left: 5px;">Áp dụng</label>
+                                    <label style="margin-left: 5px;">Có hiệu lực</label>
                                     <input ng-model="form.status" ng-value="false" style="margin-left: 8px;"
                                         type="radio" class="form-check-input" name="anvaliable" />
-                                    <label style="margin-left: 10px;">Dừng áp dụng</label>
+                                    <label style="margin-left: 10px;">Hết hạn</label>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label for="formrow-address-input">Service Type</label>
-                                <select ng-model="form.serviceType.id" class="form-select"
-                                    aria-label="Default select example">
-                                    <option ng-repeat="s in serTypes" ng-value="s.id">{{s.name}}</option>
-                                </select>
+                                <div class="mb-3">
+                                    <label for="formrow-address-input">Description</label>
+                                    <textarea ng-model="form.description" id="formrow-address-input" class="form-control"
+                                        rows="3" placeholder="Enter Your Description"></textarea>
+                                </div>
                             </div>
                         </div>
-
-                        <div class="mb-3">
-                            <label for="formrow-address-input">Description</label>
-                            <textarea ng-model="form.description" id="formrow-address-input" class="form-control"
-                                rows="3" placeholder="Enter Your Description"></textarea>
-                        </div>
-
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -95,7 +106,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="table-responsive">
-                        <h4 class="card-title">List of services</h4>
+                        <h4 class="card-title">List of promotions</h4>
 
                         <div class="table-responsive">
                             <table class="table align-middle mb-0">
@@ -104,10 +115,11 @@
                                     <tr>
                                         <th>Id</th>
                                         <th>Name</th>
-                                        <th>Price</th>
-                                        <th>Status</th>
-                                        <th>Service Type</th>
+                                        <th>Percent</th>
+                                        <th>Max Discount</th>
+                                        <th>Min Amount</th>
                                         <th>Description</th>
+                                        <th>Status</th>
                                         <th>Edit</th>
                                     </tr>
                                 </thead>
@@ -115,14 +127,13 @@
                                     <tr ng-repeat="s in items | filter:searchName">
                                         <td>{{s.id}}</td>
                                         <td>{{s.name}}</td>
-                                        <td>{{s.price}}</td>
-                                        <td>
-                                            <span class="badge rounded-pill font-size-11 "
-                                                ng-class="s.status ? 'bg-success' : 'badge-soft-danger '">{{s.status ?
-                                                'Áp dụng' : 'Dừng áp dụng'}}</span>
-                                        </td>
-                                        <td>{{s.serviceType.name}}</td>
+                                        <td>{{s.percent}}%</td>
+                                        <td>{{s.maxDiscount}}</td>
+                                        <td>{{s.minAmount}}</td>
                                         <td>{{s.description}}</td>
+                                        <td> <span class="badge rounded-pill font-size-11 "
+                                                ng-class="s.status ? 'bg-success' : 'badge-soft-danger '">{{s.status ?
+                                                'Có hiệu lực' : 'Hết hạn'}}</span></td>
                                         <td>
                                             <a ng-click="view(s)" class="btn btn-outline-secondary btn-sm edit"
                                                 title="Edit">
@@ -140,5 +151,7 @@
             </div>
         </div><!--end col-->
     </div><!--end row-->
-   
+
+
+
 </app-layout>

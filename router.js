@@ -62,6 +62,11 @@ app.config(function ($routeProvider) {
       templateUrl: "/views/payment/update.html",
       controller: "paymentUpdateCtrl",
     })
+//Promotion
+    .when("/promotion", {
+      templateUrl: "/views/promotion/promotionView.html",
+      controller: "promotionCtrl",
+    })
 //Supply
     .when("/supply", {
       templateUrl: "/views/supply/table.html",

@@ -10,7 +10,7 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http) {
         },
         {
             id: 2,
-            name: "Đã đặt"
+            name: "Nhận phòng"
         },
         {
             id: 3,

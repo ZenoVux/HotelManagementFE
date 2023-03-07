@@ -27,6 +27,14 @@ app.config(function ($routeProvider) {
       templateUrl: "/views/hotel-room/list.html",
       controller: "hotelRoomCtrl",
     })
+    .when("/checkin/:roomCode", {
+      templateUrl: "/views/checkin/checkin.html",
+      controller: "checkinCtrl",
+    })
+    .when("/checkout/:roomCode", {
+      templateUrl: "/views/checkout/checkout.html",
+      controller: "checkoutCtrl",
+    })
     .when("/service", {
       templateUrl: "/views/service/serviceView.html",
       controller: "serviceCtrl",

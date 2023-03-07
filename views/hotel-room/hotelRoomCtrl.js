@@ -10,7 +10,7 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http) {
         },
         {
             id: 2,
-            name: "Đã đặt"
+            name: "Nhận phòng"
         },
         {
             id: 3,
@@ -18,6 +18,7 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http) {
         }
     ]
     $scope.statusCounts = [];
+    $scope.floors = [];
     $scope.rooms = [];
     $scope.selectRoom = {};
     $scope.people = {};
@@ -25,12 +26,18 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http) {
 
     $scope.init = async function () {
         await $scope.loadStatusCount();
-        await $scope.loadRoom();
+        await $scope.loadFloors();
     }
 
-    $scope.loadRoom = async function () {
-        await $http.get("http://localhost:8000/api/rooms").then(function (resp) {
-            $scope.rooms = resp.data;
+    $scope.loadFloors = async function () {
+        await $http.get("http://localhost:8000/api/floors").then(function (resp) {
+            $scope.floors = resp.data;
+        });
+    }
+
+    $scope.loadRooms = async function (floor) {
+        await $http.get("http://localhost:8000/api/rooms/floor/" + floor.id).then(function (resp) {
+            floor.rooms = resp.data;
         });
     }
 
@@ -74,21 +81,41 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http) {
     $scope.addPeople = function () {
         $('#checkinModal').modal('hide');
         $('#secondmodal').modal('show');
-        $scope.configCam();
-        $scope.peoples.push(angular.copy($scope.people));
-    }
-
-    $scope.configCam = function () {
         Webcam.set({
             width: 320,
             height: 240,
             image_format: 'jpeg',
             jpeg_quality: 90
         });
-        Webcam.attach('#my_camera');
+        $scope.configCam();
+        $scope.peoples.push(angular.copy($scope.people));
     }
 
-    $scope.snapshot = function () {
+    $scope.configCam = function () {
+        Webcam.attach('#font-img');
+        Webcam.attach('#back-img');
+    }
+
+    $scope.offCam = function () {
+        $('#checkinModal').modal('show');
+    }
+
+    $scope.snapshotFont = function () {
+        Webcam.snap( function(data_uri) {
+            document.getElementById('font-img').innerHTML = 
+            '<img id="imageprev" src="'+data_uri+'"/>';
+        } );
+
+        // Webcam.reset();
+    }
+
+    $scope.snapshotBack = function () {
+        Webcam.snap( function(data_uri) {
+            document.getElementById('back-img').innerHTML = 
+            '<img id="imageprev" src="'+data_uri+'"/>';
+        } );
+
+        // Webcam.reset();
     }
 
     $scope.removePeople = function (item) {

@@ -1,0 +1,76 @@
+<app-layout name="">
+
+    <div class="row">
+        
+        <div class="col-md-10">
+            <div id="datatable_filter" class="dataTables_filter">
+                <label>Search:<input ng-model="searchName" type="search" class="form-control form-control-sm"
+                        aria-controls="datatable"></label>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="text-sm-end">
+                <a href="/#!/supply/create" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2"><i class="mdi mdi-plus me-1"></i> Add Supply</a>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- table--- -->
+    <div class="row">
+        <div class="col-12">
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <h4 class="card-title">List of Supply</h4>
+
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+
+                                <thead>
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>Name</th>
+                                        <th>Quantity</th>
+                                        <th>Supply Type</th>
+                                        <th>Image</th>
+                                        <th>Unit</th>
+                                        <th>Description</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="supply in items | filter:searchName">
+                                        <td>{{supply.id}}</td>
+                                        <td>{{supply.name}}</td>
+                                        <td>{{supply.quantity}}</td>
+                                        <td>{{supply.supplyType.name}}</td>
+                                        <td>{{supply.image}}</td>
+                                        <td>{{supply.unit}}</td>
+                                        <td>{{supply.description}}</td>
+                                        <td>
+                                            <span class="badge rounded-pill font-size-11 "
+                                                ng-class="supply.status ? 'bg-success' : 'badge-soft-danger '">{{supply.status
+                                                ?
+                                                'Đang hoạt động' : 'Ngừng hoạt động'}}</span>
+                                        </td>
+                                        <td class="align-middle">
+                                            <button ng-click="edit(supply)" class="btn">
+                                                <a  class="text-success" href="/#!/supply/update/{{supply.id}}" title="Edit">
+                                                    <i class="fas fa-pencil-alt"></i>
+                                                </a>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</app-layout>

@@ -27,6 +27,7 @@ app.config(function ($routeProvider) {
       templateUrl: "/views/hotel-room/list.html",
       controller: "hotelRoomCtrl",
     })
+//Service
     .when("/service", {
       templateUrl: "/views/service/serviceView.html",
       controller: "serviceCtrl",
@@ -35,6 +36,7 @@ app.config(function ($routeProvider) {
       templateUrl: "/views/service-type/service-typeView.html",
       controller: "service-typeCtrl",
     })
+//Customer
     .when("/customers", {
       templateUrl: "/views/customers/table.html",
       controller: "customerCtrl",
@@ -47,6 +49,7 @@ app.config(function ($routeProvider) {
       templateUrl: "/views/customers/type.html",
       controller: "customerTypeCtrl",
     })
+//Payment
     .when("/payment", {
       templateUrl: "/views/payment/table.html",
       controller: "paymentListCtrl",
@@ -59,6 +62,32 @@ app.config(function ($routeProvider) {
       templateUrl: "/views/payment/update.html",
       controller: "paymentUpdateCtrl",
     })
+//Supply
+    .when("/supply", {
+      templateUrl: "/views/supply/table.html",
+      controller: "supplyCtrl",
+    })
+    .when("/supply/create", {
+      templateUrl: "/views/supply/createSupply.html",
+      controller: "supplyCreateCtrl",
+    })
+    .when("/supply/update/:id", {
+      templateUrl: "/views/supply/updateSupply.html",
+      controller: "supplyUpdateCtrl",
+    })
+    .when("/supply/type", {
+      templateUrl: "/views/supply/tableType.html",
+      controller: "supply-typeCtrl",
+    })
+    .when("/supply/createType", {
+      templateUrl: "/views/supply/createType.html",
+      controller: "supplyCreate-typeCtrl",
+    })
+    .when("/supply/updateType/:id", {
+      templateUrl: "/views/supply/updateType.html",
+      controller: "supplyUpdate-typeCtrl",
+    })
+    //
 //Room
     .when("/room",{
       templateUrl: "/views/room/table.html",

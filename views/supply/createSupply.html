@@ -1,0 +1,90 @@
+<app-layout name="">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="mb-4">Create Supply Form</h4>
+                    <form>
+                        <div class="row">
+
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="formrow-username-input" class="form-label">Name</label>
+                                    <input ng-model="form.name" type="text" class="form-control"
+                                        id="formrow-username-input" placeholder="Enter Your  Service Name">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="formrow-quantity-input" class="form-label">Quantity</label>
+                                    <input ng-model="form.quantity" type="number" class="form-control"
+                                        id="formrow-quantity-input" placeholder="Enter Your Quantity">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="formrow-address-input">Supply Type</label>
+                                    <select ng-model="form.supplyType" class="form-select"
+                                        aria-label="Default select example">
+                                        <option ng-repeat="sup in supTypes" ng-value="sup">{{sup.name}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- <div class="col-md-1">
+                                <div class="mb-3">
+                                    <a href="/#!/supply/createType" class="btn btn-success"><i
+                                        class="mdi mdi-plus me-1"></i></a>
+                                </div>
+                            </div> -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="formrow-image-input" class="form-label">Image</label>
+                                    <input ng-model="form.image" type="file" class="form-control"
+                                        id="formrow-image-input" placeholder="Enter Your Image">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="formrow-unit-input" class="form-label">Unit</label>
+                                    <input ng-model="form.unit" type="text" class="form-control" id="formrow-unit-input"
+                                        placeholder="Enter Your Unit">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="formrow-status-input" class="form-label">Status</label><br>
+                                    <input ng-model="form.status" ng-value="1" style="margin-left: 20px;" type="radio"
+                                        class="form-check-input" name="anvaliable" />
+                                    <label style="margin-left: 10px;">Đang hoạt động</label>
+                                    <input ng-model="form.status" ng-value="0" style="margin-left: 40px;" type="radio"
+                                        class="form-check-input" name="anvaliable" />
+                                    <label style="margin-left: 10px;">Ngừng hoạt động</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label for="formrow-description-input">Description</label>
+                                <textarea ng-model="form.description" id="formrow-description-input"
+                                    class="form-control" rows="3" placeholder="Enter Your Description"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <button ng-click="create()" class="btn btn-primary w-md">Submit</button> <a
+                                    href="/#!/supply" class="btn btn-secondary w-md"> Cancel</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    </div>
+</app-layout>

@@ -5,7 +5,7 @@
                 <div class="card-body">
                     <span ng-repeat="item in statuses">
                         <button type="button" class="btn"
-                            ng-class="item.id == 0 ? 'btn-success' : (item.id == 1 ? 'btn-danger' : (item.id == 2 ? 'btn-primary' : 'btn-warning'))">
+                            ng-class="getColor('btn', item.id)">
                             {{item.name}} <span class="badge rounded-pill bg-dark">{{checkStatusCount(item.id)}}</span>
                         </button>
                     </span>
@@ -13,15 +13,15 @@
             </div>
         </div>
     </div>
-    <div ng-repeat="floor in floors track by floor.id" ng-init="loadRooms(floor)" class="row">
+    <!-- <div ng-repeat="floor in floors" class="row">
         <div class="col-12">
             <div class="card">
                 <h5 class="card-header bg-transparent border-bottom text-uppercase">{{floor.name}}</h5>
-                <div class="card-body">
+                <div class="card-body"> -->
                     <div class="row">
-                        <div ng-repeat="item in floor.rooms" class="col-xl-2 col-sm-3">
+                        <div ng-repeat="item in hotelRooms" class="col-xl-2 col-sm-3">
                             <div class="card border border-2"
-                                ng-class="item.status == 0 ? 'border-success' : (item.status == 1 ? 'border-danger' : (item.status == 2 ? 'border-primary' : 'border-warning'))">
+                                ng-class="getColor('border', item.roomStatus)">
                                 <div class="card-body p-2">
                                     <div class="">
                                         <div class="float-end ms-2">
@@ -33,11 +33,11 @@
 
                                                 <div aria-labelledby="dropdownMenuButton1"
                                                     class="dropdown-menu dropdown-menu-start">
-                                                    <a ng-show="item.status == 0" href="/#!/checkin/{{item.code}}"
+                                                    <a ng-show="item.roomStatus == 4" href="/#!/checkin/{{item.roomCode}}"
                                                         class="dropdown-item">Checkin</a>
-                                                    <button ng-show="item.status == 2"
+                                                    <button ng-show="item.roomStatus == 2 || item.roomStatus == 5"
                                                         class="dropdown-item">Checkout</button>
-                                                    <button ng-show="item.status != 0 && item.status != 3"
+                                                    <button ng-show="item.roomStatus != 0 && item.roomStatus != 3"
                                                         class="dropdown-item">Cancel</button>
                                                     <div class="dropdown-divider"></div>
                                                     <button class="dropdown-item">Room detail</button>
@@ -47,19 +47,22 @@
                                         <div class="avatar-xs me-3 mb-3">
                                             <div class="avatar-title bg-transparent rounded">
                                                 <i class="bx bx-hotel font-size-24"
-                                                    ng-class="item.status == 0 ? 'text-success' : (item.status == 1 ? 'text-danger' : (item.status == 2 ? 'text-primary' : 'text-warning'))"></i>
+                                                    ng-class="getColor('text', item.roomStatus)"></i>
                                             </div>
                                         </div>
                                         <div class="d-flex">
                                             <div class="overflow-hidden me-auto">
                                                 <h5 class="font-size-14 text-truncate mb-1"><a
-                                                        href="javascript: void(0);" class="text-body">{{item.code}}</a>
+                                                        href="javascript: void(0);" class="text-body">{{item.roomCode}}</a>
                                                 </h5>
-                                                <p class="text-muted text-truncate mb-0">{{item.status == 1 ? '25/02' :
-                                                    '---'}}</p>
+                                                <p class="text-muted text-truncate mb-0">
+                                                    {{(item.roomStatus == 5 || item.roomStatus == 2) ? (item.checkinExpected | date:'dd-MM') : '---'}}
+                                                </p>
                                             </div>
                                             <div class="align-self-end ms-2">
-                                                <p class="text-muted mb-0">{{item.status == 1 ? '26/02' : '---'}}</p>
+                                                <p class="text-muted mb-0">
+                                                    {{(item.roomStatus == 5 || item.roomStatus == 2) ? (item.checkoutExpected | date:'dd-MM') : '---'}}
+                                                </p>
                                             </div>
                                         </div>
 
@@ -70,181 +73,8 @@
                         </div>
                         <!-- end col -->
                     </div>
-                </div>
+                <!-- </div>
             </div>
         </div>
-    </div>
-    <!-- Checkin Modal -->
-    <div class="modal modal-lg fade" id="checkinModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="checkinModalLabel" aria-hidden="true" style="display: none;">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="checkinModalLabel">Checkin room {{selectRoom.code}}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="d-flex align-items-center">
-                        <h5 class="fw-semibold flex-grow-1">Booking Info</h5>
-                        <div class="flex-shrink-0">
-                            <button class="btn btn-sm btn-soft-info"><i class="mdi mdi-pencil-outline"></i></button>
-                        </div>
-                    </div>
-                    <form>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="mb-3">
-                                    <label for="formrow-fullname-input" class="form-label">Full Name</label>
-                                    <input ng-value="people.fullName" class="form-control" id="formrow-fullname-input"
-                                        readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="mb-3">
-                                    <label for="formrow-email-input" class="form-label">Phone Number</label>
-                                    <input ng-value="people.phoneNumber" class="form-control" id="formrow-email-input"
-                                        readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="mb-3">
-                                    <label for="formrow-firstname-input" class="form-label">Email</label>
-                                    <input ng-value="people.email" class="form-control" id="formrow-firstname-input"
-                                        readonly>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- <div class="row">
-                            <div class="col-md-4">
-                                <div class="mb-3">
-                                    <label for="formrow-password-input" class="form-label">Date of Birth</label>
-                                    <input ng-value="people.dateOfBirth" class="form-control"
-                                        id="formrow-password-input" readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="mb-3">
-                                    <label for="formrow-firstname-input" class="form-label">Giới tính</label>
-                                    <input ng-value="people.gender" class="form-control" id="formrow-firstname-input"
-                                        readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="mb-3">
-                                    <label for="formrow-password-input" class="form-label">People ID</label>
-                                    <input ng-value="people.peopleId" class="form-control" id="formrow-password-input"
-                                        readonly>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="formrow-firstname-input" class="form-label">Place of Birth</label>
-                                    <input ng-value="people.placeOfBirth" class="form-control"
-                                        id="formrow-firstname-input" readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="formrow-firstname-input" class="form-label">Address</label>
-                                    <input ng-value="people.address" class="form-control" id="formrow-firstname-input"
-                                        readonly>
-                                </div>
-                            </div>
-                        </div> -->
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="formrow-firstname-input" class="form-label">Checkin Date</label>
-                                    <input ng-value="people.checkinDate" class="form-control"
-                                        id="formrow-firstname-input" readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="formrow-firstname-input" class="form-label">Checkout Date</label>
-                                    <input ng-value="people.checkoutDate" class="form-control"
-                                        id="formrow-firstname-input" readonly>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                    <div class="d-flex align-items-center">
-                        <h5 class="fw-semibold flex-grow-1">People Lists</h5>
-                        <div class="flex-shrink-0">
-                            <button ng-click="addPeople()" class="btn btn-sm btn-soft-primary"><i
-                                    class="mdi mdi-plus"></i></button>
-                            <button class="btn btn-sm btn-light"><i class="mdi mdi-refresh"></i></button>
-                        </div>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table align-middle table-nowrap">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Full Name</th>
-                                    <th scope="col">Phone Number</th>
-                                    <th scope="col">Gender</th>
-                                    <th scope="col">Date of Birth</th>
-                                    <th scope="col">People ID</th>
-                                    <th scope="col">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody class="overflow-auto" style="max-height: 50px;">
-                                <tr ng-repeat="item in peoples">
-                                    <th scope="row">
-                                        {{item.fullName}}
-                                    </th>
-                                    <td>{{item.phoneNumber}}</td>
-                                    <td>{{item.gender}}</td>
-                                    <td>{{item.dateOfBirth}}</td>
-                                    <td>{{item.peopleId}}</td>
-                                    <td>
-                                        <ul class="list-unstyled hstack gap-1 mb-0">
-                                            <li>
-                                                <button class="btn btn-sm btn-soft-primary"><i
-                                                        class="mdi mdi-eye-outline"></i></button>
-                                            </li>
-                                            <!-- <li>
-                                                <button class="btn btn-sm btn-soft-info"><i
-                                                        class="mdi mdi-pencil-outline"></i></button>
-                                            </li> -->
-                                            <li>
-                                                <button ng-click="removePeople(item)"
-                                                    class="btn btn-sm btn-soft-danger"><i
-                                                        class="mdi mdi-delete-outline"></i></button>
-                                            </li>
-                                        </ul>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Checkin</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Checkin Modal -->
-    <div class="modal modal-lg fade" id="checkoutModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="checkoutModalLabel" aria-hidden="true" style="display: none;">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="checkoutModalLabel">Trả Phòng</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Next</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    </div> -->
 </app-layout>

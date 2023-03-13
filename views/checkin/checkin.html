@@ -8,7 +8,7 @@
                         <div class="flex-shrink-0">
                             <!-- <button ng-click="editable = !editable" class="btn btn-sm btn-soft-info"
                                 data-bs-toggle="button"><i class="mdi mdi-pencil-outline"></i></button> -->
-                            <button class="btn btn-sm btn-soft-success"><i class="mdi mdi-content-save"></i></button>
+                            <!-- <button class="btn btn-sm btn-soft-success"><i class="mdi mdi-content-save"></i></button> -->
                         </div>
                     </div>
                     <p class="mb-2">Room number: <span class="text-primary">{{bookingDetail.room.code}}</span></p>
@@ -43,28 +43,28 @@
                                 <div class="mb-3">
                                     <label for="formrow-firstname-input" class="form-label">Checkin Expected</label>
                                     <input ng-value="bookingDetail.booking.checkinExpected | date:'dd/MM/yyyy'"
-                                        type="text" class="form-control" id="formrow-firstname-input">
+                                        type="text" class="form-control" id="formrow-firstname-input" readonly>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="mb-3">
                                     <label for="formrow-firstname-input" class="form-label">Checkout Expected</label>
                                     <input ng-value="bookingDetail.booking.checkoutExpected | date:'dd/MM/yyyy'"
-                                        type="text" class="form-control" id="formrow-firstname-input">
+                                        type="text" class="form-control" id="formrow-firstname-input" readonly>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="mb-3">
                                     <label for="formrow-firstname-input" class="form-label">Number Adults</label>
                                     <input ng-value="bookingDetail.numAdults" type="number" class="form-control"
-                                        id="formrow-firstname-input">
+                                        id="formrow-firstname-input" readonly>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="mb-3">
                                     <label for="formrow-firstname-input" class="form-label">Number Childrens</label>
                                     <input ng-value="bookingDetail.numChildren" type="number" class="form-control"
-                                        id="formrow-firstname-input">
+                                        id="formrow-firstname-input" readonly>
                                 </div>
                             </div>
                         </div>
@@ -76,7 +76,7 @@
                     <div class="d-flex align-items-center">
                         <h5 class="fw-semibold flex-grow-1">Người ở</h5>
                         <div class="flex-shrink-0">
-                            <button ng-click="modalServicePeople()" class="btn btn-sm btn-soft-primary"><i
+                            <button ng-click="modalPeopleRoom()" class="btn btn-sm btn-soft-primary"><i
                                     class="mdi mdi-plus"></i></button>
                             <button ng-click="loadhostedAts()" class="btn btn-sm btn-light"><i
                                     class="mdi mdi-refresh"></i></button>
@@ -189,7 +189,7 @@
         </div>
     </div>
 
-    <div class="modal modal-lg fade" id="secondmodal" data-bs-keyboard="false" tabindex="-1"
+    <div id="modal-people-room" class="modal modal-lg fade" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="checkoutModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -201,15 +201,13 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="formrow-fullname-input" class="form-label">Full Name</label>
-                                <input ng-value="people.fullName" class="form-control" id="formrow-fullname-input"
-                                    readonly>
+                                <input ng-model="people.fullName" class="form-control" id="formrow-fullname-input">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="formrow-email-input" class="form-label">Phone Number</label>
-                                <input ng-value="people.phoneNumber" class="form-control" id="formrow-email-input"
-                                    readonly>
+                                <input ng-model="people.phoneNumber" class="form-control" id="formrow-email-input">
                             </div>
                         </div>
                     </div>
@@ -217,13 +215,13 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="formrow-firstname-input" class="form-label">Email</label>
-                                <input ng-value="people.email" class="form-control" id="formrow-firstname-input">
+                                <input ng-model="people.email" type="email" class="form-control" id="formrow-firstname-input">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="formrow-password-input" class="form-label">Date of Birth</label>
-                                <input ng-value="people.dateOfBirth" type="date" class="form-control"
+                                <input ng-model="people.dateOfBirth" type="date" class="form-control"
                                     id="formrow-password-input">
                             </div>
                         </div>
@@ -232,13 +230,13 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="formrow-password-input" class="form-label">People ID</label>
-                                <input ng-value="people.peopleId" class="form-control" id="formrow-password-input">
+                                <input ng-model="people.peopleId" class="form-control" id="formrow-password-input">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="formrow-firstname-input" class="form-label">Place of Birth</label>
-                                <input ng-value="people.placeOfBirth" class="form-control" id="formrow-firstname-input">
+                                <input ng-model="people.placeOfBirth" class="form-control" id="formrow-firstname-input">
                             </div>
                         </div>
                     </div>
@@ -246,7 +244,7 @@
                         <div class="col-md-12">
                             <div class="mb-3">
                                 <label for="formrow-firstname-input" class="form-label">Address</label>
-                                <textarea class="form-control" id="formrow-firstname-input" rows="3"></textarea>
+                                <textarea ng-model="people.address" class="form-control" id="formrow-firstname-input" rows="3"></textarea>
                             </div>
                         </div>
                     </div>
@@ -304,6 +302,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <input ng-model="searchText" class="form-control form-control-sm"></label>
                     <div class="table-responsive">
                         <table id="datatable-service-room" class="table align-middle table-nowrap">
                             <thead>
@@ -315,7 +314,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="item in serviceRooms">
+                                <tr ng-repeat="item in serviceRooms | filter:searchText">
                                     <th scope="row">
                                         {{item.name}}
                                     </th>

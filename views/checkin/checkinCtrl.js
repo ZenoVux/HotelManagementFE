@@ -4,6 +4,7 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
     $scope.serviceRooms = [];
     $scope.usedServices = [];
     $scope.bookingDetail = {};
+    $scope.people = {};
 
     $scope.init = async function () {
         await $scope.loadBookingDetail();
@@ -31,23 +32,21 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
         });
     }
 
-    $scope.modalServicePeople = function () {
-        $('#secondmodal').modal('show');
+    $scope.modalPeopleRoom = function () {
+        $('#modal-people-room').modal('show');
     }
 
     $scope.addPeople = function () {
-        $('#secondmodal').modal('hide');
+        const numAdults = $scope.bookingDetail.numAdults;
+        const numChildren = $scope.bookingDetail.numChildren;
+        const numPeople = $scope.hostedAts.length + 1;
+        if (numPeople > (numAdults + numChildren)) {
+            alert("max people");
+            return;
+        }
+        $('#modal-people-room').modal('hide');
         $scope.hostedAts.push({
-            customer: {
-                fullName: "Vũ Văn Luân",
-                phoneNumber: "0987654321",
-                email: "luanvu0702@gmail.com",
-                dateOfBirth: "07/02/2002",
-                gender: "Nam",
-                peopleId: "87265232724",
-                placeOfBirth: "Thái Bình",
-                address: "Hà Nội"
-            }
+            customer: $scope.people
         });
     }
 
@@ -70,15 +69,25 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
         var usedService = $scope.usedServices.find(item => item.serviceRoom.id == service.id);
         if (usedService) {
             usedService.quantity++;
+            $http.put("http://localhost:8000/api/used-services", usedService).then(function (resp) {
+                alert("update success")
+            });
         } else {
-            $scope.usedServices.push({
+            $http.post("http://localhost:8000/api/used-services", {
                 serviceRoom: service,
+                bookingDetail: $scope.bookingDetail,
                 quantity: 1
+            }).then(function (resp) {
+                $scope.usedServices.push(resp.data);
             });
         }
     }
 
     $scope.removeServiceRoom = function (service) {
+        if (!confirm("ok?")) {
+            return;
+        }
+        $http.delete("http://localhost:8000/api/used-services", service.id);
     }
 
     $scope.checkin = function () {

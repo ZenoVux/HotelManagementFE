@@ -5,40 +5,59 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http) {
             name: "Trống"
         },
         {
-            id: 1,
-            name: "Đang ở"
+            id: 3,
+            name: "Đang đặt"
         },
         {
-            id: 2,
+            id: 4,
             name: "Nhận phòng"
         },
         {
-            id: 3,
+            id: 2,
+            name: "Đang ở"
+        },
+        {
+            id: 5,
             name: "Quá hạn"
+        },
+        {
+            id: 1,
+            name: "Không hoạt động"
         }
     ]
     $scope.statusCounts = [];
     $scope.floors = [];
-    $scope.rooms = [];
+    $scope.hotelRooms = [];
     $scope.selectRoom = {};
-    $scope.people = {};
+    $scope.people = {
+        name: "Luân"
+    };
     $scope.peoples = [];
 
-    $scope.init = async function () {
+    $scope.init = async function () {      
         await $scope.loadStatusCount();
-        await $scope.loadFloors();
+        await $scope.loadHotelRooms();
+        // await $scope.loadFloors();
     }
 
-    $scope.loadFloors = async function () {
-        await $http.get("http://localhost:8000/api/floors").then(function (resp) {
-            $scope.floors = resp.data;
+    $scope.loadHotelRooms = async function () {
+        await $http.get("http://localhost:8000/api/rooms/hotel-room").then(function (resp) {
+            $scope.hotelRooms = resp.data;
         });
     }
 
-    $scope.loadRooms = async function (floor) {
-        await $http.get("http://localhost:8000/api/rooms/floor/" + floor.id).then(function (resp) {
-            floor.rooms = resp.data;
+    $scope.loadFloors = function () {
+        // $scope.hotelRooms.forEach(element => {
+            
+        // });
+        $scope.floors.push({
+            name: "Tầng 1",
+            rooms: $scope.hotelRooms
         });
+        console.log($scope.floors)
+        // await $http.get("http://localhost:8000/api/rooms/floor/" + floor.id).then(function (resp) {
+        //     floor.rooms = resp.data;
+        // });
     }
 
     $scope.loadStatusCount = async function () {
@@ -55,71 +74,21 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http) {
         return 0;
     }
 
-    $scope.checkinRoom = function (item) {
-        $scope.selectRoom = item;
-        $('#checkinModal').modal('show');
-        $('#secondmodal').modal('hide');
-        $scope.people = {
-            fullName: "Vũ Văn Luân",
-            phoneNumber: "0987654321",
-            email: "luanvu0702@gmail.com",
-            dateOfBirth: "07/02/2002",
-            gender: "Nam",
-            peopleId: "87265232724",
-            placeOfBirth: "Thái Bình",
-            address: "Hà Nội",
-            checkinDate: "25/02/2023",
-            checkoutDate: "26/02/2023"
-        }
-        Webcam.reset();
+    
+    $scope.getColor = function (name, status) {
+        return name + (status == 0 ? '-success' : (status == 1 ? '-secondary' : (status == 2 ? '-danger' : (status == 3 ? '-info' : (status == 4 ? '-primary' : '-warning')))))
     }
 
     $scope.roomDetail = function (item) {
         $scope.checkinRoom(item);
     }
 
-    $scope.addPeople = function () {
-        $('#checkinModal').modal('hide');
-        $('#secondmodal').modal('show');
-        Webcam.set({
-            width: 320,
-            height: 240,
-            image_format: 'jpeg',
-            jpeg_quality: 90
-        });
-        $scope.configCam();
-        $scope.peoples.push(angular.copy($scope.people));
+    $scope.checkin = function (room) {
+        
     }
 
-    $scope.configCam = function () {
-        Webcam.attach('#font-img');
-        Webcam.attach('#back-img');
-    }
-
-    $scope.offCam = function () {
-        $('#checkinModal').modal('show');
-    }
-
-    $scope.snapshotFont = function () {
-        Webcam.snap( function(data_uri) {
-            document.getElementById('font-img').innerHTML = 
-            '<img id="imageprev" src="'+data_uri+'"/>';
-        } );
-
-        // Webcam.reset();
-    }
-
-    $scope.snapshotBack = function () {
-        Webcam.snap( function(data_uri) {
-            document.getElementById('back-img').innerHTML = 
-            '<img id="imageprev" src="'+data_uri+'"/>';
-        } );
-
-        // Webcam.reset();
-    }
-
-    $scope.removePeople = function (item) {
-        $scope.peoples.splice(0, 1);
+    $scope.checkout = function (room) {
+        
     }
 
     $scope.init();

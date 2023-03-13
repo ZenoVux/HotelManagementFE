@@ -1,0 +1,36 @@
+/* Style for the circles around the numbers */
+.circle {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #6c757d;
+    margin-right: 10px;
+    text-align: center;
+    line-height: 30px;
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Style for the active tab */
+.active-tab {
+    background-color: #2A3042;
+    color: #fff;
+    transition: background-color 0.2s ease-in-out;
+}
+
+/* Style for the active circle */
+.active-tab .circle {
+    background-color: #fff;
+    color: #2A3042;
+    transition: background-color 0.2s ease-in-out;
+}
+
+/* Style for the pill-shaped background */
+.tab-pill {
+    border: 1px solid #6c757d;
+    padding: 5px 10px;
+    /* border-radius: 20px; */
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}

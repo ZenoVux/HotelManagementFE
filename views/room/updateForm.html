@@ -82,19 +82,19 @@
                                     <label for="formrow-status-input">Status</label>
                                     <select ng-model="form.status" id="formrow-status-input" class="form-select">
                                         <option ng-value="0">Trống</option>
-                                        <option ng-value="1">Đang ở</option>
-                                        <option ng-value="2">Đã đặt</option>
-                                        <option ng-value="3">Quá hạn</option>
+                                        <option ng-value="1">Không hoạt động</option>
+                                        <option ng-value="2">Đang ở</option>
+                                        <option ng-value="3">Đang book</option>
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-2 mb-3 mt-auto">
-                                <a href="/#!/room-type/create" class="btn btn-outline-primary waves-effect waves-light"><i class="fas fa-plus me-3"></i>Create room type</a>
+                            <div class="col-md-3 mb-3 mt-auto">
+                                <a href="/#!/room-type/create" class="btn btn-outline-primary waves-effect waves-light w-100"><i class="fas fa-plus me-3"></i>Create room type</a>
                             </div>
                             
                             <!-- Model supply-->
-                            <div class="col-md-2 mb-3 mt-auto d-grid">
-                                <a class="btn btn-outline-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#chooseSupply">
+                            <div class="col-md-3 mb-3 mt-auto d-grid">
+                                <a class="btn btn-outline-primary waves-effect waves-light w-100" data-bs-toggle="modal" data-bs-target="#chooseSupply">
                                     <i class="fas fa-couch mx-auto me-3"></i>Choose supply
                                 </a>
                                 <div class="modal fade" id="chooseSupply" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -146,10 +146,39 @@
                                 </div>
                             </div>
                             <!-- End Model supply-->
-
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-3 mb-3 mt-auto">
+                                <a class="btn btn-outline-primary waves-effect waves-light w-100" data-bs-toggle="modal" data-bs-target="#imageRoom">
+                                    <i class="bx bxs-image-alt mx-auto me-3 font-size-15"></i>Image room</a>
+                                <!-- Model image room-->
+                                <div class="modal fade" id="imageRoom" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="ImageRoomLabel">Image room</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="mb-3">
+                                                    <input type="file" class="form-control" name="imageRoom" id="formrow-image-input" accept="image/*"
+                                                    multiple onchange="angular.element(this).scope().uploadImageStorage(this.files)">
+                                                </div>
+                                                <label ng-repeat="imageRoom in chooseImageRoom">
+                                                    <img width="900px" class="img-responsive img-thumbnail" ng-src="{{url(imageRoom)}}" alt="error load image" ng-dblclick="deleteImageStorage(imageRoom)">
+                                                </label>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- End model image room -->
+                            </div>
                             <!-- Model bed-->
-                            <div class="col-md-2 mb-3 mt-auto d-grid">
-                                <a class="btn btn-outline-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#chooseBed">
+                            <div class="col-md-3 mb-3 mt-auto d-grid">
+                                <a class="btn btn-outline-primary waves-effect waves-light w-100" data-bs-toggle="modal" data-bs-target="#chooseBed">
                                     <i class="bx bxs-bed mx-auto font-size-15 me-3"></i>Choose bed
                                 </a>
                                 <div class="modal fade" id="chooseBed" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">

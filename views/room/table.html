@@ -42,9 +42,9 @@
                                 <td>{{room.floor.name}}</td>
                                 <td>
                                     <span ng-if="room.status == 0" class="badge badge-pill badge-soft-success font-size-12">Trống</span>
-                                    <span ng-if="room.status == 1" class="badge badge-pill badge-soft-danger font-size-12">Đang ở</span>
-                                    <span ng-if="room.status == 2" class="badge badge-pill badge-soft-primary font-size-12">Đã đặt</span>
-                                    <span ng-if="room.status == 3" class="badge badge-pill badge-soft-warning font-size-12">Quá hạn</span>
+                                    <span ng-if="room.status == 1" class="badge badge-pill badge-soft-danger font-size-12">Không hoạt động</span>
+                                    <span ng-if="room.status == 2" class="badge badge-pill badge-soft-primary font-size-12">Đang ở</span>
+                                    <span ng-if="room.status == 3" class="badge badge-pill badge-soft-warning font-size-12">Đang book</span>
                                 </td>
                                 <td>
                                     <div class="dropdown">
@@ -58,8 +58,11 @@
                                             <div class="dropdown-divider"></div>
                                             <button class="dropdown-item btn waves-light" title="View" data-bs-toggle="modal" data-bs-target="#listSupplyRoom" ng-click="loadSupplyRoom(room.code)">Supply</button>
                                             <div class="dropdown-divider"></div>
+                                            <button class="dropdown-item btn waves-light" title="View" data-bs-toggle="modal" data-bs-target="#listImageRoom" ng-click="loadImageRoom(room.code)">Image room</button>
+                                            <div class="dropdown-divider"></div>
                                             <button class="dropdown-item btn waves-light" title="View" data-bs-toggle="modal" data-bs-target="#viewOtherRoom">View Other</button>
                                         </div>
+                                        
                                         <!-- Model view other room -->
                                         <div class="modal fade" id="viewOtherRoom" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
                                             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
@@ -98,8 +101,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <!-- End model -->
-                                        
+                                        <!-- End model view other room -->
                                     </div>
                                 </td>
                                 <td class="align-middle">
@@ -112,7 +114,8 @@
                             </tr>
                         </tbody>
                     </table>
-                    <!-- Model supplyRoom -->
+
+                    <!-- Model supply room -->
                     <div class="modal fade" id="listSupplyRoom" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
                             <div class="modal-content">
@@ -148,8 +151,29 @@
                             </div>
                         </div>
                     </div>
-                    <!-- End model -->
+                    <!-- End model supply room -->
 
+                    <!-- Model image room -->
+                    <div class="modal fade" id="listImageRoom" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="listImageRoomLabel">Image room</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <label ng-repeat="imageRoom in imageRooms">
+                                        <img width="900px" class="img-responsive img-thumbnail" ng-src="{{url(imageRoom.image.url)}}" alt="error load image">
+                                    </label>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End model image room -->
+                
                     <!-- Model view bed room -->
                     <div class="modal fade" id="viewBedRoom" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">

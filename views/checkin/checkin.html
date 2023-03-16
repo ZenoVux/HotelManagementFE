@@ -76,8 +76,10 @@
                     <div class="d-flex align-items-center">
                         <h5 class="fw-semibold flex-grow-1">Người ở</h5>
                         <div class="flex-shrink-0">
-                            <button ng-click="modalPeopleRoom()" class="btn btn-sm btn-soft-primary"><i
+                            <button ng-click="modalPeopleRoom()" class="btn btn-sm btn-soft-success"><i
                                     class="mdi mdi-plus"></i></button>
+                            <button ng-click="modalListCustomer('show')" class="btn btn-sm btn-soft-primary"><i
+                                    class="mdi mdi-format-list-bulleted"></i></button>
                             <button ng-click="loadhostedAts()" class="btn btn-sm btn-light"><i
                                     class="mdi mdi-refresh"></i></button>
                         </div>
@@ -100,7 +102,7 @@
                                         {{item.customer.fullName}}
                                     </th>
                                     <td>{{item.customer.phoneNumber}}</td>
-                                    <td>{{item.customer.gender}}</td>
+                                    <td>{{item.customer.gender ? "Nữ" : "Nam"}}</td>
                                     <td>{{item.customer.dateOfBirth | date:'dd/MM/yyyy'}}</td>
                                     <td>{{item.customer.peopleId}}</td>
                                     <td>
@@ -114,7 +116,7 @@
                                                         class="mdi mdi-pencil-outline"></i></button>
                                             </li> -->
                                             <li>
-                                                <button ng-click="removePeople(item)"
+                                                <button ng-click="removeHostedAt(item)"
                                                     class="btn btn-sm btn-soft-danger"><i
                                                         class="mdi mdi-delete-outline"></i></button>
                                             </li>
@@ -130,8 +132,8 @@
                     <div class="d-flex align-items-center">
                         <h5 class="fw-semibold flex-grow-1">Dịch vụ</h5>
                         <div class="flex-shrink-0">
-                            <button ng-click="modalServiceRoom()" class="btn btn-sm btn-soft-primary"><i
-                                    class="mdi mdi-plus"></i></button>
+                            <button ng-click="modalServiceRoom('show')" class="btn btn-sm btn-soft-primary"><i
+                                    class="mdi mdi-format-list-bulleted"></i></button>
                             <button ng-click="loadUsedServices()" class="btn btn-sm btn-light"><i
                                     class="mdi mdi-refresh"></i></button>
                         </div>
@@ -155,15 +157,16 @@
                                     </th>
                                     <td>{{item.serviceRoom.serviceType.name}}</td>
                                     <td>{{item.serviceRoom.price}}</td>
-                                    <td><input ng-model="item.quantity" style="width: 70px;" type="number"
-                                            class="form-control form-control-sm" min="1"></td>
+                                    <td><input ng-model="item.quantity" ng-blur="updateServiceRoom(item)"
+                                            style="width: 70px;" type="number" class="form-control form-control-sm"
+                                            min="1"></td>
                                     <td>{{item.serviceRoom.price * item.quantity}}</td>
                                     <td>
                                         <ul class="list-unstyled hstack gap-1 mb-0">
-                                            <li>
+                                            <!-- <li>
                                                 <button class="btn btn-sm btn-soft-primary"><i
                                                         class="mdi mdi-eye-outline"></i></button>
-                                            </li>
+                                            </li> -->
                                             <li>
                                                 <button ng-click="removeServiceRoom(item)"
                                                     class="btn btn-sm btn-soft-danger"><i
@@ -198,6 +201,23 @@
                 </div>
                 <div class="modal-body">
                     <div class="row">
+                        <div class="col">
+                            <h3 ng-class="{'active-tab': currentStep == 0}" class="tab-pill"><span
+                                    class="circle">1</span> Mặt trước
+                            </h3>
+                        </div>
+                        <div class="col">
+                            <h3 ng-class="{'active-tab': currentStep == 1}" class="tab-pill"><span
+                                    class="circle">2</span> Mặt sau
+                            </h3>
+                        </div>
+                        <div class="col">
+                            <h3 ng-class="{'active-tab': currentStep == 2}" class="tab-pill"><span
+                                    class="circle">3</span> Xác nhận
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="formrow-fullname-input" class="form-label">Full Name</label>
@@ -215,7 +235,8 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="formrow-firstname-input" class="form-label">Email</label>
-                                <input ng-model="people.email" type="email" class="form-control" id="formrow-firstname-input">
+                                <input ng-model="people.email" type="email" class="form-control"
+                                    id="formrow-firstname-input">
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -243,8 +264,32 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="mb-3">
+                                <label class="form-label">Gender</label>
+                                <div class="d-flex">
+                                    <div class="form-check  form-check-inline">
+                                        <input ng-model="people.gender" class="form-check-input" type="radio"
+                                            id="form-radio-male" ng-value="false">
+                                        <label class="form-check-label" for="form-radio-male">
+                                            Male
+                                        </label>
+                                    </div>
+                                    <div class="form-check  form-check-inline">
+                                        <input ng-model="people.gender" class="form-check-input" type="radio"
+                                            id="form-radio-female" ng-value="true">
+                                        <label class="form-check-label" for="form-radio-female">
+                                            Female
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
                                 <label for="formrow-firstname-input" class="form-label">Address</label>
-                                <textarea ng-model="people.address" class="form-control" id="formrow-firstname-input" rows="3"></textarea>
+                                <textarea ng-model="people.address" class="form-control" id="formrow-firstname-input"
+                                    rows="3"></textarea>
                             </div>
                         </div>
                     </div>
@@ -294,15 +339,18 @@
             </div>
         </div>
     </div>
-    <div id="modal-service-room" class="modal modal-lg fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div id="modal-service-room" class="modal modal-lg fade" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Service room</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button ng-click="modalServiceRoom('hide')" type="button" class="btn-close"></button>
                 </div>
                 <div class="modal-body">
-                    <input ng-model="searchText" class="form-control form-control-sm"></label>
+                    <label>
+                        <span>Search:</span>
+                        <input ng-model="searchService" type="search" class="form-control form-control-sm">
+                    </label>
                     <div class="table-responsive">
                         <table id="datatable-service-room" class="table align-middle table-nowrap">
                             <thead>
@@ -314,7 +362,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="item in serviceRooms | filter:searchText">
+                                <tr ng-repeat="item in serviceRooms | filter:searchService">
                                     <th scope="row">
                                         {{item.name}}
                                     </th>
@@ -323,7 +371,8 @@
                                     <td>
                                         <ul class="list-unstyled hstack gap-1 mb-0">
                                             <li>
-                                                <button ng-click="addServiceRoom(item)" class="btn btn-sm btn-soft-success"><i
+                                                <button ng-click="addServiceRoom(item)"
+                                                    class="btn btn-sm btn-soft-success"><i
                                                         class="mdi mdi-plus"></i></button>
                                             </li>
                                         </ul>
@@ -332,6 +381,62 @@
                             </tbody>
                         </table>
                     </div>
+                </div>
+                <div class="modal-footer">
+                    <button ng-click="modalServiceRoom('hide')" class="btn btn-primary">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="modal-list-customer" class="modal modal-lg fade" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Service room</h5>
+                    <button ng-click="modalListCustomer('hide')" type="button" class="btn-close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label>
+                            <span>Search:</span>
+                            <input ng-model="searchCustomer" type="search" class="form-control form-control-sm">
+                        </label>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="datatable-service-room" class="table align-middle table-nowrap">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Full Name</th>
+                                    <th scope="col">Phone Number</th>
+                                    <th scope="col">Gender</th>
+                                    <th scope="col">Date of Birth</th>
+                                    <th scope="col">People ID</th>
+                                    <th scope="col" style="width: 100px;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="item in customers | filter:searchCustomer">
+                                    <th scope="row">
+                                        {{item.fullName}}
+                                    </th>
+                                    <td>{{item.phoneNumber}}</td>
+                                    <td>{{item.gender ? "Nữ" : "Nam"}}</td>
+                                    <td>{{item.dateOfBirth | date:'dd/MM/yyyy'}}</td>
+                                    <td>{{item.peopleId}}</td>
+                                    <td>
+                                        <ul class="list-unstyled hstack gap-1 mb-0">
+                                            <button ng-click="addHostedAt(item)" class="btn btn-sm btn-soft-success"><i
+                                                    class="mdi mdi-plus"></i></button>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button ng-click="modalListCustomer('hide')" class="btn btn-primary">Close</button>
                 </div>
             </div>
         </div>

@@ -20,7 +20,7 @@
                 <div class="card-body"> -->
                     <div class="row">
                         <div ng-repeat="item in hotelRooms" class="col-xl-2 col-sm-3">
-                            <div class="card border border-2"
+                            <div class="card border border-3"
                                 ng-class="getColor('border', item.roomStatus)">
                                 <div class="card-body p-2">
                                     <div class="">
@@ -33,11 +33,11 @@
 
                                                 <div aria-labelledby="dropdownMenuButton1"
                                                     class="dropdown-menu dropdown-menu-start">
-                                                    <a ng-show="item.roomStatus == 4" href="/#!/checkin/{{item.roomCode}}"
-                                                        class="dropdown-item">Checkin</a>
-                                                    <button ng-show="item.roomStatus == 2 || item.roomStatus == 5"
+                                                    <button ng-show="item.roomStatus == 4" ng-click="checkin(item)"
+                                                        class="dropdown-item">Checkin</button>
+                                                    <button ng-show="item.roomStatus == 2 || item.roomStatus == 5" ng-click="checkout(item)"
                                                         class="dropdown-item">Checkout</button>
-                                                    <button ng-show="item.roomStatus != 0 && item.roomStatus != 3"
+                                                    <button ng-show="item.roomStatus != 0 && item.roomStatus != 1 && item.roomStatus != 3"
                                                         class="dropdown-item">Cancel</button>
                                                     <div class="dropdown-divider"></div>
                                                     <button class="dropdown-item">Room detail</button>

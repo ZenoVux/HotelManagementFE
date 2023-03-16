@@ -76,7 +76,7 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http) {
 
     
     $scope.getColor = function (name, status) {
-        return name + (status == 0 ? '-success' : (status == 1 ? '-secondary' : (status == 2 ? '-danger' : (status == 3 ? '-info' : (status == 4 ? '-primary' : '-warning')))))
+        return name + (status == 0 ? '-success' : (status == 1 ? '-sliver' : (status == 2 ? '-danger' : (status == 3 ? '-secondary' : (status == 4 ? '-primary' : '-warning')))))
     }
 
     $scope.roomDetail = function (item) {
@@ -84,10 +84,11 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http) {
     }
 
     $scope.checkin = function (room) {
-        
+        $location.path("/checkin/" + room.roomCode);
     }
 
     $scope.checkout = function (room) {
+        $location.path("/checkout/" + room.roomCode);
         
     }
 

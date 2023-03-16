@@ -1,0 +1,18 @@
+.btn-sliver {
+    background-color: rgb(206, 206, 206);
+    color: white;
+}
+
+.btn-sliver:hover {
+    background-color: rgb(181, 181, 181);
+    color: white;
+    border: 1px solid rgb(181, 181, 181);
+}
+
+.border-sliver {
+    border-color: white !important;
+}
+
+.text-sliver {
+    color: rgb(206, 206, 206) !important;
+}

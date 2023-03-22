@@ -8,29 +8,37 @@
                         <div class="flex-shrink-0">
                             <!-- <button ng-click="editable = !editable" class="btn btn-sm btn-soft-info"
                                 data-bs-toggle="button"><i class="mdi mdi-pencil-outline"></i></button> -->
-                            <!-- <button class="btn btn-sm btn-soft-success"><i class="mdi mdi-content-save"></i></button> -->
+                            <button class="btn btn-sm btn-soft-success"><i class="mdi mdi-content-save"></i></button>
                         </div>
                     </div>
-                    <p class="mb-2">Room number: <span class="text-primary">{{bookingDetail.room.code}}</span></p>
-                    <p class="mb-4">Room type: <span class="text-primary">{{bookingDetail.room.roomType.name}}</span>
-                    </p>
+                    <p class="mb-2">Số phòng: <span class="text-primary">{{bookingDetail.room.code}}</span></p>
+                    <p class="mb-2">Tầng: <span class="text-primary">{{bookingDetail.room.floor.name}}</span></p>
+                    <p class="mb-2">Loại phòng: <span class="text-primary">{{bookingDetail.room.roomType.name}}</span>
+                    <p class="mb-4">Giá phòng: <span class="text-primary">{{bookingDetail.room.price | currency : "VNĐ "}}/ngày</span>
                     <form>
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="mb-3">
-                                    <label for="formrow-fullname-input" class="form-label">Booking customer</label>
+                                    <label for="formrow-fullname-input" class="form-label">Khách hàng</label>
                                     <input ng-value="bookingDetail.booking.customer.fullName" class="form-control"
                                         id="formrow-fullname-input" readonly>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="mb-3">
-                                    <label for="formrow-email-input" class="form-label">Phone Number</label>
+                                    <label for="formrow-email-input" class="form-label">CCCD/CMT</label>
+                                    <input ng-value="bookingDetail.booking.customer.peopleId" class="form-control"
+                                        id="formrow-email-input" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="formrow-email-input" class="form-label">SĐT</label>
                                     <input ng-value="bookingDetail.booking.customer.phoneNumber" class="form-control"
                                         id="formrow-email-input" readonly>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="mb-3">
                                     <label for="formrow-firstname-input" class="form-label">Email</label>
                                     <input ng-value="bookingDetail.booking.customer.email" class="form-control"
@@ -41,30 +49,30 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="mb-3">
-                                    <label for="formrow-firstname-input" class="form-label">Checkin Expected</label>
-                                    <input ng-value="bookingDetail.booking.checkinExpected | date:'dd/MM/yyyy'"
+                                    <label for="formrow-firstname-input" class="form-label">Ngày nhận</label>
+                                    <input ng-value="bookingDetail.checkinExpected | date:'dd/MM/yyyy'"
                                         type="text" class="form-control" id="formrow-firstname-input" readonly>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="mb-3">
-                                    <label for="formrow-firstname-input" class="form-label">Checkout Expected</label>
-                                    <input ng-value="bookingDetail.booking.checkoutExpected | date:'dd/MM/yyyy'"
+                                    <label for="formrow-firstname-input" class="form-label">Ngày trả</label>
+                                    <input ng-value="bookingDetail.checkoutExpected | date:'dd/MM/yyyy'"
                                         type="text" class="form-control" id="formrow-firstname-input" readonly>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="mb-3">
-                                    <label for="formrow-firstname-input" class="form-label">Number Adults</label>
+                                    <label for="formrow-firstname-input" class="form-label">Số lượng người lớn</label>
                                     <input ng-value="bookingDetail.numAdults" type="number" class="form-control"
-                                        id="formrow-firstname-input" readonly>
+                                        id="formrow-firstname-input">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="mb-3">
-                                    <label for="formrow-firstname-input" class="form-label">Number Childrens</label>
+                                    <label for="formrow-firstname-input" class="form-label">Số lượng trẻ em</label>
                                     <input ng-value="bookingDetail.numChildren" type="number" class="form-control"
-                                        id="formrow-firstname-input" readonly>
+                                        id="formrow-firstname-input">
                                 </div>
                             </div>
                         </div>
@@ -76,10 +84,10 @@
                     <div class="d-flex align-items-center">
                         <h5 class="fw-semibold flex-grow-1">Người ở</h5>
                         <div class="flex-shrink-0">
-                            <button ng-click="modalPeopleRoom()" class="btn btn-sm btn-soft-success"><i
+                            <button ng-click="modalPeopleRoom('show')" class="btn btn-sm btn-soft-success"><i
                                     class="mdi mdi-plus"></i></button>
-                            <button ng-click="modalListCustomer('show')" class="btn btn-sm btn-soft-primary"><i
-                                    class="mdi mdi-format-list-bulleted"></i></button>
+                            <!-- <button ng-click="modalListCustomer('show')" class="btn btn-sm btn-soft-primary"><i
+                                    class="mdi mdi-format-list-bulleted"></i></button> -->
                             <button ng-click="loadhostedAts()" class="btn btn-sm btn-light"><i
                                     class="mdi mdi-refresh"></i></button>
                         </div>
@@ -88,12 +96,12 @@
                         <table class="table align-middle table-nowrap">
                             <thead>
                                 <tr>
-                                    <th scope="col">Full Name</th>
-                                    <th scope="col">Phone Number</th>
-                                    <th scope="col">Gender</th>
-                                    <th scope="col">Date of Birth</th>
-                                    <th scope="col">People ID</th>
-                                    <th scope="col" style="width: 100px;">Action</th>
+                                    <th scope="col">Họ tên</th>
+                                    <th scope="col">SĐT</th>
+                                    <th scope="col">Giới tính</th>
+                                    <th scope="col">Ngày sinh</th>
+                                    <th scope="col">CCCD/CMT</th>
+                                    <th scope="col" style="width: 150px;">Hành động</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -142,12 +150,12 @@
                         <table class="table align-middle table-nowrap">
                             <thead>
                                 <tr>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Type</th>
-                                    <th scope="col">Price</th>
-                                    <th scope="col">Quantity</th>
-                                    <th scope="col">Total</th>
-                                    <th scope="col" style="width: 100px;">Action</th>
+                                    <th scope="col">Tên DV</th>
+                                    <th scope="col">Loại</th>
+                                    <th scope="col">Giá</th>
+                                    <th scope="col">Số lượng</th>
+                                    <th scope="col">Thành tiền</th>
+                                    <th scope="col" style="width: 150px;">Hành động</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -182,8 +190,7 @@
                 <!-- end card body -->
                 <div class="card-body border-top">
                     <div class="d-flex flex-wrap gap-2">
-                        <button ng-click="checkin()" class="btn btn-primary waves-effect waves-light">Checkin</button>
-                        <button type="submit" class="btn btn-secondary waves-effect waves-light">Cancel</button>
+                        <button ng-click="checkin()" class="btn btn-primary waves-effect waves-light">Nhận phòng</button>
                     </div>
                 </div>
                 <!-- end card body -->
@@ -192,46 +199,41 @@
         </div>
     </div>
 
-    <div id="modal-people-room" class="modal modal-lg fade" data-bs-keyboard="false" tabindex="-1"
+    <div id="modal-people-room" class="modal modal-lg fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="checkoutModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Add people</h5>
+                    <h5 class="modal-title">Thêm khánh hàng</h5>
+                    <button ng-click="modalPeopleRoom('hide')" type="button" class="btn-close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col">
-                            <h3 ng-class="{'active-tab': currentStep == 0}" class="tab-pill"><span
-                                    class="circle">1</span> Mặt trước
-                            </h3>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="formrow-password-input" class="form-label">People ID</label>
+                                <div class="input-group">
+                                    <input ng-model="people.peopleId" class="form-control" id="formrow-password-input">
+                                    <button ng-click="searchCustomer()" class="btn btn-outline-secondary" type="button">
+                                        <i class="mdi mdi-account-search-outline"></i>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col">
-                            <h3 ng-class="{'active-tab': currentStep == 1}" class="tab-pill"><span
-                                    class="circle">2</span> Mặt sau
-                            </h3>
-                        </div>
-                        <div class="col">
-                            <h3 ng-class="{'active-tab': currentStep == 2}" class="tab-pill"><span
-                                    class="circle">3</span> Xác nhận
-                            </h3>
-                        </div>
-                    </div>
-                    <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="formrow-fullname-input" class="form-label">Full Name</label>
                                 <input ng-model="people.fullName" class="form-control" id="formrow-fullname-input">
                             </div>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="formrow-email-input" class="form-label">Phone Number</label>
                                 <input ng-model="people.phoneNumber" class="form-control" id="formrow-email-input">
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="formrow-firstname-input" class="form-label">Email</label>
@@ -239,19 +241,13 @@
                                     id="formrow-firstname-input">
                             </div>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="formrow-password-input" class="form-label">Date of Birth</label>
                                 <input ng-model="people.dateOfBirth" type="date" class="form-control"
                                     id="formrow-password-input">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="formrow-password-input" class="form-label">People ID</label>
-                                <input ng-model="people.peopleId" class="form-control" id="formrow-password-input">
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -293,48 +289,10 @@
                             </div>
                         </div>
                     </div>
-                    <!-- <div class="row justify-content-center">
-                        <div class="col-md-6">
-                            <div class="card border">
-                                <div class="card-body p-2">
-                                    <div class="mx-auto" id="webcam">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="card border">
-                                    <div class="card-body p-2">
-                                        <div class="mx-auto" id="font-img">
-                                        </div>
-                                        <button ng-click="snapshotFont()" class="btn btn-sm btn-primary"><i
-                                                class="mdi mdi-camera"></i></button>
-                                        <button class="btn btn-sm btn-primary"><i
-                                                class="mdi mdi-camera-retake"></i></button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="card">
-                                    <img class="card-img-top img-fluid"
-                                        src="https://i1-dulich.vnecdn.net/2022/09/14/4-1663171508.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=S06yaNXNAEw5yuUNPbsJYA"
-                                        alt="Card image cap">
-                                    <div class="card-body">
-                                        <div class="mx-auto">
-                                            <button ng-click="snapshotBack()" class="btn btn-sm btn-primary"><i
-                                                    class="mdi mdi-camera"></i></button>
-                                            <button class="btn btn-sm btn-primary"><i
-                                                    class="mdi mdi-camera-retake"></i></button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div> -->
                 </div>
                 <div class="modal-footer">
-                    <button ng-click="addPeople()" class="btn btn-primary">Add people</button>
+                    <button ng-click="addPeople()" class="btn btn-primary">Thêm</button>
+                    <button ng-click="modalPeopleRoom('hide')" class="btn btn-secondary">Đóng</button>
                 </div>
             </div>
         </div>
@@ -343,7 +301,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Service room</h5>
+                    <h5 class="modal-title">Dịch vụ phòng</h5>
                     <button ng-click="modalServiceRoom('hide')" type="button" class="btn-close"></button>
                 </div>
                 <div class="modal-body">
@@ -352,13 +310,13 @@
                         <input ng-model="searchService" type="search" class="form-control form-control-sm">
                     </label>
                     <div class="table-responsive">
-                        <table id="datatable-service-room" class="table align-middle table-nowrap">
+                        <table id="datatable-service-room" class="table align-middle table-nowrap table-hover">
                             <thead>
                                 <tr>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Type</th>
-                                    <th scope="col">Price</th>
-                                    <th scope="col">Action</th>
+                                    <th scope="col">Tên DV</th>
+                                    <th scope="col">Loại</th>
+                                    <th scope="col">Giá</th>
+                                    <th scope="col">Hành động</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -383,7 +341,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button ng-click="modalServiceRoom('hide')" class="btn btn-primary">Close</button>
+                    <button ng-click="modalServiceRoom('hide')" class="btn btn-secondary">Đóng</button>
                 </div>
             </div>
         </div>
@@ -403,7 +361,7 @@
                         </label>
                     </div>
                     <div class="table-responsive">
-                        <table id="datatable-service-room" class="table align-middle table-nowrap">
+                        <table id="datatable-service-room" class="table align-middle table-nowrap table-hover">
                             <thead>
                                 <tr>
                                     <th scope="col">Full Name</th>
@@ -436,7 +394,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button ng-click="modalListCustomer('hide')" class="btn btn-primary">Close</button>
+                    <button ng-click="modalListCustomer('hide')" class="btn btn-secondary">Đóng</button>
                 </div>
             </div>
         </div>

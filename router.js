@@ -24,8 +24,17 @@ app.config(function ($routeProvider) {
       controller: "accountRoleCtrl",
     })
     .when("/hotel-room", {
-      templateUrl: "/views/hotel-room/list.html",
+      templateUrl: "/views/hotel-room/index.html",
       controller: "hotelRoomCtrl",
+    })
+//invoice
+    .when("/invoices", {
+      templateUrl: "/views/invoice/index.html",
+      controller: "invoiceCtrl",
+    })
+    .when("/invoices/:code", {
+      templateUrl: "/views/invoice/detail.html",
+      controller: "invoiceDetailCtrl",
     })
 //Checkin-Checkout
     .when("/checkin/:roomCode", {

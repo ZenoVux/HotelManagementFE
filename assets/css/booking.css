@@ -34,3 +34,40 @@
     cursor: pointer;
     transition: background-color 0.2s ease-in-out;
 }
+
+.booking-header {
+    border: 1px solid #6c757d;
+}
+
+.booking {
+    background-color: #0d6efd;
+    color: white;
+}
+
+.pending :hover {
+    cursor: pointer;
+    background-color: #dc3545;
+    color: white;
+}
+
+.customer :hover {
+    cursor: pointer;
+    background-color: #6c757d;
+    color: white;
+}
+
+.booking :hover {
+    cursor: pointer;
+    background-color: #0d6efd;
+    color: white;
+}
+
+.confirmed :hover {
+    cursor: pointer;
+    background-color: #198754;
+    color: white;
+}
+
+i {
+    font-size: 25px;
+}

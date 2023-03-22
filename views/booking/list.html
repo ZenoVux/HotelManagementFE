@@ -1,0 +1,296 @@
+<app-layout name="">
+
+    <div class="row mb-2">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4 text-center">
+            <div id="loading-spinner" ng-show="loading">
+                <i class="fa fa-spinner fa-spin" style="font-size: 30px"></i>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="text-sm-end">
+                <a class="btn btn-success btn-lg" ng-href="/#!/bookings/create" role="button">
+                    <i class="fas fa-plus"></i> Create</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-xl-3 col-sm-6" ng-class="{'active-table': currentTable == 0}">
+            <div class="card booking-header booking active" ng-click="toggleTable('bookingTable')">
+                <div class="d-flex align-items-center justify-content-center h-100">
+                    <h2 class="text-truncate mb-4 mb-lg-5 text-center" style="margin-top: 15%;">2 BOOKINGS
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-sm-6" ng-class="{'active-table': currentTable == 1}">
+            <div class="card booking-header customer" ng-click="toggleTable('customerTable')">
+                <div class="d-flex align-items-center justify-content-center h-100">
+                    <h2 class="text-truncate mb-4 mb-lg-5 text-center" style="margin-top: 15%;">20 CUSTOMERS
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-sm-6" ng-class="{'active-table': currentTable == 2}">
+            <div class="card booking-header confirmed" ng-click="toggleTable('confirmedTable')">
+                <div class="d-flex align-items-center justify-content-center h-100">
+                    <h2 class="text-truncate mb-4 mb-lg-5 text-center" style="margin-top: 15%;">
+                        2 CONFIRMED
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-sm-6" ng-class="{'active-table': currentTable == 3}">
+            <div class="card booking-header pending" ng-click="toggleTable('pendingTable')">
+                <div class="d-flex align-items-center justify-content-center h-100">
+                    <h2 class="text-truncate mb-4 mb-lg-5 text-center" style="margin-top: 15%;">2 PENDING
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Table booking -->
+
+    <div class="row" ng-show="currentTable == 0">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+
+                    <table id="bookingTable" class="table table-bordered dt-responsive nowrap w-100"
+                        ng-show="showBookingTable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Check-in</th>
+                                <th>Check-out</th>
+                                <th>Phòng</th>
+                                <th>Người lớn tối đa</th>
+                                <th>Trẻ em tối đa</th>
+                                <th>Trạng thái</th>
+                                <th>Chi tiết</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="booking in bookings">
+                                <th>{{booking.code}}</th>
+                                <td>{{booking.checkin | date:'dd-MM-yyyy'}}</td>
+                                <td>{{booking.checkout | date:'dd-MM-yyyy'}}</td>
+                                <td>{{booking.numOfRoom}}</td>
+                                <td>{{booking.adults}}</td>
+                                <td>{{booking.childs}}</td>
+                                <td>
+                                    <span ng-if="booking.status == 0"
+                                        class="badge badge-pill badge-soft-danger font-size-12">Huỷ</span>
+                                    <span ng-if="booking.status == 1"
+                                        class="badge badge-pill badge-soft-warning font-size-12">Chờ xác nhận</span>
+                                    <span ng-if="booking.status == 2"
+                                        class="badge badge-pill badge-soft-success font-size-12">Đã xác nhận</span>
+                                </td>
+                                <td>
+                                    <a class="btn btn-outline-secondary btn-sm edit" title="View"
+                                        ng-click="viewBooking(booking)">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking modal -->
+    <div class="modal fade" id="booking-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="customer-modal-label">{{ selectedBooking.code }}</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-1"></div>
+                        <div class="col-10">
+                            <table class="table table-bordered dt-responsive nowrap w-100">
+                                <tr>
+                                    <td colspan="1"><strong>Người đặt:</strong></td>
+                                    <td colspan="2">{{123123}}</td>
+                                    <td colspan="1"><strong>Email:</strong></td>
+                                    <td colspan="2">{{123123}}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><strong>SDT:</strong></td>
+                                    <td colspan="2">{{123123}}</td>
+                                    <td colspan="2"><strong>Check-in:</strong></td>
+                                    <td colspan="2">{{123123}}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><strong>Check-out:</strong></td>
+                                    <td colspan="2">{{123123}}</td>
+                                    <td colspan="2"><strong>Phòng:</strong></td>
+                                    <td colspan="2">{{123123}}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><strong>Người lớn:</strong></td>
+                                    <td colspan="2">{{123123}}</td>
+                                    <td colspan="2"><strong>Trẻ em:</strong></td>
+                                    <td colspan="2">{{123123}}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><strong>Tiền cọc:</strong></td>
+                                    <td colspan="2">{{123123}}</td>
+                                    <td colspan="2"><strong>Ngày tạo:</strong></td>
+                                    <td colspan="2">{{123123}}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><strong>Dịch vụ:</strong></td>
+                                    <td colspan="2">{{123123}}</td>
+                                    <td colspan="2"><strong>Ghi chú:</strong></td>
+                                    <td colspan="2">{{123123}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-1"></div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Customer table -->
+
+    <div class="row" ng-show="currentTable == 1">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+
+                    <table id="customerTable" class="table table-bordered dt-responsive  nowrap w-100"
+                        ng-show="showCustomerTable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Check-in</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="customer in customers">
+                                <th scope="row">{{$index + 1}}</th>
+                                <td>{{customer.fullName}}</td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmed table -->
+
+    <div class="row" ng-show="currentTable == 2">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+
+                    <table id="confirmedTable" class="table table-bordered dt-responsive  nowrap w-100"
+                        ng-show="showConfirmedTable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Check-in</th>
+                                <th>Check-out</th>
+                                <th>Phòng</th>
+                                <th>Người lớn tối đa</th>
+                                <th>Trẻ em tối đa</th>
+                                <th>Trạng thái</th>
+                                <th>Chi tiết</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="booking in bookings" ng-if="booking.status === 2">
+                                <th>{{booking.code}}</th>
+                                <td>{{booking.checkin | date:'dd-MM-yyyy'}}</td>
+                                <td>{{booking.checkout | date:'dd-MM-yyyy'}}</td>
+                                <td>{{booking.numOfRoom}}</td>
+                                <td>{{booking.adults}}</td>
+                                <td>{{booking.childs}}</td>
+                                <td>
+                                    <span class="badge badge-pill badge-soft-success font-size-12">Đã xác nhận</span>
+                                </td>
+                                <td>
+                                    <a class="btn btn-outline-secondary btn-sm edit" title="View"
+                                        ng-click="viewBooking(booking)">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending table -->
+
+    <div class="row" ng-show="currentTable == 3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+
+                    <table id="pendingTable" class="table table-bordered dt-responsive  nowrap w-100"
+                        ng-show="showPendingTable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Check-in</th>
+                                <th>Check-out</th>
+                                <th>Phòng</th>
+                                <th>Người lớn tối đa</th>
+                                <th>Trẻ em tối đa</th>
+                                <th>Trạng thái</th>
+                                <th>Chi tiết</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="booking in bookings" ng-if="booking.status === 1">
+                                <th>{{booking.code}}</th>
+                                <td>{{booking.checkin | date:'dd-MM-yyyy'}}</td>
+                                <td>{{booking.checkout | date:'dd-MM-yyyy'}}</td>
+                                <td>{{booking.numOfRoom}}</td>
+                                <td>{{booking.adults}}</td>
+                                <td>{{booking.childs}}</td>
+                                <td>
+                                    <span class="badge badge-pill badge-soft-warning font-size-12">Chờ xác nhận</span>
+                                </td>
+                                <td>
+                                    <a class="btn btn-outline-secondary btn-sm edit" title="View"
+                                        ng-click="viewBooking(booking)">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</app-layout>

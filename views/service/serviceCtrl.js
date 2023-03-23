@@ -8,7 +8,7 @@ app.controller("serviceCtrl", function ($scope, $http) {
 	$scope.serTypes = [];
 	$scope.initialize = function () {
 
-		$http.get("http://localhost:8000/api/service-rooms").then(resp => {
+		$http.get("http://localhost:8000/api/services").then(resp => {
 			$scope.items = resp.data;
 		})
 
@@ -21,7 +21,7 @@ app.controller("serviceCtrl", function ($scope, $http) {
 
 	$scope.create = function () { //create a new service 
 		var item = angular.copy($scope.form);
-		$http.post("http://localhost:8000/api/service-rooms", item).then(resp => {
+		$http.post("http://localhost:8000/api/services", item).then(resp => {
 			$scope.initialize();
 			alert("Adding success !");
 			$scope.close();
@@ -34,7 +34,7 @@ app.controller("serviceCtrl", function ($scope, $http) {
 
 	$scope.update = function () {
 		var item = angular.copy($scope.form);
-		$http.put("http://localhost:8000/api/service-rooms", item).then(resp => {
+		$http.put("http://localhost:8000/api/services", item).then(resp => {
 			var index = $scope.items.findIndex(p => p.id == item.id)
 			$scope.items[index] = item;
 			alert("Update success!");	

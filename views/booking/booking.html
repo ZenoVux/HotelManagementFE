@@ -2,16 +2,22 @@
 
     <!-- header -->
     <div class="row">
-        <div class="col-md-6">
-            <h1>Booking</h1>
+        <div class="col-md-4">
+            <h1>Create Booking</h1>
         </div>
-        <div class="col-md-6 text-right">
+        <div class="col-md-4 text-center">
             <div id="loading-spinner" ng-show="loading">
                 <i class="fa fa-spinner fa-spin" style="font-size: 30px"></i>
             </div>
         </div>
+        <div class="col-sm-4">
+            <div class="text-sm-end">
+                <a class="btn btn-success btn-lg" ng-href="/#!/bookings" role="button">
+                    <i class="fas fa-arrow-left"></i> Back</a>
+            </div>
+        </div>
     </div>
-
+    <p></p>
     <!-- handle -->
     <div class="row">
         <div class="col-lg-12">
@@ -27,14 +33,11 @@
                                         ng-disabled="currentSection == 0">Previous</button>
                                 </div>
                                 <div class="col-auto">
-                                    <button type="submit" class="btn btn-secondary" ng-show="currentSection == 3"
-                                        ng-click="getBookings()">Submit</button>
                                     <button type="button" class="btn btn-secondary" ng-click="nextSection()"
-                                        ng-show="currentSection < 3">Next</button>
+                                        ng-disabled="currentSection == 2">Next</button>
                                 </div>
                             </div>
                             <br>
-                            <!-- Chọn phòng -->
                             <div class="row">
                                 <div class="col">
                                     <h3 ng-class="{'active-tab': currentSection == 0}" class="tab-pill"><span
@@ -48,12 +51,7 @@
                                 </div>
                                 <div class="col">
                                     <h3 ng-class="{'active-tab': currentSection == 2}" class="tab-pill"><span
-                                            class="circle">3</span> Thanh Toán
-                                    </h3>
-                                </div>
-                                <div class="col">
-                                    <h3 ng-class="{'active-tab': currentSection == 3}" class="tab-pill"><span
-                                            class="circle">4</span> Xác Nhận</h3>
+                                            class="circle">3</span> Xác nhận</h3>
                                 </div>
                             </div>
 
@@ -97,6 +95,7 @@
                                     </div>
                                 </form>
                                 <p></p>
+
                                 <!-- table -->
                                 <table class="table table-bordered mb-0">
                                     <thead style="text-align: center;">
@@ -168,21 +167,27 @@
                                             <td>
                                                 <div class="input-group">
                                                     <input class="form-control" type="number" ng-model="info.roomCount"
-                                                        ng-init="info.roomCount = 0" min="0" max="{{ info.quantity }}">
+                                                        ng-init="info.roomCount = 0" min="0" max="{{ info.quantity }}"
+                                                        readonly>
                                                 </div>
                                             </td>
                                             <td>
                                                 <div class="row">
                                                     <div class="col-sm-1"></div>
-                                                    <div class="col-sm-3 form-check" ng-repeat="room in info.listRooms">
-                                                        <input class="form-check-input" type="checkbox"
-                                                            id="{{room.code}}" ng-model="room.selected"
-                                                            ng-change="updateSelectedRooms(info)">
-                                                        <label class="form-check-label" for="{{room.code}}">
-                                                            {{ room.code }}
-                                                        </label>
+                                                    <div class="col-sm-10">
+                                                        <div class="row">
+                                                            <div class="col-sm-3 form-check"
+                                                                ng-repeat="room in info.listRooms">
+                                                                <input class="form-check-input" type="checkbox"
+                                                                    id="{{room.code}}" ng-model="room.selected"
+                                                                    ng-change="updateSelectedRooms(info)">
+                                                                <label class="form-check-label" for="{{room.code}}">
+                                                                    {{ room.code }}
+                                                                </label>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    <div class="col-sm-2"></div>
+                                                    <div class="col-sm-1"></div>
                                                 </div>
                                             </td>
                                         </tr>
@@ -197,94 +202,203 @@
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="mb-3">
-                                                    <label for="fullName" class="form-label">Full Name</label>
+                                                    <label for="fullName" class="form-label">Họ tên</label>
                                                     <input type="text" class="form-control" id="fullName"
                                                         placeholder="Full Name" ng-model="customer.fullName" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="gender" class="form-label">Giới tính</label>
+                                                    <div class="row">
+                                                        <div class="col-md-2">
+                                                            <input class="form-check-input" type="radio" name="gender"
+                                                                id="male" ng-model="customer.gender" value="1">
+                                                            <label class="form-check-label" for="male">
+                                                                Nam
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <input class="form-check-input" type="radio" name="gender"
+                                                                id="female" ng-model="customer.gender" value="0">
+                                                            <label class="form-check-label" for="female">
+                                                                Nữ
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="dateOfBirth" class="form-label">Ngày sinh</label>
+                                                    <div class="input-daterange input-group" id="datepicker6"
+                                                        data-date-format="dd-mm-yyyy" data-date-autoclose="true"
+                                                        data-provide="datepicker" data-date-container='#datepicker6'>
+                                                        <input datepicker type="text" class="form-control"
+                                                            ng-model="customer.dateOfBirth" name="dob"
+                                                            placeholder="Ngày sinh" readonly
+                                                            style="text-align: left;" />
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="peopleId" class="form-label">Số cccd/cmnd</label>
+                                                    <input type="text" class="form-control" id="peopleId"
+                                                        placeholder="Số cccd/cmnd" required
+                                                        ng-model="customer.peopleId">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="address" class="form-label">Địa chỉ</label>
+                                                    <input type="text" class="form-control" id="address"
+                                                        placeholder="Địa chỉ" required ng-model="customer.address">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="placeOfBirth" class="form-label">Thường trú</label>
+                                                    <input type="text" class="form-control" id="placeOfBirth"
+                                                        placeholder="Thường trú" required
+                                                        ng-model="customer.placeOfBirth">
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="mb-3">
-                                                    <label for="phoneNumber" class="form-label">Phone Number</label>
+                                                    <label for="phoneNumber" class="form-label">SDT</label>
                                                     <input type="text" class="form-control" id="phoneNumber"
-                                                        placeholder="Phone Number" ng-model="customer.phoneNumber"
-                                                        required>
+                                                        placeholder="Số điện thoại" required
+                                                        ng-model="customer.phoneNumber">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="email" class="form-label">Email</label>
+                                                    <input type="text" class="form-control" id="email"
+                                                        placeholder="Email" required ng-model="customer.email">
                                                 </div>
                                             </div>
                                         </div>
-                                        <!-- <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="mb-3">
-                                                        <label for="address" class="form-label">Address</label>
-                                                        <input type="text" class="form-control" id="address"
-                                                            placeholder="Address" ng-model="customer.address" required>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="mb-3">
-                                                        <label for="placeOfBirth" class="form-label">Place of
-                                                            Birth</label>
-                                                        <input type="text" class="form-control" id="placeOfBirth"
-                                                            placeholder="Place of Birth"
-                                                            ng-model="customer.placeOfBirth" required>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4">
-                                                    <div class="mb-3">
-                                                        <label for="email" class="form-label">Email</label>
-                                                        <input type="text" class="form-control" id="email"
-                                                            placeholder="Email" ng-model="customer.email" required>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="mb-3">
-                                                        <label for="type" class="form-label">Type</label>
-                                                        <input type="text" class="form-control" id="type"
-                                                            placeholder="Type" ng-model="customer.customerType.name"
-                                                            required>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="mb-3">
-                                                        <label for="dateOfBirth" class="form-label">Date of
-                                                            Birth</label>
-                                                        <input type="date" class="form-control" id="dateOfBirth"
-                                                            placeholder="Date of Birth" ng-model="customer.dateOfBirth"
-                                                            ng-value="customer.dateOfBirth | date:'yyyy-MM-dd'"
-                                                            ng-model-options="{timezone: 'UTC'}" required>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4">
-                                                    <div class="mb-3">
-                                                        <label for="peopleId" class="form-label">People ID</label>
-                                                        <input type="text" class="form-control" id="peopleId"
-                                                            placeholder="People ID" ng-model="customer.peopleId"
-                                                            required>
-                                                    </div>
-                                                </div>
-                                            </div> -->
                                     </div>
                                 </div>
                             </section>
 
-                            <!-- Section 3: Bank Details -->
+                            <!-- Section 3: Xác nhận -->
                             <section ng-show="currentSection == 2">
-                                <div class="form-group">
-                                    <label for="account">Bank Account Number:</label>
-                                    <input type="text" class="form-control" id="account" ng-model="formData.account">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-sm-6">
+                                                        <address>
+                                                            <strong>Khách hàng:</strong><br>
+                                                            <i>
+                                                                {{customer.fullName}}
+                                                            </i>
+                                                        </address>
+                                                    </div>
+                                                    <div class="col-sm-6 text-sm-end">
+                                                        <address class="mt-2 mt-sm-0">
+                                                            <strong>Số phòng:</strong><br>
+                                                            <i>
+                                                                {{rooms.length}}
+                                                            </i>
+                                                        </address>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-6 mt-3">
+                                                        <address>
+                                                            <strong>Thời gian:</strong><br>
+                                                            <span>Check in: <i>{{booking.checkinDate |
+                                                                    date:'dd-MM-yyyy'}}</i></span><br>
+                                                            <span>Check out: <i>{{booking.checkoutDate |
+                                                                    date:'dd-MM-yyyy'}}</i></span><br>
+                                                        </address>
+                                                    </div>
+                                                    <div class="col-sm-6 mt-3 text-sm-end">
+                                                        <address>
+                                                            <strong>Số đêm:</strong><br>
+                                                            <i>{{(booking.checkoutDate - booking.checkinDate) /
+                                                                (1000*60*60*24)}}</i>
+                                                        </address>
+                                                    </div>
+                                                </div>
+                                                <div class="py-2 mt-3">
+                                                    <h3 class="font-size-15 fw-bold">Thông tin</h3>
+                                                </div>
+                                                <div class="table-responsive">
+                                                    <table class="table table-nowrap">
+                                                        <thead>
+                                                            <tr>
+                                                                <th style="width: 70px;">STT</th>
+                                                                <th>Phòng</th>
+                                                                <th>Giá 1 đêm</th>
+                                                                <th class="text-end">Tổng</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr ng-repeat="room in rooms">
+                                                                <td>{{ $index + 1 }}</td>
+                                                                <td>{{room.code}}</td>
+                                                                <td>{{room.price | currency: '' : 0}}đ</td>
+                                                                <td class="text-end">
+                                                                    {{room.price *
+                                                                    ((booking.checkoutDate - booking.checkinDate) /
+                                                                    (1000*60*60*24))
+                                                                    | currency: '' : 0}}đ
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+
+                                                        <tfoot>
+                                                            <tr>
+                                                                <td colspan="3" class="border-0 text-end">
+                                                                    <strong>Tổng tiền</strong>
+                                                                </td>
+                                                                <td class="border-0 text-end">
+                                                                    <h4 class="m-0">
+                                                                        {{totalPrice * ((booking.checkoutDate -
+                                                                        booking.checkinDate) /
+                                                                        (1000*60*60*24))|
+                                                                        currency: '' : 0}}đ
+                                                                    </h4>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="3" class="border-0 text-end">
+                                                                    <strong>Thanh toán</strong>
+                                                                </td>
+                                                                <td class="border-0 text-end">
+                                                                    <select class="form-select" ng-model="payment">
+                                                                        <option value="">Chọn phương thức thanh toán
+                                                                        </option>
+                                                                        <option ng-repeat="method in paymentMethods"
+                                                                            value="{{method.code}}">{{method.name}}
+                                                                        </option>
+                                                                    </select>
+                                                                </td>
+                                                            </tr>
+                                                            <tr style="color: red">
+                                                                <td colspan="3" class="border-0 text-end">
+                                                                    <h2>Tiền cọc (10%)</h2>
+                                                                </td>
+                                                                <td class="border-0 text-end">
+                                                                    <h2 class="m-0">
+                                                                        {{deposit * ((booking.checkoutDate -
+                                                                        booking.checkinDate) /
+                                                                        (1000*60*60*24))|
+                                                                        currency: '' : 0}}đ
+                                                                    </h2>
+                                                                </td>
+                                                            </tr>
+                                                        </tfoot>
+                                                    </table>
+                                                </div>
+                                                <div class="d-print-none">
+                                                    <div class="float-end">
+                                                        <a href="javascript: void(0);"
+                                                            class="btn btn-success w-md waves-effect waves-light"
+                                                            ng-click="getBookings()">
+                                                            Xác nhận</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </section>
 
-                            <!-- Section 4: Confirm Details -->
-                            <section ng-show="currentSection == 3">
-                                <div class="form-group">
-                                    <label for="confirm">Confirm Details:</label>
-                                    <input type="text" class="form-control" id="confirm" ng-model="formData.confirm">
-                                </div>
-                            </section>
                         </form>
                     </div>
                 </div>

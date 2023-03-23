@@ -77,7 +77,7 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
     }
 
     $scope.loadServices = async function () {
-        await $http.get("http://localhost:8000/api/service-rooms").then(function (resp) {
+        await $http.get("http://localhost:8000/api/services").then(function (resp) {
             $scope.services = resp.data;
         });
     }
@@ -165,7 +165,7 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
         if (!confirm("Bạn muốn huỷ phòng " + $scope.selectRoom.code +  "?")) {
             return;
         }
-        $http.post("http://localhost:8000/api/rooms/cancel-room", {
+        $http.post("http://localhost:8000/api/hotel/cancel", {
             code: $scope.selectRoom.code,
             note: $scope.hotel.note
         }).then(function (resp) {

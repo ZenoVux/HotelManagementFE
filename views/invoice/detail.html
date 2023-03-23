@@ -1,0 +1,66 @@
+<app-layout>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <h5 class="fw-semibold flex-grow-1">Hoá đơn #{{invoice.code}}</h5>
+                    </div>
+
+                </div>
+                <div ng-repeat="invoiceDetail in invoiceDetails" class="card-body border-top">
+                    <div class="d-flex align-items-center">
+                        <h5 class="fw-semibold flex-grow-1">Phòng {{invoiceDetail.room.code}}</h5>
+                    </div>
+                    <p class="mb-2">Giá phòng: <span class="text-primary">{{invoiceDetail.room.price | currency : "VNĐ "}}/ngày</span>
+                    <p class="mb-4">Ngày thuê: <span class="text-primary">{{invoiceDetail.checkin | date:'dd/MM/yyyy'}}</span> - <span class="text-primary">{{invoiceDetail.checkout | date:'dd/MM/yyyy'}}</span>
+                    <div class="table-responsive">
+                        <table class="table align-middle table-nowrap">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Tên dich vụ</th>
+                                    <th scope="col">Loại</th>
+                                    <th scope="col" class="text-end">Giá</th>
+                                    <th scope="col" class="text-end" style="width: 250px;">Số lượng</th>
+                                    <th scope="col" class="text-end" style="width: 250px;">Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody ng-init="loadUsedServices(invoiceDetail)">
+                                <tr ng-repeat="usedService in invoiceDetail.usedServices">
+                                    <th scope="row">
+                                        {{usedService.serviceRoom.name}}
+                                    </th>
+                                    <td>{{usedService.serviceRoom.serviceType.name}}</td>
+                                    <td class="text-end">{{usedService.serviceRoom.price}}</td>
+                                    <td class="text-end">{{usedService.quantity}}</td>
+                                    <td class="text-end">{{usedService.serviceRoom.price * usedService.quantity}}</td>
+                                </tr>
+                                <tr ng-show="invoiceDetail.usedServices.length == 0">
+                                    <td colspan="5" class="text-center">Dịch vụ trống</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="text-end">Tiền dịch vụ</td>
+                                    <td class="text-end">{{invoiceDetail.totalServiceFee + ' VNĐ'}}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="text-end">Tiền phòng</td>
+                                    <td class="text-end">{{invoiceDetail.totalRoomFee + ' VNĐ'}}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="border-0 text-end">
+                                        <strong>Tổng tiền phòng</strong></td>
+                                    <td class="border-0 text-end"><h4 class="m-0">{{invoiceDetail.total + ' VNĐ'}}</h4></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-body border-top">
+                    <div class="d-flex flex-wrap gap-2">
+                        <button class="btn btn-primary waves-effect waves-light">Thanh toán</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</app-layout>

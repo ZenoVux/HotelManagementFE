@@ -31,7 +31,7 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
     }
 
     $scope.loadUsedServices = async function () {
-        await $http.get("http://localhost:8000/api/used-services/booking-detail/" + $scope.bookingDetail.id).then(function (resp) {
+        await $http.get("http://localhost:8000/api/used-services/booking-detail-code/" + $scope.bookingDetail.code).then(function (resp) {
             $scope.usedServices = resp.data;
         }, function () {
             console.log("Có lỗi xảy ra vui lòng thử lại!");
@@ -101,7 +101,7 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
 
     $scope.modalServiceRoom = async function (action) {
         if (action == 'show') {
-            await $http.get("http://localhost:8000/api/service-rooms").then(function (resp) {
+            await $http.get("http://localhost:8000/api/services").then(function (resp) {
                 $scope.serviceRooms = resp.data;
             });
         } else {
@@ -172,7 +172,7 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
         if (!confirm("Bạn muốn nhận phòng " + $routeParams.roomCode +  "?")) {
             return;
         }
-        $http.get("http://localhost:8000/api/rooms/checkin/" + $routeParams.roomCode).then(function (resp) {
+        $http.get("http://localhost:8000/api/hotel/checkin/" + $routeParams.roomCode).then(function (resp) {
             alert("Nhận phòng thành công!");
             $location.path("/hotel-room");
         });

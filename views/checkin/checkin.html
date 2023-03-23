@@ -50,14 +50,14 @@
                             <div class="col-md-3">
                                 <div class="mb-3">
                                     <label for="formrow-firstname-input" class="form-label">Ngày nhận</label>
-                                    <input ng-value="bookingDetail.checkinExpected | date:'dd/MM/yyyy'"
+                                    <input ng-value="bookingDetail.booking.checkinExpected | date:'dd/MM/yyyy'"
                                         type="text" class="form-control" id="formrow-firstname-input" readonly>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="mb-3">
                                     <label for="formrow-firstname-input" class="form-label">Ngày trả</label>
-                                    <input ng-value="bookingDetail.checkoutExpected | date:'dd/MM/yyyy'"
+                                    <input ng-value="bookingDetail.booking.checkoutExpected | date:'dd/MM/yyyy'"
                                         type="text" class="form-control" id="formrow-firstname-input" readonly>
                                 </div>
                             </div>
@@ -316,7 +316,7 @@
                                     <th scope="col">Tên DV</th>
                                     <th scope="col">Loại</th>
                                     <th scope="col">Giá</th>
-                                    <th scope="col">Hành động</th>
+                                    <th scope="col" style="width: 100px;">Hành động</th>
                                 </tr>
                             </thead>
                             <tbody>

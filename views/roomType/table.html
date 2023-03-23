@@ -43,8 +43,8 @@
                         <tbody>
                             <tr ng-repeat = "item in roomTypes">
                                 <td>{{item.name}}</td>
-                                <td>{{item.adultSurcharge}}</td>
-                                <td>{{item.childSurcharge}}</td>
+                                <td>{{item.adultSurcharge | currency: '' : 0}} đ</td>
+                                <td>{{item.childSurcharge | currency: '' : 0}} đ</td>
                                 <td>{{item.cancellationPolicy}}</td>
                                 <td>{{item.otherPolicy}}</td>
                                 <td>{{item.description}}</td>

@@ -21,8 +21,9 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="formrow-roomNumber-input" class="form-label">Room number</label>
-                                    <input ng-model="form.code" type="text" class="form-control" id="formrow-roomNumber-input"
-                                        placeholder="Enter Room Number">
+                                    <select ng-model="form.code" id="formrow-roomNumber-select" class="form-select">
+                                        <option ng-repeat= "item in roomNumber" ng-value = "item">{{item}}</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
@@ -58,16 +59,20 @@
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="formrow-floor-input" class="form-label">Floor</label>
-                                <select ng-model="form.floor.id" id="formrow-floor-select" class="form-select">
+                                <select ng-model="form.floor.id" id="formrow-floor-select" class="form-select" ng-change="floorChange()">
                                     <option ng-repeat= "floor in floors" ng-value = "floor.id">{{floor.name}}</option>
                                 </select>
                             </div>
-                            <div class="col-md-3 mb-3">
-                                <label for="formrow-isSmoking-input" class="form-label">Is smoking</label>
-                                <select ng-model="form.isSmoking" id="formrow-isSmoking-select" class="form-select">
-                                    <option ng-value = "true">Có</option>
-                                    <option ng-value = "false">Không</option>
-                                </select>
+                            <div class="col-md-3 mb-4">
+                                <label for="formrow-isSmoking-input" class="form-label">Is smoking</label> <br>
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input" name="btnradio" id="btnradio1" ng-model="form.isSmoking" ng-value="true">
+                                    <label class="form-check-label" for="btnradio1">Có</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input" name="btnradio" id="btnradio2" ng-model="form.isSmoking" ng-value="false">
+                                    <label class="form-check-label" for="btnradio2">Không</label>
+                                </div>
                             </div>
                         </div>
                         <div class="row mb-3">

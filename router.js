@@ -1,4 +1,6 @@
-app.config(function ($routeProvider) {
+app.config(function ($routeProvider,$httpProvider) {
+  $httpProvider.interceptors.push('tokenConfig');
+  $httpProvider.interceptors.push('authInterceptor');
   $routeProvider
     .when("/", {
       templateUrl: "/views/dashboard.html",
@@ -141,10 +143,15 @@ app.config(function ($routeProvider) {
       templateUrl: "/views/roomType/updateForm.html",
       controller: "roomTypeUpdateFormCtrl",
     })
-	//Login
-    .when("/login", {
-      templateUrl: "/views/login.html",
-    })
+	//Authenticate
+  .when("/login", {
+    templateUrl: "/views/authenticate/login.html",
+    controller: "loginCtrl",
+  })
+  .when("/reset-password/:token", {
+    templateUrl: "/views/authenticate/resetPassword.html",
+    controller: "loginCtrl",
+  })
     .otherwise({
       templateUrl: "/views/404.html",
     });

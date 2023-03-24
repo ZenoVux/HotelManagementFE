@@ -2,7 +2,19 @@ var app = angular.module("myApp", ["ngRoute"]);
 app.component("appLayout", {
   templateUrl: "layout.html",
   transclude: true,
-  controller: function () {
+  controller: function ($scope, $window, $location,authService) {
+    $scope.isLogin=false
+    if( authService.getToken()){
+    $scope.isLogin =true;
+    }
+    $scope.isAdmin = authService.hasRole('ADMIN');
+    $scope.logout = function() {
+      var confirmLogout = $window.confirm('Bạn có chắc muốn đăng xuất?');
+      if (confirmLogout) {
+        $window.localStorage.removeItem('token');
+        $location.path('/');
+      }
+    };
     (function ($) {
       "use strict";
 

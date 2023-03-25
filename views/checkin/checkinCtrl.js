@@ -14,7 +14,7 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
     }
 
     $scope.loadBookingDetail = async function () {
-        await $http.get("http://localhost:8000/api/booking-details/checkin-room/" + $routeParams.roomCode).then(function (resp) {
+        await $http.get("http://localhost:8000/api/booking-details/waiting-checkin/" + $routeParams.roomCode).then(function (resp) {
             $scope.bookingDetail = resp.data;
         }, function () {
             alert("Có lỗi xảy ra vui lòng thử lại!");

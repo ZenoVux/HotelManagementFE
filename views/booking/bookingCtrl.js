@@ -223,17 +223,17 @@ app.controller("createBookingCtrl", function ($scope, $http) {
         console.log("placeOfBirth: " + $scope.customer.placeOfBirth);
         console.log("phoneNumber: " + $scope.customer.phoneNumber);
         console.log("email: " + $scope.customer.email);
-        // $http.post('http://localhost:8000/api/bookings', {
-        //     customer: $scope.customer,
-        //     rooms: rooms,
-        //     checkinExpected: $scope.booking.checkinDate,
-        //     checkoutExpected: $scope.booking.checkoutDate,
-        //     note: "note"
-        // }).then(function (response) {
-        //     console.log(response);
-        // }).catch(function (error) {
-        //     console.error('Error fetching data:', error);
-        // });
+        $http.post('http://localhost:8000/api/bookings', {
+            customer: $scope.customer,
+            rooms: rooms,
+            checkinExpected: $scope.booking.checkinDate,
+            checkoutExpected: $scope.booking.checkoutDate,
+            note: "note"
+        }).then(function (response) {
+            console.log(response);
+        }).catch(function (error) {
+            console.error('Error fetching data:', error);
+        });
 
     }
 

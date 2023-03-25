@@ -25,7 +25,7 @@
                 <div class="card-body"> -->
                     <div class="row">
                         <div ng-repeat="item in hotelRooms" class="col-xl-2 col-sm-3">
-                            <div class="card border border-3"
+                            <div ng-dblclick="modalInfoRoom('show', item)" class="card border border-3"
                                 ng-class="getColor('border', item.status)">
                                 <div class="card-body p-2">
                                     <div class="">
@@ -39,12 +39,10 @@
                                                     class="dropdown-menu dropdown-menu-start">
                                                     <button ng-show="item.status == 4" ng-click="checkin(item)"
                                                         class="dropdown-item"><i class="mdi mdi-login-variant"></i> Nhận phòng</button>
-                                                    <button ng-show="item.status == 2" ng-click="modalUsedService('show', item)"
-                                                        class="dropdown-item"><i class="mdi mdi-room-service-outline"></i> Dịch vụ</button>
                                                     <button ng-show="item.status == 2" ng-click="modalChangeRoom('show', item)"
                                                         class="dropdown-item"><i class="mdi mdi-shuffle-variant"></i> Đổi phòng</button>
-                                                        <button ng-show="item.status == 2 || item.status == 5" ng-click="modalExtendDate(item)"
-                                                            class="dropdown-item"><i class="mdi mdi-calendar-plus"></i> Gia hạn</button>
+                                                    <!-- <button ng-show="item.status == 2 || item.status == 5" ng-click="modalExtendDate(item)"
+                                                        class="dropdown-item"><i class="mdi mdi-calendar-plus"></i> Gia hạn</button> -->
                                                     <button ng-show="item.status == 2 || item.status == 5" ng-click="checkout(item)"
                                                         class="dropdown-item"><i class="mdi mdi-logout-variant"></i> Trả phòng</button>
                                                     <button ng-show="item.status != 0 && item.status != 1 && item.status != 3"
@@ -61,17 +59,18 @@
                                                     ng-class="getColor('text', item.status)"></i>
                                             </div>
                                         </div>
+                                        <div class="text-center">
+                                            <h5 class="font-size-16 text-truncate mb-2">{{item.code}}</h5>
+                                            <p class="font-size-14 text-truncate">{{item.customer ? item.customer : '---'}}</p>
+                                        </div>
                                         <div class="d-flex">
                                             <div class="overflow-hidden me-auto">
-                                                <h5 class="font-size-14 text-truncate mb-1"><a
-                                                        href="javascript: void(0);" class="text-body">{{item.code}}</a>
-                                                </h5>
-                                                <p class="text-muted text-truncate mb-0">
+                                                <p class="text-truncate mb-0">
                                                     {{(item.status == 4 || item.status == 5 || item.status == 2) ? (item.checkinExpected | date:'dd-MM') : '---'}}
                                                 </p>
                                             </div>
                                             <div class="align-self-end ms-2">
-                                                <p class="text-muted mb-0">
+                                                <p class="text-truncate mb-0">
                                                     {{(item.status == 4 || item.status == 5 || item.status == 2) ? (item.checkoutExpected | date:'dd-MM') : '---'}}
                                                 </p>
                                             </div>
@@ -88,93 +87,6 @@
             </div>
         </div>
     </div> -->
-    <div id="modal-used-service" class="modal modal-lg fade" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Dịch vụ phòng {{selectRoom.code}}</h5>
-                    <button ng-click="modalUsedService('hide')" type="button" class="btn-close"></button>
-                </div>
-                <div class="modal-body">
-                    <h5 class="fw-semibold">Danh sách dịch vụ</h5>
-                    <div class="table-responsive">
-                        <table id="datatable-service-room" class="table align-middle table-nowrap table-hover">
-                            <thead class="table-light">
-                                <tr>
-                                    <th scope="col">Tên DV</th>
-                                    <th scope="col">Loại</th>
-                                    <th scope="col">Giá</th>
-                                    <th scope="col" style="width: 100px;">Hành động</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr ng-repeat="item in services">
-                                    <th scope="row">
-                                        {{item.name}}
-                                    </th>
-                                    <td>{{item.serviceType.name}}</td>
-                                    <td>{{item.price}}</td>
-                                    <td>
-                                        <ul class="list-unstyled hstack gap-1 mb-0">
-                                            <li>
-                                                <button ng-click="addServiceRoom(item)"
-                                                    class="btn btn-sm btn-soft-success"><i
-                                                        class="mdi mdi-plus"></i></button>
-                                            </li>
-                                        </ul>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <h5 class="fw-semibold">Danh sách dịch vụ phòng</h5>
-                    <div class="table-responsive">
-                        <table id="datatable-service-room" class="table align-middle table-nowrap table-hover">
-                            <thead class="table-light">
-                                <tr>
-                                    <th scope="col">Tên DV</th>
-                                    <th scope="col">Loại</th>
-                                    <th scope="col">Giá</th>
-                                    <th scope="col">Số lượng</th>
-                                    <th scope="col">Thành tiền</th>
-                                    <th scope="col" style="width: 100px;">Hành động</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr ng-repeat="item in usedServices">
-                                    <th scope="row">
-                                        {{item.serviceRoom.name}}
-                                    </th>
-                                    <td>{{item.serviceRoom.serviceType.name}}</td>
-                                    <td>{{item.serviceRoom.price}}</td>
-                                    <td><input ng-model="item.quantity" ng-blur="updateServiceRoom(item)"
-                                            style="width: 70px;" type="number" class="form-control form-control-sm"
-                                            min="1"></td>
-                                    <td>{{item.serviceRoom.price * item.quantity}}</td>
-                                    <td>
-                                        <ul class="list-unstyled hstack gap-1 mb-0">
-                                            <!-- <li>
-                                                <button class="btn btn-sm btn-soft-primary"><i
-                                                        class="mdi mdi-eye-outline"></i></button>
-                                            </li> -->
-                                            <li>
-                                                <button ng-click="removeServiceRoom(item)"
-                                                    class="btn btn-sm btn-soft-danger"><i
-                                                        class="mdi mdi-delete-outline"></i></button>
-                                            </li>
-                                        </ul>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button ng-click="modalUsedService('hide')" class="btn btn-secondary">Đóng</button>
-                </div>
-            </div>
-        </div>
-    </div>
     
     <div id="modal-change-room" class="modal fade" data-bs-backdrop="static"  tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -197,32 +109,6 @@
                 <div class="modal-footer">
                     <button ng-click="changeRoom()" class="btn btn-primary">Xác nhận</button>
                     <button ng-click="modalChangeRoom('hide')" class="btn btn-secondary">Đóng</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div id="modal-cancel-room" class="modal fade" data-bs-backdrop="static"  tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Huỷ phòng {{selectRoom.code}}</h5>
-                    <button ng-click="modalCancelRoom('hide')" type="button" class="btn-close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="mb-3">
-                                <label for="formrow-note-input" class="form-label">Ghi chú</label>
-                                <textarea ng-model="hotel.note" class="form-control" id="formrow-note-input"
-                                    rows="3"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button ng-click="cancelRoom()" class="btn btn-primary">Xác nhận</button>
-                    <button ng-click="modalCancelRoom('hide')" class="btn btn-secondary">Đóng</button>
                 </div>
             </div>
         </div>
@@ -272,6 +158,168 @@
                 </div>
                 <div class="modal-footer">
                     <button ng-click="cancelRoom()" class="btn btn-primary">Xác nhận</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="modal-info-room" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalFullscreenLabel">Phòng {{selectRoom.code}}</h5>
+                    <button ng-click="modalInfoRoom('hide')" type="button" class="btn-close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="card shadow-lg">
+                                <div class="card-body">
+                                    <h5 class="fw-semibold">Thông tin phòng</h5>
+                                    <div class="table-responsive">
+                                        <table class="table table-borderless mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th>Loại phòng</th>
+                                                    <th>Người lớn</th>
+                                                    <th>Trẻ em</th>
+                                                    <th>Trạng thái</th>
+                                                    <th>Ngày tạo</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Phòng đơn</td>
+                                                    <td><input style="width: 70px;" type="number" class="form-control form-control-sm"
+                                                        min="1"></td>
+                                                    <td><input style="width: 70px;" type="number" class="form-control form-control-sm"
+                                                        min="1"></td>
+                                                    <td>{{selectRoom.status}}</td>
+                                                    <td>23/03/2023</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card shadow-lg">
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table id="datatable-service-room" class="table align-middle table-nowrap table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">#</th>
+                                                    <th scope="col">Tên dịch vụ</th>
+                                                    <th scope="col">Loại</th>
+                                                    <th scope="col">Giá</th>
+                                                    <th scope="col">Số lượng</th>
+                                                    <th scope="col">Thành tiền</th>
+                                                    <th scope="col" style="width: 100px;">Hành động</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="item in usedServices">
+                                                    <th scope="row">
+                                                        {{item.serviceRoom.code}}
+                                                    </th>
+                                                    <td>{{item.serviceRoom.name}}</td>
+                                                    <td>{{item.serviceRoom.serviceType.name}}</td>
+                                                    <td>{{item.serviceRoom.price}}</td>
+                                                    <td><input ng-model="item.quantity" ng-blur="updateServiceRoom(item)"
+                                                            style="width: 70px;" type="number" class="form-control form-control-sm"
+                                                            min="1"></td>
+                                                    <td>{{item.serviceRoom.price * item.quantity | currency: '' : 0}}đ</td>
+                                                    <td>
+                                                        <ul class="list-unstyled hstack gap-1 mb-0">
+                                                            <!-- <li>
+                                                                <button class="btn btn-sm btn-soft-primary"><i
+                                                                        class="mdi mdi-eye-outline"></i></button>
+                                                            </li> -->
+                                                            <li>
+                                                                <button ng-click="removeServiceRoom(item)"
+                                                                    class="btn btn-sm btn-soft-danger"><i
+                                                                        class="mdi mdi-delete-outline"></i></button>
+                                                            </li>
+                                                        </ul>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="card shadow-lg">
+                                <div class="card-body">
+                                    <h5 class="fw-semibold">Dịch vụ</h5>
+                                    <div class="table-responsive">
+                                        <table id="datatable-service-room" class="table align-middle table-nowrap table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">#</th>
+                                                    <th scope="col">Tên dịch vụ</th>
+                                                    <th scope="col">Loại</th>
+                                                    <th scope="col">Giá</th>
+                                                    <th scope="col" style="width: 100px;">Hành động</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="item in services">
+                                                    <th scope="row">
+                                                        {{item.code}}
+                                                    </th>
+                                                    <td>{{item.name}}</td>
+                                                    <td>{{item.serviceType.name}}</td>
+                                                    <td>{{item.price | currency: '' : 0}}đ</td>
+                                                    <td>
+                                                        <ul class="list-unstyled hstack gap-1 mb-0">
+                                                            <li>
+                                                                <button ng-click="addServiceRoom(item)"
+                                                                    class="btn btn-sm btn-soft-success"><i
+                                                                        class="mdi mdi-plus"></i></button>
+                                                            </li>
+                                                        </ul>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button ng-show="selectRoom.status == 2 || selectRoom.status == 5" ng-click="modalCancelRoom('show', selectRoom)" type="button" class="btn btn-primary waves-effect waves-light">
+                        <i class="mdi mdi-logout-variant"></i> Trả phòng
+                    </button>
+                    <button ng-click="modalInfoRoom('hide')" type="button" class="btn btn-secondary waves-effect">Đóng</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+    
+    <div id="modal-cancel-room" class="modal fade" data-bs-backdrop="static"  tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Huỷ phòng {{selectRoom.code}}</h5>
+                    <button ng-click="modalCancelRoom('hide')" type="button" class="btn-close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label for="formrow-note-input" class="form-label">Ghi chú</label>
+                                <textarea ng-model="hotel.note" class="form-control" id="formrow-note-input"
+                                    rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button ng-click="cancelRoom()" class="btn btn-primary">Xác nhận</button>
+                    <button ng-click="modalCancelRoom('hide')" class="btn btn-secondary">Đóng</button>
                 </div>
             </div>
         </div>

@@ -10,7 +10,7 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
         },
         {
             id: 4,
-            name: "Nhận phòng"
+            name: "Chờ nhận phòng"
         },
         {
             id: 2,
@@ -64,6 +64,18 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
         return 0;
     }
 
+    $scope.modalInfoRoom = async function (action, room) {
+        $scope.selectRoom = room;
+        if (action == 'show') {
+            await $scope.loadServices();
+            await $scope.loadUsedServices();
+        } else {
+            $scope.services = [];
+            $scope.usedServices = [];
+        }
+        $('#modal-info-room').modal(action);
+    }
+
     $scope.modalUsedService = async function (action, room) {
         $scope.selectRoom = room;
         if (action == 'show') {
@@ -83,7 +95,8 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
     }
 
     $scope.loadUsedServices = async function () {
-        await $http.get("http://localhost:8000/api/used-services/invoice-detail/" + $scope.selectRoom.invoiceDetailId).then(function (resp) {
+        const api = $scope.selectRoom.status == 4 ? ('booking-detail/' + $scope.selectRoom.bookingDetailId) : ('invoice-detail/' + $scope.selectRoom.invoiceDetailId);
+        await $http.get("http://localhost:8000/api/used-services/" + api).then(function (resp) {
             $scope.usedServices = resp.data;
         });
     }
@@ -94,14 +107,12 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
             alert("Dịch vụ đã tồn tại!");
         } else {
             console.log($scope.selectRoom.bookingDetail);
+            const invoiceDetail = $scope.selectRoom.invoiceDetailId ? null : { id: $scope.selectRoom.invoiceDetailId }
+            const bookingDetail = $scope.selectRoom.bookingDetailId ? null : { id: $scope.selectRoom.bookingDetailId }
             $http.post("http://localhost:8000/api/used-services", {
                 serviceRoom: service,
-                bookingDetail: {
-                    id: $scope.selectRoom.bookingDetailId
-                },
-                invoiceDetail: {
-                    id: $scope.selectRoom.invoiceDetailId
-                },
+                bookingDetail: bookingDetail,
+                invoiceDetail: invoiceDetail,
                 quantity: 1
             }).then(function (resp) {
                 alert("Thêm dịch vụ thành công!");
@@ -144,6 +155,7 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
     }
 
     $scope.modalCancelRoom = function (action, room) {
+        $scope.modalInfoRoom('hide', room);
         $scope.selectRoom = room;
         $scope.hotel.note = "";
         $('#modal-cancel-room').modal(action);

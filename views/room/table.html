@@ -10,9 +10,9 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="mb-4">List Room</h4>
-                    <!--Search room-->
                     <div class="row mb-2">
                         <div class="col-sm-4">
+
                         </div>
                         
                         <div class="col-sm-8">
@@ -37,7 +37,7 @@
                         <tbody>
                             <tr ng-repeat = "room in rooms">
                                 <td>{{room.code}}</td>
-                                <td>{{room.price}}</td>
+                                <td>{{room.price | currency: '' : 0}} đ</td>
                                 <td>{{room.roomType.name}}</td>
                                 <td>{{room.floor.name}}</td>
                                 <td>
@@ -88,8 +88,11 @@
                                                                         <td>{{room.area}} M<sup>2</sup></td>
                                                                         <td>{{room.maxAdultAdd}}</td>
                                                                         <td>{{room.maxChildAdd}}</td>
-                                                                        <td>{{room.isSmoking}}</td>
+                                                                        <td>
+                                                                            <span>{{room.isSmoking ? 'Có' : 'Không'}}</span>
+                                                                        </td>
                                                                         <td>{{room.description}}</td>
+                                                                        <td>{{room.code}}</td>
                                                                     </tr>
                                                                 </tbody>
                                                             </table>

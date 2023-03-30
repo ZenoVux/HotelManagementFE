@@ -2,54 +2,64 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
+                <h5 class="card-header bg-transparent border-bottom text-uppercase">
+                    <i class="bx bxs-circle text-danger"></i>
+                    <i class="bx bxs-circle text-warning"></i>
+                    <i class="bx bxs-circle text-success"></i>
+                </h5>
                 <div class="card-body">
-                    <h5 class="mb-2">Thông tin khách hàng</h5>
-                    <table class="table mb-0 table-bordered">
-                        <tbody>
-                            <tr>
-                                <th scope="row" style="width: 300px;">Họ và tên</th>
-                                <td>{{invoiceDetail.invoice.booking.customer.fullName}}</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">CCCD/CMND</th>
-                                <td>{{invoiceDetail.invoice.booking.customer.peopleId}}</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Email</th>
-                                <td>{{invoiceDetail.invoice.booking.customer.email}}</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">SĐT</th>
-                                <td>{{invoiceDetail.invoice.booking.customer.phoneNumber}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div class="mt-4">
-                        <h5 class="mb-2">Thông tin phòng</h5>
-                        <table class="table mb-0 table-bordered">
-                            <tbody>
-                                <tr>
-                                    <th scope="row" style="width: 300px;">Loại phòng</th>
-                                    <td>{{invoiceDetail.room.roomType.name}}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Giá phòng</th>
-                                    <td>{{invoiceDetail.room.price | currency: '' : 0}}₫</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Ngày nhận</th>
-                                    <td>{{invoiceDetail.invoice.booking.checkinExpected | date:'dd/MM/yyyy'}}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Ngày trả</th>
-                                    <td>{{invoiceDetail.invoice.booking.checkoutExpected | date:'dd/MM/yyyy'}}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="row">
+                        <div class="col-6">
+                            <h5 class="mb-2">Khách hàng</h5>
+                            <table class="table mb-0 table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th scope="row" style="width: 300px;">Họ và tên</th>
+                                        <td>{{invoiceDetail.invoice.booking.customer.fullName}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">CCCD/CMND</th>
+                                        <td>{{invoiceDetail.invoice.booking.customer.peopleId}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Email</th>
+                                        <td>{{invoiceDetail.invoice.booking.customer.email}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">SĐT</th>
+                                        <td>{{invoiceDetail.invoice.booking.customer.phoneNumber}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-6">
+                            <h5 class="mb-2">Phòng {{invoiceDetail.room.code}}</h5>
+                            <table class="table mb-0 table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th scope="row" style="width: 300px;">Loại phòng</th>
+                                        <td>{{invoiceDetail.room.roomType.name}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Giá phòng</th>
+                                        <td>{{invoiceDetail.room.price | currency: '' : 0}}₫</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Ngày nhận</th>
+                                        <td>{{invoiceDetail.checkinExpected | date:'dd/MM/yyyy'}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Ngày trả</th>
+                                        <td>{{invoiceDetail.checkoutExpected | date:'dd/MM/yyyy'}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
                 <!-- end card body -->
                 <div class="card-body border-top">
+                    <h5 class="fw-semibold flex-grow-1">Dịch vụ</h5>
                     <div class="table-responsive">
                         <table class="table align-middle table-nowrap">
                             <thead>
@@ -69,7 +79,7 @@
                                     </th>
                                     <td>{{item.serviceRoom.name}}</td>
                                     <td>{{item.serviceRoom.serviceType.name}}</td>
-                                    <td class="text-end">{{item.serviceRoom.price | currency: '' : 0}}₫</td>
+                                    <td class="text-end">{{item.servicePrice | currency: '' : 0}}₫</td>
                                     <td class="text-end">{{item.quantity}}</td>
                                     <td class="text-end">{{item.serviceRoom.price * item.quantity | currency: '' : 0}}₫</td>
                                 </tr>
@@ -85,8 +95,16 @@
                                     <td class="border-0 text-end">{{totalRoom() | currency: '' : 0}}₫</td>
                                 </tr>
                                 <tr>
+                                    <td colspan="5" class="border-0 text-end">Nhận phòng sớm</td>
+                                    <td class="border-0 text-end">0₫</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" class="border-0 text-end">Trả phòng muộn</td>
+                                    <td class="border-0 text-end">0₫</td>
+                                </tr>
+                                <tr>
                                     <td colspan="5" class="border-0 text-end">
-                                        <strong>Tổng tiền</strong></td>
+                                        <strong>Tổng tiền phòng</strong></td>
                                     <td class="border-0 text-end"><h4 class="m-0">{{total() | currency: '' : 0}}₫</h4></td>
                                 </tr>
                             </tbody>

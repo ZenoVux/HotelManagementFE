@@ -30,14 +30,14 @@ app.controller("checkoutCtrl", function ($scope, $routeParams, $location, $http)
         if (!$scope.usedServices) {
             return 0;
         }
-        return $scope.usedServices.reduce((total, usedService) => total + (usedService.serviceRoom.price * usedService.quantity), 0);
+        return $scope.usedServices.reduce((total, usedService) => total + (usedService.servicePrice * usedService.quantity), 0);
     }
 
     $scope.getDate = function () {
         if (!$scope.invoiceDetail) {
             return 0;
         }
-        const checkout = new Date($scope.invoiceDetail.invoice.booking.checkoutExpected);
+        const checkout = new Date();
         const checkin = new Date($scope.invoiceDetail.invoice.booking.checkinExpected);
         return checkout.getDate() - checkin.getDate();
     }
@@ -46,7 +46,7 @@ app.controller("checkoutCtrl", function ($scope, $routeParams, $location, $http)
         if (!$scope.invoiceDetail) {
             return 0;
         }
-        return $scope.invoiceDetail.room.price * $scope.getDate();
+        return $scope.invoiceDetail.roomPrice * $scope.getDate();
     }
 
     $scope.total = function () {
@@ -60,10 +60,12 @@ app.controller("checkoutCtrl", function ($scope, $routeParams, $location, $http)
         if (!confirm("Bạn muốn trả phòng " + $routeParams.roomCode +  "?")) {
             return;
         }
-        $http.post("http://localhost:8000/api/hotel/checkout", $routeParams.roomCode).then(function (resp) {
-            const invoice = resp.data;
+        $http.post("http://localhost:8000/api/hotel/checkout", {
+            code: $routeParams.roomCode
+        }).then(function (resp) {
+            const invoiceDetail = resp.data;
             alert("Trả phòng thành công!");
-            $location.path("/invoices/" + invoice.code);
+            $location.path("/invoices/" + invoiceDetail.invoice.code);
         }, function () {
             alert("Trả phòng thất bại!");
         });

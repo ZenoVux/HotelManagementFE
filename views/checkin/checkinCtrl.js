@@ -6,11 +6,10 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
     $scope.people = {
         gender: false
     };
+    $scope.isCustomer = false;
 
     $scope.init = async function () {
         await $scope.loadBookingDetail();
-        await $scope.loadhostedAts();
-        await $scope.loadUsedServices();
     }
 
     $scope.loadBookingDetail = async function () {
@@ -22,24 +21,8 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
         });
     }
 
-    $scope.loadhostedAts = async function () {
-        await $http.get("http://localhost:8000/api/hosted-ats/booking-detail/" + $scope.bookingDetail.id).then(function (resp) {
-            $scope.hostedAts = resp.data;
-        }, function () {
-            console.log("Có lỗi xảy ra vui lòng thử lại!");
-        });
-    }
-
-    $scope.loadUsedServices = async function () {
-        await $http.get("http://localhost:8000/api/used-services/booking-detail-code/" + $scope.bookingDetail.code).then(function (resp) {
-            $scope.usedServices = resp.data;
-        }, function () {
-            console.log("Có lỗi xảy ra vui lòng thử lại!");
-        });
-    }
-
     $scope.modalPeopleRoom = function (action) {
-        if (action == "hide") {
+        if (action == "show") {
             $scope.people = {
                 gender: false
             };
@@ -48,19 +31,20 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
     }
 
     $scope.searchCustomer = function () {
-        $http.get("http://localhost:8000/api/customers/search-by-people-id/" + $scope.people.peopleId)
-        .then(function (resp) {
+        $http.get("http://localhost:8000/api/customers/search-by-people-id/" + $scope.people.peopleId).then(function (resp) {
             $scope.people = resp.data;
             $scope.people.dateOfBirth = new Date($scope.people.dateOfBirth);
+            $scope.isCustomer = true;
         }, function () {
             alert("Khách hàng không tồn tại!");
             $scope.people = {
                 gender: false
             };
+            $scope.isCustomer = false;
         });
     }
 
-    $scope.addPeople = async function () {
+    $scope.addPeople = async function (customerForm) {
         const numAdults = $scope.bookingDetail.numAdults;
         const numChildren = $scope.bookingDetail.numChildren;
         const numPeople = $scope.hostedAts.length + 1;
@@ -68,41 +52,67 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
             alert("max people");
             return;
         }
-        if (!$scope.people.id) {
-            await $http.post("http://localhost:8000/api/customers", $scope.people).then(function (resp) {
-                $scope.people = resp.data;
-            }, function () {
-                alert("Thêm khách hàng thất bại!");
+        if ($scope.isCustomer) {
+            const customer = $scope.hostedAts.find(item => item.customer.id == $scope.people.id);
+            if (customer) {
+                alert("Khách hàng đã tồn tại!");
+                $scope.people = {
+                    gender: false
+                };
+                customerForm.$setPristine();
+                customerForm.$setUntouched();
+                return;
+            }
+            $scope.hostedAts.push({
+                customer: $scope.people
             });
-        }
-        
-        $http.post("http://localhost:8000/api/hosted-ats", {
-            bookingDetail: {
-                id: $scope.bookingDetail.id
-            },
-            checkin: new Date(),
-            customer: $scope.people
-        }).then(function (resp) {
-            alert("Thêm khách hàng thành công!");
-            $scope.hostedAts.push(resp.data);
             $scope.people = {
                 gender: false
             };
+            $scope.isCustomer = false;
+            customerForm.$setPristine();
+            customerForm.$setUntouched();
             $('#modal-people-room').modal('hide');
-        }, function () {
-            alert("Thêm khách hàng thất bại!");
-        });
-    }
-
-    $scope.addHostedAt = function (customer) {
-        $scope.people = customer;
-        $scope.addPeople();
+            return;
+        }
+        if (customerForm.$valid) {
+            await $http.post("http://localhost:8000/api/customers", $scope.people).then(function (resp) {
+                $scope.people = resp.data;
+                const hostedAt = {
+                    customer: $scope.people
+                }
+                $scope.hostedAts.push(hostedAt);
+                $scope.people = {
+                    gender: false
+                };
+                customerForm.$setPristine();
+                customerForm.$setUntouched();
+                $('#modal-people-room').modal('hide');
+            }, function () {
+                alert("Thêm khách hàng thất bại!");
+            });
+        } else {
+            alert("Vui lòng nhập đầy đủ thông tin!")
+        }
     }
 
     $scope.modalServiceRoom = async function (action) {
         if (action == 'show') {
             await $http.get("http://localhost:8000/api/services").then(function (resp) {
                 $scope.serviceRooms = resp.data;
+                $(document).ready(function () {
+                    $('#datatable-service-room').DataTable({
+                        language: {
+                            url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
+                        },
+                        columnDefs: [
+                            {
+                                targets: 4,
+                                orderable: false
+                            }
+                        ]
+                    });
+                });
             });
         } else {
             $scope.serviceRooms = [];
@@ -115,41 +125,30 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
         if (usedService) {
             alert("Dịch vụ đã tồn tại!");
         } else {
-            $http.post("http://localhost:8000/api/used-services", {
+            usedService = {
                 serviceRoom: service,
                 bookingDetail: $scope.bookingDetail,
                 quantity: 1
-            }).then(function (resp) {
-                alert("Thêm dịch vụ thành công!");
-                $scope.usedServices.push(resp.data);
-            });
+            }
+            $scope.usedServices.push(usedService);
+            alert("Thêm dịch vụ thành công!");
         }
-    }
-
-    $scope.updateServiceRoom = function (usedService) {
-        $http.put("http://localhost:8000/api/used-services", usedService).then(function (resp) {
-            alert("Cập nhật dịch vụ thành công!");
-        });
     }
 
     $scope.removeServiceRoom = function (service) {
         if (!confirm("Bạn muốn loại bỏ dịch vụ này khỏi phòng?")) {
             return;
         }
-        $http.delete("http://localhost:8000/api/used-services/" + service.id).then(function () {
-            alert("Loại bỏ dịch vụ thành công!");
-            $scope.loadUsedServices();
-        });
+        const index = $scope.usedServices.findIndex(item => item.serviceRoom.id == service.id);
+        $scope.usedServices.splice(index, 1);
     }
 
-    $scope.removeHostedAt = function (hostedAt) {
-        if (!confirm("Bạn muốn loại bỏ khách hàng này khỏi phòng?")) {
+    $scope.removeHostedAt = function (customer) {
+        if (!confirm("Bạn muốn loại bỏ khách hàng này?")) {
             return;
         }
-        $http.delete("http://localhost:8000/api/hosted-ats/" + hostedAt.id).then(function () {
-            alert("Loại bỏ khách hàng thành công!");
-            $scope.loadhostedAts();
-        });
+        const index = $scope.hostedAts.findIndex(item => item.customer.id == customer.id);
+        $scope.hostedAts.splice(index, 1);
     }
 
     $scope.modalListCustomer = async function (action) {
@@ -172,7 +171,27 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
         if (!confirm("Bạn muốn nhận phòng " + $routeParams.roomCode +  "?")) {
             return;
         }
-        $http.get("http://localhost:8000/api/hotel/checkin/" + $routeParams.roomCode).then(function (resp) {
+        console.log("checkin", {
+            code: $routeParams.roomCode,
+            hostedAts: $scope.hostedAts,
+            usedServices: $scope.usedServices
+        });
+        const customers = $scope.hostedAts.map(hostedAt => {
+            return {
+                customerId: hostedAt.customer.id
+            }
+        });
+        const services = $scope.usedServices.map(usedService => {
+            return {
+                serviceId: usedService.serviceRoom.id,
+                quantity: usedService.quantity
+            }
+        })
+        $http.post("http://localhost:8000/api/hotel/checkin", {
+            code: $routeParams.roomCode,
+            customers: customers,
+            services: services
+        }).then(function (resp) {
             alert("Nhận phòng thành công!");
             $location.path("/hotel-room");
         });

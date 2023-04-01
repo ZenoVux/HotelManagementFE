@@ -21,7 +21,11 @@
                                 <td>{{item.booking.customer.fullName}}</td>
                                 <td>{{item.account.fullName}}</td>
                                 <td>{{item.total | currency: '' : 0}}₫</td>
-                                <td><span class="badge rounded-pill " ng-class="item.status ? 'bg-success' : 'bg-primary'">{{item.status == 0 ? 'Đã huỷ' : (item.status == 1 ? 'Đang chờ' : 'Chưa thanh toán')}}</span></td>
+                                <td>
+                                    <span class="badge rounded-pill " ng-class="item.status == 1 ? 'bg-secondary' : (item.status == 2 ? 'bg-primary' : 'bg-success')">
+                                        {{item.status == 1 ? 'Đang chờ' : (item.status == 2 ? 'Chưa thanh toán' :  (item.status == 3 ? 'Chờ thanh toán' : (item.status == 4 ? 'Hoàn thành' : 'Đã huỷ')))}}
+                                    </span>
+                                </td>
                                 <td>{{item.createdDate | date:'dd/MM/yyyy'}}</td>
                                 <td>
                                     <a href="/#!/invoices/{{item.code}}" class="btn btn-outline-secondary btn-sm edit" title="View">

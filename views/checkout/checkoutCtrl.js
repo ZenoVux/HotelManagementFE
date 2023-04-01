@@ -37,9 +37,14 @@ app.controller("checkoutCtrl", function ($scope, $routeParams, $location, $http)
         if (!$scope.invoiceDetail) {
             return 0;
         }
-        const checkout = new Date();
-        const checkin = new Date($scope.invoiceDetail.invoice.booking.checkinExpected);
-        return checkout.getDate() - checkin.getDate();
+        const now = new Date();
+        now.setHours(0, 0, 0, 0);
+        const checkinExpected = new Date($scope.invoiceDetail.checkinExpected);
+        const checkoutExpected = new Date($scope.invoiceDetail.checkoutExpected);
+        if (now > checkoutExpected) {
+            return (checkoutExpected.getTime() - checkinExpected.getTime())  / (1000 * 3600 * 24);
+        }
+        return (now.getTime() - checkinExpected.getTime())  / (1000 * 3600 * 24);
     }
 
     $scope.totalRoom = function () {

@@ -2,14 +2,9 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <h5 class="card-header bg-transparent border-bottom text-uppercase">
-                    <i class="bx bxs-circle text-danger"></i>
-                    <i class="bx bxs-circle text-warning"></i>
-                    <i class="bx bxs-circle text-success"></i>
-                </h5>
                 <div class="card-body">
                     <h5 class="fw-semibold">Hoá đơn #{{invoice.code}}</h5>
-                    <table class="table mb-0 table-bordered">
+                    <table class="table mb-3 table-bordered">
                         <tbody>
                             <tr>
                                 <th scope="row" style="width: 300px;">Họ và tên</th>
@@ -27,106 +22,146 @@
                                 <th scope="row">SĐT</th>
                                 <td>{{invoice.booking.customer.phoneNumber}}</td>
                             </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div ng-repeat="invoiceDetail in invoiceDetails" class="card-body border-top">
-                    <h5 class="fw-semibold">Phòng {{invoiceDetail.room.code}}</h5>
-                    <table class="table mb-3 table-bordered">
-                        <tbody>
                             <tr>
-                                <th scope="row" style="width: 300px;">Loại phòng</th>
-                                <td>{{invoiceDetail.room.roomType.name}}</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Giá phòng</th>
-                                <td>{{invoiceDetail.room.price | currency: '' : 0}}₫</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Ngày nhận</th>
-                                <td>{{invoiceDetail.checkin | date:'dd/MM/yyyy'}}</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Ngày trả</th>
-                                <td>{{invoiceDetail.checkout | date:'dd/MM/yyyy'}}</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Trạng thái</th>
-                                <td>{{invoiceDetail.status == 0 ? 'Huỷ' : (invoiceDetail.status == 1 ? 'Đang sử dụng' :
-                                    (invoiceDetail.status == 2 ? 'Chờ thanh toán' : ''))}}</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Ghi chú</th>
-                                <td>{{invoiceDetail.note}}</td>
+                                <th scope="row">Địa chỉ</th>
+                                <td>{{invoice.booking.customer.address}}</td>
                             </tr>
                         </tbody>
                     </table>
-                    <h5 class="fw-semibold">Dịch vụ</h5>
+                    <div ng-repeat="invoiceDetail in invoiceDetails">
+                        <table class="table mb-3 table-bordered">
+                            <tbody>
+                                <tr>
+                                    <th colspan="2" class="fw-semibold text-center">PHÒNG {{invoiceDetail.room.code}}</th>
+                                </tr>
+                                <tr>
+                                    <th scope="row" style="width: 300px;">Loại phòng</th>
+                                    <td>{{invoiceDetail.room.roomType.name}}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Giá phòng</th>
+                                    <td>{{invoiceDetail.room.price | currency: '' : 0}}₫</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Ngày thuê</th>
+                                    <td>{{invoiceDetail.checkinExpected | date:'dd/MM/yyyy'}} - {{invoiceDetail.checkoutExpected | date:'dd/MM/yyyy'}}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Ngày đến/đi</th>
+                                    <td>{{invoiceDetail.checkin | date:'hh:mm dd/MM/yyyy'}} - {{invoiceDetail.checkout | date:'hh:mm dd/MM/yyyy'}}</td>
+                                </tr>
+                                <tr class="d-print-none">
+                                    <th scope="row">Trạng thái</th>
+                                    <td>{{invoiceDetail.status == 0 ? 'Huỷ' : (invoiceDetail.status == 1 ? 'Đang sử dụng' :
+                                        (invoiceDetail.status == 2 ? 'Hoàn thành' : ''))}}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Ghi chú</th>
+                                    <td>{{invoiceDetail.note}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="table-responsive">
+                            <table class="table align-middle table-nowrap">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Tên dich vụ</th>
+                                        <th scope="col">Loại</th>
+                                        <th scope="col" class="text-end">Giá</th>
+                                        <th scope="col" class="text-end" style="width: 250px;">Số lượng</th>
+                                        <th scope="col" class="text-end" style="width: 250px;">Thành tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody ng-init="loadUsedServices(invoiceDetail)">
+                                    <tr ng-repeat="usedService in invoiceDetail.usedServices">
+                                        <th scope="row">
+                                            {{usedService.serviceRoom.name}}
+                                        </th>
+                                        <td>{{usedService.serviceRoom.serviceType.name}}</td>
+                                        <td class="text-end">{{usedService.serviceRoom.price | currency: '' : 0}}₫</td>
+                                        <td class="text-end">{{usedService.quantity}}</td>
+                                        <td class="text-end">{{usedService.serviceRoom.price * usedService.quantity |
+                                            currency: '' : 0}}₫</td>
+                                    </tr>
+                                    <tr ng-show="invoiceDetail.usedServices.length == 0">
+                                        <td colspan="5" class="text-center">Dịch vụ trống</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4" class="border-0 text-end">Tiền dịch vụ</td>
+                                        <td class="border-0 text-end">{{(invoiceDetail.status == 1 ?
+                                            getTotalUsedService(invoiceDetail.usedServices) : invoiceDetail.totalServiceFee) |
+                                            currency: '' : 0}}₫</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4" class="border-0 text-end">Tiền phòng</td>
+                                        <td class="border-0 text-end">{{(invoiceDetail.status == 1 ?
+                                            getTotalRoom(invoiceDetail) : invoiceDetail.totalRoomFee) | currency: '' : 0}}₫
+                                        </td>
+                                    </tr>
+                                    <!-- <tr ng-show="invoiceDetail.status == 2">
+                                        <td colspan="4" class="border-0 text-end">Nhận phòng sớm</td>
+                                        <td class="border-0 text-end">{{invoiceDetail.earlyCheckinFee | currency: '' : 0}}₫
+                                        </td>
+                                    </tr>
+                                    <tr ng-show="invoiceDetail.status == 2">
+                                        <td colspan="4" class="border-0 text-end">Trả phòng muộn</td>
+                                        <td class="border-0 text-end">{{invoiceDetail.lateCheckoutFee | currency: '' : 0}}₫
+                                        </td>
+                                    </tr> -->
+                                    <tr>
+                                        <td colspan="4" class="border-0 text-end">
+                                            Tổng tiền phòng
+                                        </td>
+                                        <td class="border-0 text-end">
+                                            {{(invoiceDetail.status == 1 ? getTotalInvoiceDetail(invoiceDetail,
+                                                invoiceDetail.usedServices) : invoiceDetail.total) | currency: '' : 0}}₫
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                     <div class="table-responsive">
-                        <table class="table align-middle table-nowrap">
-                            <thead>
+                        <table class="table table-bordered">
+                            <tbody>
                                 <tr>
-                                    <th scope="col">Tên dich vụ</th>
-                                    <th scope="col">Loại</th>
-                                    <th scope="col" class="text-end">Giá</th>
-                                    <th scope="col" class="text-end" style="width: 250px;">Số lượng</th>
-                                    <th scope="col" class="text-end" style="width: 250px;">Thành tiền</th>
-                                </tr>
-                            </thead>
-                            <tbody ng-init="loadUsedServices(invoiceDetail)">
-                                <tr ng-repeat="usedService in invoiceDetail.usedServices">
-                                    <th scope="row">
-                                        {{usedService.serviceRoom.name}}
-                                    </th>
-                                    <td>{{usedService.serviceRoom.serviceType.name}}</td>
-                                    <td class="text-end">{{usedService.serviceRoom.price | currency: '' : 0}}₫</td>
-                                    <td class="text-end">{{usedService.quantity}}</td>
-                                    <td class="text-end">{{usedService.serviceRoom.price * usedService.quantity |
-                                        currency: '' : 0}}₫</td>
-                                </tr>
-                                <tr ng-show="invoiceDetail.usedServices.length == 0">
-                                    <td colspan="5" class="text-center">Dịch vụ trống</td>
+                                    <th colspan="2" class="fw-semibold text-center">THANH TOÁN</th>
                                 </tr>
                                 <tr>
-                                    <td colspan="4" class="border-0 text-end">Tiền dịch vụ</td>
-                                    <td class="border-0 text-end">{{(invoiceDetail.status == 1 ?
-                                        totalUsedService(invoiceDetail.usedServices) : invoiceDetail.totalServiceFee) |
-                                        currency: '' : 0}}₫</td>
+                                    <th>Tổng tiền hoá đơn</th>
+                                    <td class="border-0 text-end">{{invoice.total | currency: '' : 0}}₫</td>
                                 </tr>
-                                <tr>
-                                    <td colspan="4" class="border-0 text-end">Tiền phòng</td>
-                                    <td class="border-0 text-end">{{(invoiceDetail.status == 1 ?
-                                        totalRoom(invoiceDetail) : invoiceDetail.totalRoomFee) | currency: '' : 0}}₫
-                                    </td>
+                                <tr ng-show="invoice.status == 3 || invoice.status == 4">
+                                    <th>Giảm giá</th>
+                                    <td class="border-0 text-end">{{invoice.discountMoney | currency: '' : 0}}₫</td>
                                 </tr>
-                                <tr ng-show="invoiceDetail.status == 2">
-                                    <td colspan="4" class="border-0 text-end">Nhận phòng sớm</td>
-                                    <td class="border-0 text-end">{{invoiceDetail.earlyCheckinFee | currency: '' : 0}}₫
-                                    </td>
-                                </tr>
-                                <tr ng-show="invoiceDetail.status == 2">
-                                    <td colspan="4" class="border-0 text-end">Trả phòng muộn</td>
-                                    <td class="border-0 text-end">{{invoiceDetail.lateCheckoutFee | currency: '' : 0}}₫
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="4" class="border-0 text-end">
-                                        <strong>Tổng tiền phòng</strong>
-                                    </td>
+                                <tr ng-show="invoice.status == 3 || invoice.status == 4">
+                                    <th>Phương thức thanh toán</th>
                                     <td class="border-0 text-end">
-                                        <h4 class="m-0">{{(invoiceDetail.status == 1 ? totalInvoiceDetail(invoiceDetail,
-                                            invoiceDetail.usedServices) : invoiceDetail.total) | currency: '' : 0}}₫
-                                        </h4>
+                                        {{invoice.paymentMethod.name}}
+                                    </td>
+                                </tr>
+                                <tr ng-show="invoice.status == 4">
+                                    <th>Ngày thanh toán</th>
+                                    <td class="border-0 text-end">
+                                        {{invoice.paidDate | date:'hh:mm dd/MM/yyyy'}}
+                                    </td>
+                                </tr>
+                                <tr ng-show="invoice.status == 3 || invoice.status == 4">
+                                    <th>Tổng tiền thanh toán</th>
+                                    <td class="border-0 text-end">
+                                        <h4 class="m-0">{{invoice.totalPayment | currency: '' : 0}}₫</h4>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
-                <div class="card-body border-top">
-                    <div class="d-flex flex-row-reverse ">
-                        <button ng-show="isSplitInvoice()" class="btn btn-primary waves-effect waves-light"><i
-                                class="bx bx-money"></i> Tách hoá đơn</button>
+                <div class="card-body border-top d-print-none">
+                    <div class="float-end">
+                        <a href="javascript:window.print()" class="btn btn-primary waves-effect waves-light me-1"><i class="fa fa-print"></i></a>
+                        <!-- <button ng-show="isSplitInvoice()" class="btn btn-primary waves-effect waves-light me-1"><i
+                                class="bx bx-money"></i> Tách hoá đơn</button> -->
                         <button ng-show="isPaymentInvoice()" ng-click="modalPayment('show')"
                             class="btn btn-success waves-effect waves-light"><i class="bx bx-money"></i> Thanh
                             toán</button>
@@ -144,38 +179,54 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="promotion" class="form-label">Khuyến mại</label>
+                        <select ng-options="promotion as promotion.description for promotion in promotions"
+                            ng-model="payment.promotion" class="form-select" id="promotion">
+                            <option ng-value="null"></option>
+                        </select>
+                    </div>
                     <table class="table table-bordered">
                         <tbody>
                             <tr>
                                 <th scope="row" style="width: 250px;">Tổng tiền hoá đơn</th>
-                                <td>{{invoice.total | currency: '' : 0}}₫</td>
+                                <td>{{getTotalInvoice() | currency: '' : 0}}₫</td>
                             </tr>
                             <tr>
-                                <th scope="row">Khuyến mãi</th>
-                                <td>
-                                    <select ng-options="promotion as promotion.description for promotion in promotions"
-                                        ng-model="invoice.promotion" ng-change="totalInvoice()" class="form-select">
-                                    </select>
-                                </td>
+                                <th scope="row">Giảm giá</th>
+                                <td>{{getDiscount() | currency: '' : 0}}₫</td>
                             </tr>
                             <tr>
                                 <th scope="row">Tổng tiền thanh toán</th>
-                                <td>{{total | currency: '' : 0}}₫</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Phương thức thanh toán</th>
-                                <td>
-                                    <select ng-model="invoice.paymentMethod" class="form-select">
-                                        <option ng-repeat="paymentMethod in paymentMethods"
-                                            ng-value="paymentMethod.code">{{paymentMethod.name}}</option>
-                                    </select>
-                                </td>
+                                <td>{{getTotalPayment() | currency: '' : 0}}₫</td>
                             </tr>
                         </tbody>
                     </table>
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="mb-3">
+                                <label for="paymentMethod" class="form-label">Phương thức thanh toán</label>
+                                <select ng-options="paymentMethod as paymentMethod.name for paymentMethod in paymentMethods"
+                                    ng-model="payment.paymentMethod" class="form-select" id="paymentMethod">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="mb-3">
+                                <label for="paymentMethod" class="form-label">Tiền khách đưa</label>
+                                <input ng-model="payment.money" class="form-control" type="number" id="">
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="mb-3">
+                                <label for="paymentMethod" class="form-label">Tiền trả lại</label>
+                                <input ng-value="(payment.money - getTotalPayment() | currency: '' : 0) + '₫'" class="form-control" type="text" id="" readonly>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-success"><i class="bx bx-money"></i> Thanh toán</button>
+                    <button ng-click="handlerPayment()" class="btn btn-success"><i class="bx bx-money"></i> Thanh toán</button>
                 </div>
             </div>
         </div>

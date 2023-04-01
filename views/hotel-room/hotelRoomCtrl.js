@@ -32,13 +32,10 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
     $scope.statusCounts = [];
     $scope.hotelRooms = [];
     $scope.selectRoom = {};
-    $scope.hotel = {
-        note: "",
-        extendDate: new Date()
-    };
     $scope.peoples = [];
     $scope.loading = false;
     $scope.invoiceDetail = {};
+    $scope.bookingDetail = {};
     $scope.services = [];
     $scope.usedServices = [];
     $scope.hostedAts = [];
@@ -46,7 +43,7 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
     $scope.room = {};
     $scope.rooms = [];
     $scope.extendCheckoutRoom = {};
-    // $scope.cancelRoom = {};
+    $scope.cancelRoom = {};
     $scope.changeRoom = {};
 
     $scope.init = async function () {
@@ -94,6 +91,12 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
         });
     }
 
+    $scope.loadBookingDetail = async function () {
+        await $http.get("http://localhost:8000/api/booking-details/" + $scope.selectRoom.bookingDetailId).then(function (resp) {
+            $scope.bookingDetail = resp.data;
+        });
+    }
+
     $scope.loadUsedServices = async function () {
         await $http.get("http://localhost:8000/api/used-services/invoice-detail/" + $scope.selectRoom.invoiceDetailId).then(function (resp) {
             $scope.usedServices = resp.data;
@@ -103,12 +106,6 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
     $scope.loadHostedAts = async function () {
         await $http.get("http://localhost:8000/api/hosted-ats/invoice-detail/" + $scope.selectRoom.invoiceDetailId).then(function (resp) {
             $scope.hostedAts = resp.data;
-        });
-    }
-
-    $scope.loadRoomTypes = async function () {
-        await $http.get("http://localhost:8000/api/room-types").then(function (resp) {
-            $scope.roomTypes = resp.data;
         });
     }
 
@@ -210,7 +207,37 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
         if (action == 'show') {
             await $scope.loadServices();
             await $scope.loadUsedServices();
+            $(document).ready(function () {
+                tableServiceRoom = $('#datatable-service-room').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
+                    },
+                    columnDefs: [
+                        {
+                            targets: 4,
+                            orderable: false
+                        }
+                    ]
+                });
+                tableUsedService = $('#datatable-used-service').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
+                    },
+                    columnDefs: [
+                        {
+                            targets: 6,
+                            orderable: false
+                        }
+                    ]
+                });
+            });
         } else {
+            $(document).ready(function () {
+                tableServiceRoom.clear();
+                tableServiceRoom.destroy();
+                tableUsedService.clear();
+                tableUsedService.destroy();
+            });
             $scope.services = [];
             $scope.usedServices = [];
         }
@@ -220,7 +247,11 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
     $scope.modalCancelRoom = async function (action, room) {
         $scope.selectRoom = room;
         if (action == 'show') {
-            await $scope.loadInvoiceDetail();
+            if (room.status == 2 || room.status == 5) {
+                await $scope.loadInvoiceDetail();
+            } else {
+                await $scope.loadBookingDetail();
+            }
         } else {
             $scope.invoiceDetail = {};
         }
@@ -245,14 +276,19 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
         $scope.selectRoom = room;
         if (action == 'show') {
             await $scope.loadInvoiceDetail();
-            // await $scope.loadRoomTypes();
             await $http.get("http://localhost:8000/api/rooms/unbooked?start-date=" + $scope.selectRoom.checkinExpected + "&end-date=" + $scope.selectRoom.checkoutExpected).then(resp => {
                 $scope.rooms = resp.data;
                 $(document).ready(function () {
                     tableChangeRoom = $('#datatable-change-room').DataTable({
                         language: {
                             url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
-                        }
+                        },
+                        columnDefs: [
+                            {
+                                targets: 4,
+                                orderable: false
+                            }
+                        ]
                     });
                 });
             }).catch(error => {
@@ -270,7 +306,7 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
         $('#modal-change-room').modal(action);
     }
 
-    $scope.extendDateRoom = async function () {
+    $scope.handlerExtendDateRoom = async function () {
         const checkout = new Date($scope.selectRoom.checkoutExpected);
         const newCheckout = new Date($scope.extendCheckoutRoom.extendDate);
         if (newCheckout <= checkout) {
@@ -294,7 +330,7 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
         extendDateForm.$setUntouched();
     }
 
-    $scope.cancelRoom = function () {
+    $scope.handlerCancelRoom = function () {
         if (!$scope.cancelRoom.note) {
             alert("Vui lòng nhập ghi chú!");
             return;
@@ -314,7 +350,7 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
         });
     }
 
-    $scope.readyRoom = function (room) {
+    $scope.handlerReadyRoom = function (room) {
         if (!confirm("Bạn muốn chuyển phòng " + room.code + " về trạng thái sẵn sàng?")) {
             return;
         }

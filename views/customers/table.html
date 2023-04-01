@@ -1,4 +1,20 @@
 <app-layout name="">
+
+    <div class="row mb-2">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4 text-center">
+            <div id="loading-spinner" ng-show="loading">
+                <i class="fa fa-spinner fa-spin" style="font-size: 30px"></i>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="text-sm-end">
+                <a class="btn btn-success btn-lg" ng-href="/#!/customers/types" role="button">
+                    Type</a>
+            </div>
+        </div>
+    </div>
+
     <div class="container-fluid">
 
         <div class="row">
@@ -76,6 +92,13 @@
                                     <tr>
                                         <td><strong>Id:</strong></td>
                                         <td>{{ selectedCustomer.peopleId }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Gender:</strong></td>
+                                        <td>
+                                            <span ng-if="selectedCustomer.gender">Male</span>
+                                            <span ng-if="!selectedCustomer.gender">Female</span>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td><strong>Dob:</strong></td>

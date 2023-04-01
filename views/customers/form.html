@@ -1,4 +1,20 @@
 <app-layout name="">
+
+    <div class="row mb-2">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4 text-center">
+            <div id="loading-spinner" ng-show="loading">
+                <i class="fa fa-spinner fa-spin" style="font-size: 30px"></i>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="text-sm-end">
+                <a class="btn btn-success btn-lg" ng-href="/#!/customers" role="button">
+                    <i class="fas fa-arrow-left"></i> Back</a>
+            </div>
+        </div>
+    </div>
+
     <div class="card">
         <div class="card-body">
             <h4 class="card-title">Edit customer</h4>
@@ -35,18 +51,39 @@
 
             <form ng-submit="updateCustomer()">
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="mb-3">
                             <label for="fullName" class="form-label">Full Name</label>
                             <input type="text" class="form-control" id="fullName" placeholder="Full Name"
                                 ng-model="customer.fullName" required>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="mb-3">
                             <label for="phoneNumber" class="form-label">Phone Number</label>
                             <input type="text" class="form-control" id="phoneNumber" placeholder="Phone Number"
                                 ng-model="customer.phoneNumber" required>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="gender" class="form-label">Giới tính</label>
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <input class="form-check-input" type="radio" name="gender" id="male"
+                                        ng-model="customer.gender" ng-value="true">
+                                    <label class="form-check-label" for="male">
+                                        Nam
+                                    </label>
+                                </div>
+                                <div class="col-md-2">
+                                    <input class="form-check-input" type="radio" name="gender" id="female"
+                                        ng-model="customer.gender" ng-value="false">
+                                    <label class="form-check-label" for="female">
+                                        Nữ
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -85,9 +122,11 @@
                     <div class="col-md-4">
                         <div class="mb-3">
                             <label for="dateOfBirth" class="form-label">Date of Birth</label>
-                            <input type="date" class="form-control" id="dateOfBirth" placeholder="Date of Birth"
-                                ng-model="customer.dateOfBirth" ng-value="customer.dateOfBirth | date:'yyyy-MM-dd'"
-                                ng-model-options="{timezone: 'UTC'}" required>
+                            <div class="input-daterange input-group" id="datepicker6" data-date-format="dd-mm-yyyy"
+                                data-date-autoclose="true" data-provide="datepicker" data-date-container='#datepicker6'>
+                                <input datepicker type="text" class="form-control" ng-model="customer.dateOfBirth"
+                                    name="dob" placeholder="Ngày sinh" style="text-align: left;" />
+                            </div>
                         </div>
                     </div>
 

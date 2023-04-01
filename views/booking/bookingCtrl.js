@@ -25,8 +25,19 @@ app.controller("listBookingCtrl", function ($scope, $http) {
             console.error('Error fetching data:', error);
             $scope.loading = false;
         });
+
+        $http.get("http://localhost:8000/api/customers/in-use").then(function (resp) {
+            $scope.customersInUse = resp.data;
+            $(document).ready(function () {
+                $('#customerTable').DataTable();
+            });
+        }).catch(function (error) {
+            console.error('Error fetching data:', error);
+        });
+
     }
     $scope.init();
+
 
     $scope.setFalseAllTable = function () {
         $scope.showBookingTable = false;
@@ -83,6 +94,10 @@ app.controller("listBookingCtrl", function ($scope, $http) {
 
     $scope.viewBooking = function (booking) {
         $scope.loading = true;
+        $scope.currentBooking = booking;
+        $scope.currentBooking.checkin = new Date(booking.checkin);
+        $scope.currentBooking.checkout = new Date(booking.checkout);
+        console.log(booking);
         $http.get("http://localhost:8000/api/bookings/" + booking.code).then(function (resp) {
             $scope.bookingInfo = resp.data;
             console.log($scope.bookingInfo);
@@ -99,6 +114,8 @@ app.controller("listBookingCtrl", function ($scope, $http) {
 app.controller("createBookingCtrl", function ($scope, $http) {
 
     $scope.booking = {};
+    $scope.booking.numAdults = 0;
+    $scope.booking.numChildren = 0;
     $scope.customer = {};
     $scope.loading = false;
     $scope.currentSection = 0;
@@ -136,14 +153,6 @@ app.controller("createBookingCtrl", function ($scope, $http) {
             $scope.roomTypes = resp.data;
         }).catch(function (error) {
             console.error('Error fetching data room type:', error);
-        });
-
-        //services
-        $http.get("http://localhost:8000/api/services").then(function (resp) {
-            $scope.services = resp.data;
-            console.log($scope.services);
-        }).catch(function (error) {
-            console.error('Error fetching data service:', error);
         });
 
         //paymentMethods
@@ -213,27 +222,31 @@ app.controller("createBookingCtrl", function ($scope, $http) {
 
     $scope.getBookings = function () {
 
-        console.log($scope.rooms);
-        console.log($scope.rooms.length);
-        console.log("Name: " + $scope.customer.fullName);
-        console.log("Gender: " + $scope.customer.gender);
-        console.log("dateOfBirth: " + $scope.customer.dateOfBirth);
-        console.log("peopleId: " + $scope.customer.peopleId);
-        console.log("address: " + $scope.customer.address);
-        console.log("placeOfBirth: " + $scope.customer.placeOfBirth);
-        console.log("phoneNumber: " + $scope.customer.phoneNumber);
-        console.log("email: " + $scope.customer.email);
-        // $http.post('http://localhost:8000/api/bookings', {
-        //     customer: $scope.customer,
-        //     rooms: rooms,
-        //     checkinExpected: $scope.booking.checkinDate,
-        //     checkoutExpected: $scope.booking.checkoutDate,
-        //     note: "note"
-        // }).then(function (response) {
-        //     console.log(response);
-        // }).catch(function (error) {
-        //     console.error('Error fetching data:', error);
-        // });
+        $scope.customer.dateOfBirth = new Date($scope.customer.dateOfBirth);
+
+        $scope.customer.gender == 1 ? $scope.customer.gender = true : $scope.customer.gender = false;
+
+        console.log($scope.customer.gender);
+
+        $http.post('http://localhost:8000/api/bookings', {
+            customer: $scope.customer,
+            rooms: $scope.rooms,
+            numChildren: $scope.booking.numChildren,
+            numAdults: $scope.booking.numAdults,
+            checkinExpected: $scope.booking.checkinDate,
+            checkoutExpected: $scope.booking.checkoutDate,
+            paymentCode: $scope.booking.payment,
+            note: $scope.booking.note,
+        }).then(function (response) {
+            if (response.status == 200) {
+                alert('Đặt phòng thành công!');
+            } else {
+                alert('Đặt phòng thất bại!');
+            }
+            console.log(response);
+        }).catch(function (error) {
+            console.error('Error fetching data:', error);
+        });
 
     }
 

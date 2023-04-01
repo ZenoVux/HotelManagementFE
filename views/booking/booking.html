@@ -232,8 +232,7 @@
                                                         data-provide="datepicker" data-date-container='#datepicker6'>
                                                         <input datepicker type="text" class="form-control"
                                                             ng-model="customer.dateOfBirth" name="dob"
-                                                            placeholder="Ngày sinh" readonly
-                                                            style="text-align: left;" />
+                                                            placeholder="Ngày sinh" style="text-align: left;" />
                                                     </div>
                                                 </div>
                                                 <div class="mb-3">
@@ -274,7 +273,7 @@
 
                             <!-- Section 3: Xác nhận -->
                             <section ng-show="currentSection == 2">
-                                <div class="row">
+                                <div class="row confirmed-div">
                                     <div class="col-lg-12">
                                         <div class="card">
                                             <div class="card-body">
@@ -360,13 +359,23 @@
                                                                     <strong>Thanh toán</strong>
                                                                 </td>
                                                                 <td class="border-0 text-end">
-                                                                    <select class="form-select" ng-model="payment">
+                                                                    <select class="form-select"
+                                                                        ng-model="booking.payment">
                                                                         <option value="">Chọn phương thức thanh toán
                                                                         </option>
                                                                         <option ng-repeat="method in paymentMethods"
                                                                             value="{{method.code}}">{{method.name}}
                                                                         </option>
                                                                     </select>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="3" class="border-0 text-end">
+                                                                    <strong>Ghi chú</strong>
+                                                                </td>
+                                                                <td class="border-0 text-end">
+                                                                    <textarea class="form-control" rows="3"
+                                                                        ng-model="booking.note"></textarea>
                                                                 </td>
                                                             </tr>
                                                             <tr style="color: red">

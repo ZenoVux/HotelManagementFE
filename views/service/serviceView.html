@@ -32,14 +32,14 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="formrow-username-input" class="form-label">Name</label>
-                                    <input ng-model="form.name" type="text" class="form-control"
+                                    <input required ng-model="form.name" type="text" class="form-control"
                                         id="formrow-username-input" placeholder="Enter Your  Service Name">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="formrow-password-input" class="form-label">Price</label>
-                                    <input ng-model="form.price" type="number" class="form-control"
+                                    <input required ng-model="form.price" type="number" class="form-control"
                                         id="formrow-password-input" placeholder="Enter Your Service Price">
                                 </div>
                             </div>
@@ -70,7 +70,7 @@
 
                         <div class="mb-3">
                             <label for="formrow-address-input">Description</label>
-                            <textarea ng-model="form.description" id="formrow-address-input" class="form-control"
+                            <textarea required ng-model="form.description" id="formrow-address-input" class="form-control"
                                 rows="3" placeholder="Enter Your Description"></textarea>
                         </div>
 

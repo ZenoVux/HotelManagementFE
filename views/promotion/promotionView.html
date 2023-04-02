@@ -9,14 +9,14 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="formrow-username-input" class="form-label">Name</label>
-                                <input ng-model="form.name" type="text" class="form-control" id="formrow-username-input"
+                                <input required ng-model="form.name" type="text" class="form-control" id="formrow-username-input"
                                     placeholder="Enter Your  Promotion Name">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="formrow-password-input" class="form-label">Percent %</label>
-                                <input type="number" class="form-control" ng-model="form.percent"
+                                <input required type="number" class="form-control" ng-model="form.percent"
                                     id="formrow-password-input" placeholder="Enter Your Promotion Percent">
                             </div>
                         </div>
@@ -27,7 +27,7 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="formrow-password-input" class="form-label">Max Discount</label>
-                                <input type="number" class="form-control" ng-model="form.maxDiscount"
+                                <input required type="number" class="form-control" ng-model="form.maxDiscount"
                                     id="formrow-password-input" placeholder="Enter Your Max Discount">
                             </div>
                         </div>
@@ -35,7 +35,7 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="formrow-password-input" class="form-label">Min Amount</label>
-                                <input type="number" class="form-control" ng-model="form.minAmount"
+                                <input required type="number" class="form-control" ng-model="form.minAmount"
                                     id="formrow-password-input" placeholder="Enter Your Max Discount">
                             </div>
                         </div>
@@ -44,7 +44,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <label for="formrow-address-input">Description</label>
-                            <textarea ng-model="form.description" id="formrow-address-input" class="form-control"
+                            <textarea required ng-model="form.description" id="formrow-address-input" class="form-control"
                                 rows="3" placeholder="Enter Your Description"></textarea>
                         </div>
                     </div>

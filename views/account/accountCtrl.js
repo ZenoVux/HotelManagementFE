@@ -1,4 +1,4 @@
-app.controller("accountCreateCtrl", function ($scope, $location, $http) {
+app.controller("accountCreateCtrl", function ($scope, $location, $http,$rootScope,$timeout) {
 
     $scope.account = {
         username: null,
@@ -13,17 +13,19 @@ app.controller("accountCreateCtrl", function ($scope, $location, $http) {
     $scope.create = function () {
         // alert("Update success");
         if ($scope.account.password) {
-            alert("Error");
+            $rootScope.$emit('showErrorbar', 'ERROR!');
             return;
         }
         if ($scope.account.password != $scope.account.confirmpassword) {
-            alert("Error");
+            $rootScope.$emit('showErrorbar', 'ERROR!');
             return;
         }
         $http.post("http://localhost:8000/api/accounts", $scope.account).then(function (resp) {
             $scope.account = resp.data;
-            alert("Create success");
-            $location.path("/account");
+            $rootScope.$emit('showSnackbar', 'Create success');
+            $timeout(function() {
+                $location.path("/accounts");
+              }, 3000);
         });
     };
 });
@@ -44,7 +46,7 @@ app.controller("accountUpdateCtrl", function ($scope, $routeParams, $http, $loca
                 }
             }, function (resp) {
                 alert("Can't find account by id " + $routeParams.id);
-                $location.path("/account");
+                $location.path("/accounts");
             });
     }
 

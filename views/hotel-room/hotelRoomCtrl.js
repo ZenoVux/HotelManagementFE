@@ -337,12 +337,17 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
                         language: {
                             url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
                         },
+                        dom: 'lrt',
                         columnDefs: [
                             {
                                 targets: 4,
                                 orderable: false
                             }
                         ]
+                    });
+                    $('#search-datatable-change-room').keyup(function(){
+                        console.log($(this).val());
+                        tableChangeRoom.search($(this).val()).draw() ;
                     });
                 });
             }).catch(error => {

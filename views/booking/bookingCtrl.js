@@ -128,7 +128,7 @@ app.controller("listBookingCtrl", function ($scope, $http) {
 
 });
 
-app.controller("createBookingCtrl", function ($scope, $http) {
+app.controller("createBookingCtrl", function ($scope, $http, $location) {
 
     $scope.booking = {};
     $scope.booking.numAdults = 0;
@@ -152,22 +152,22 @@ app.controller("createBookingCtrl", function ($scope, $http) {
     };
 
     $scope.init = function () {
-        $scope.loading = true;
+        // $scope.loading = true;
 
         //bookingsInfo
-        $http.get('http://localhost:8000/api/bookings/info', {
-            params: {
-                checkinDate: new Date(1990, 1, 1),
-                checkoutDate: new Date(1990, 1, 1),
-                roomType: ''
-            }
-        }).then(function (response) {
-            $scope.bookings = response.data;
-            $scope.loading = false;
-        }).catch(function (error) {
-            console.error('Error fetching data booking:', error);
-            $scope.loading = false;
-        });
+        // $http.get('http://localhost:8000/api/bookings/info', {
+        //     params: {
+        //         checkinDate: new Date(1990, 1, 1),
+        //         checkoutDate: new Date(1990, 1, 1),
+        //         roomType: ''
+        //     }
+        // }).then(function (response) {
+        //     $scope.bookings = response.data;
+        //     $scope.loading = false;
+        // }).catch(function (error) {
+        //     console.error('Error fetching data booking:', error);
+        //     $scope.loading = false;
+        // });
 
         //roomTypes
         $http.get("http://localhost:8000/api/room-types").then(function (resp) {
@@ -257,6 +257,7 @@ app.controller("createBookingCtrl", function ($scope, $http) {
         }).then(function (response) {
             if (response.status == 200) {
                 alert('Đặt phòng thành công!');
+                $location.path("/bookings");
             } else {
                 alert('Đặt phòng thất bại!');
             }

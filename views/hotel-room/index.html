@@ -49,7 +49,7 @@
                                     <button ng-show="room.status == 2 || room.status == 5" ng-click="checkout(room)"
                                         class="dropdown-item"><i class="mdi mdi-logout-variant"></i> Trả phòng</button>
                                     <button
-                                        ng-show="room.status != 0 && room.status != 1 && room.status != 3 && room.status != 6"
+                                        ng-show="room.status != 0 && room.status != 1 && room.status != 3 && room.status != 6 && room.status != 2"
                                         ng-click="modalCancelRoom('show', room)" class="dropdown-item"><i
                                             class="mdi mdi-cancel"></i> Huỷ phòng</button>
                                     <button ng-show="room.status == 6" ng-click="handlerReadyRoom(room)"
@@ -126,6 +126,10 @@
                             </tr>
                         </tbody>
                     </table>
+                    <div class="mb-3">
+                        <label class="form-label">Tìm kiếm</label>
+                        <input class="form-control" type="text" placeholder="Tìm kiếm" id="search-datatable-change-room">
+                    </div>
                     <div class="table-responsive mb-3">
                         <table id="datatable-change-room" class="table align-middle table-nowrap table-hover">
                             <thead>
@@ -138,7 +142,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="item in rooms">
+                                <tr ng-click="changeRoom.toRoomCode = item.code" ng-repeat="item in rooms">
                                     <td>{{item.code}}</td>
                                     <td>{{item.roomType.name}}</td>
                                     <td>{{item.price | currency: '' : 0}}đ</td>

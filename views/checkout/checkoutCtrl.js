@@ -40,11 +40,16 @@ app.controller("checkoutCtrl", function ($scope, $routeParams, $location, $http)
         const now = new Date();
         now.setHours(0, 0, 0, 0);
         const checkinExpected = new Date($scope.invoiceDetail.checkinExpected);
+        checkinExpected.setHours(0, 0, 0, 0);
         const checkoutExpected = new Date($scope.invoiceDetail.checkoutExpected);
-        if (now > checkoutExpected) {
+        checkoutExpected.setHours(0, 0, 0, 0);
+        if (now.getTime() === checkinExpected.getTime()) {
+            return 1;
+        } else if (now.getTime() > checkoutExpected.getTime()) {
             return (checkoutExpected.getTime() - checkinExpected.getTime())  / (1000 * 3600 * 24);
+        } else {
+            return (now.getTime() - checkinExpected.getTime())  / (1000 * 3600 * 24);
         }
-        return (now.getTime() - checkinExpected.getTime())  / (1000 * 3600 * 24);
     }
 
     $scope.totalRoom = function () {
@@ -58,7 +63,7 @@ app.controller("checkoutCtrl", function ($scope, $routeParams, $location, $http)
         if (!$scope.usedServices || !$scope.invoiceDetail) {
             return 0;
         }
-        return $scope.totalUsedService() + $scope.totalRoom();
+        return $scope.totalUsedService() + $scope.totalRoom() - $scope.invoiceDetail.deposit;
     }
 
     $scope.checkout = function() {
@@ -68,9 +73,8 @@ app.controller("checkoutCtrl", function ($scope, $routeParams, $location, $http)
         $http.post("http://localhost:8000/api/hotel/checkout", {
             code: $routeParams.roomCode
         }).then(function (resp) {
-            const invoiceDetail = resp.data;
             alert("Trả phòng thành công!");
-            $location.path("/invoices/" + invoiceDetail.invoice.code);
+            $location.path("/invoices/" + $scope.invoiceDetail.invoice.code);
         }, function () {
             alert("Trả phòng thất bại!");
         });

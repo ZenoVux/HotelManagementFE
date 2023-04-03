@@ -36,7 +36,7 @@ app.controller("invoiceCtrl", function ($scope, $http) {
     $scope.initTable();
 });
 
-app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $window) {
+app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $window, $location) {
 
     $scope.invoice = {};
     $scope.payment = {};
@@ -52,6 +52,9 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
     $scope.loadInvoice = async function () {
         await $http.get("http://localhost:8000/api/invoices/" + $routeParams.code).then(function (resp) {
             $scope.invoice = resp.data;
+        }, function () {
+            alert("Có lỗi xảy ra vui lòng thử lại!");
+            $location.path("/invoices");
         });
     }
 
@@ -93,8 +96,17 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
         }
         const now = new Date();
         now.setHours(0, 0, 0, 0);
-        const checkin = new Date(invoiceDetail.checkoutExpected);
-        return (now.getTime() - checkin.getTime())  / (1000 * 3600 * 24);
+        const checkinExpected = new Date(invoiceDetail.checkinExpected);
+        checkinExpected.setHours(0, 0, 0, 0);
+        const checkoutExpected = new Date(invoiceDetail.checkoutExpected);
+        checkoutExpected.setHours(0, 0, 0, 0);
+        if (now.getTime() === checkinExpected.getTime()) {
+            return 1;
+        } else if (now.getTime() > checkoutExpected.getTime()) {
+            return (checkoutExpected.getTime() - checkinExpected.getTime())  / (1000 * 3600 * 24);
+        } else {
+            return (now.getTime() - checkinExpected.getTime())  / (1000 * 3600 * 24);
+        }
     }
 
     $scope.getDiscount = function () {
@@ -120,11 +132,16 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
         if (!usedServices || !invoiceDetail) {
             return 0;
         }
-        return $scope.getTotalUsedService(usedServices) + $scope.getTotalRoom(invoiceDetail);
+        return $scope.getTotalUsedService(usedServices) + $scope.getTotalRoom(invoiceDetail) - invoiceDetail.deposit;
     }
 
     $scope.getTotalInvoice = function () {
+        // return $scope.invoiceDetails.reduce((total, invoiceDetail) => total + $scope.getTotalInvoiceDetail(invoiceDetail, invoiceDetail.usedServices), 0);
         return $scope.invoice.total;
+    }
+
+    $scope.getTotalDeposit = function () {
+        return $scope.invoiceDetails.reduce((total, invoiceDetail) => total + invoiceDetail.deposit, 0);
     }
 
     $scope.getTotalPayment = function () {
@@ -161,7 +178,7 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
             promotionCode: $scope.payment.promotion ? $scope.payment.promotion.code : null,
             paymentMethodCode: $scope.payment.paymentMethod ? $scope.payment.paymentMethod.code : null
         });
-        if (!$scope.paymentMethod) {
+        if (!$scope.payment.paymentMethod) {
             alert("Vui lòng chọn phương thức thanh toán!")
             return;
         }

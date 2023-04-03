@@ -32,7 +32,7 @@
                         <table class="table mb-3 table-bordered">
                             <tbody>
                                 <tr>
-                                    <th colspan="2" class="fw-semibold text-center">PHÒNG {{invoiceDetail.room.code}}</th>
+                                    <th colspan="2" class="fw-semibold text-center bg-light bm-0"><h4>PHÒNG {{invoiceDetail.room.code}}</h4></th>
                                 </tr>
                                 <tr>
                                     <th scope="row" style="width: 300px;">Loại phòng</th>
@@ -98,12 +98,17 @@
                                             getTotalRoom(invoiceDetail) : invoiceDetail.totalRoomFee) | currency: '' : 0}}₫
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <td colspan="4" class="border-0 text-end">Trả trước</td>
+                                        <td class="border-0 text-end">{{invoiceDetail.deposit | currency: '' : 0}}₫
+                                        </td>
+                                    </tr>
                                     <!-- <tr ng-show="invoiceDetail.status == 2">
                                         <td colspan="4" class="border-0 text-end">Nhận phòng sớm</td>
                                         <td class="border-0 text-end">{{invoiceDetail.earlyCheckinFee | currency: '' : 0}}₫
                                         </td>
-                                    </tr>
-                                    <tr ng-show="invoiceDetail.status == 2">
+                                    </tr> -->
+                                    <!-- <tr ng-show="invoiceDetail.status == 2">
                                         <td colspan="4" class="border-0 text-end">Trả phòng muộn</td>
                                         <td class="border-0 text-end">{{invoiceDetail.lateCheckoutFee | currency: '' : 0}}₫
                                         </td>
@@ -125,7 +130,11 @@
                         <table class="table table-bordered">
                             <tbody>
                                 <tr>
-                                    <th colspan="2" class="fw-semibold text-center">THANH TOÁN</th>
+                                    <th colspan="2" class="fw-semibold text-center bg-light"><h4>THANH TOÁN</h4></th>
+                                </tr>
+                                <tr>
+                                    <th>Tổng tiền trả trước</th>
+                                    <td class="border-0 text-end">{{getTotalDeposit() | currency: '' : 0}}₫</td>
                                 </tr>
                                 <tr>
                                     <th>Tổng tiền hoá đơn</th>
@@ -180,7 +189,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="promotion" class="form-label">Khuyến mại</label>
+                        <label for="promotion" class="form-label">Khuyến mãi</label>
                         <select ng-options="promotion as promotion.description for promotion in promotions"
                             ng-model="payment.promotion" class="form-select" id="promotion">
                             <option ng-value="null"></option>

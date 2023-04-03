@@ -16,3 +16,22 @@
 .text-sliver {
     color: rgb(206, 206, 206) !important;
 }
+
+.btn-purple {
+    background-color: purple;
+    color: white;
+}
+
+.btn-purple:hover {
+    background-color: rgb(70, 0, 70);
+    color: white;
+    border: 1px solid rgb(70, 0, 70);
+}
+
+.border-purple {
+    border-color: purple !important;
+}
+
+.text-purple {
+    color: purple !important;
+}

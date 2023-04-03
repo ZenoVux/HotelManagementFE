@@ -4,54 +4,131 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title mb-4">Phụ thu</h4>
-                    <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" data-bs-toggle="tab" href="#home1" role="tab">
-                                <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
-                                <span class="d-none d-sm-block">Nhận phòng sớm</span> 
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#profile1" role="tab">
-                                <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
-                                <span class="d-none d-sm-block">Trả phòng trễ</span> 
-                            </a>
-                        </li>
-                    </ul>
-                    <div class="tab-content p-3 text-muted">
-                        <div class="tab-pane active" id="home1" role="tabpanel">
-                            <div class="row">
-                                <div class="col-4">
-                                    <div class="mb-3">
-                                        <label for="formrow-inputCity" class="form-label">Từ</label>
-                                        <input class="form-control" type="time" readonly>
-                                    </div>
+                    <form>
+                        <div class="row">
+                            <div class="col-3">
+                                <div class="mb-3">
+                                    <label for="formrow-inputCity" class="form-label">Từ</label>
+                                    <input ng-model="surcharge.timeStart" class="form-control" type="time">
                                 </div>
-                                <div class="col-4">
-                                    <div class="mb-3">
-                                        <label for="formrow-inputState" class="form-label">Đến</label>
-                                        <input class="form-control" type="time" readonly>
-                                    </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="mb-3">
+                                    <label for="formrow-inputState" class="form-label">Đến</label>
+                                    <input ng-model="surcharge.timeEnd" class="form-control" type="time">
                                 </div>
-                                
-                                <div class="col-4">
-                                    <div class="mb-3">
-                                        <label for="formrow-inputZip" class="form-label">Phần trăm</label>
-                                        <input type="number" min="0" max="100" class="form-control">
-                                    </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="mb-3">
+                                    <label for="formrow-inputZip" class="form-label">Phần trăm</label>
+                                    <input ng-model="surcharge.percent" type="number" min="0" max="100" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="mb-3">
+                                    <label for="formrow-inputZip" class="form-label">Loại</label>
+                                    <select class="form-select">
+                                        <option ng-value="false">Nhận phòng</option>
+                                        <option ng-value="true">Trả phòng</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane" id="profile1" role="tabpanel">
-                            <p class="mb-0">
-                                Food truck fixie locavore, accusamus mcsweeney's marfa nulla
-                                single-origin coffee squid. Exercitation +1 labore velit, blog
-                                sartorial PBR leggings next level wes anderson artisan four loko
-                                farm-to-table craft beer twee. Qui photo booth letterpress,
-                                commodo enim craft beer mlkshk aliquip jean shorts ullamco ad
-                                vinyl cillum PBR. Homo nostrud organic, assumenda labore
-                                aesthetic magna delectus.
-                            </p>
+                        <button ng-click="update()" class="btn btn-success">Thêm mới</button>
+                    </form>
+                </div>
+                <div class="card-body border-top">
+                    <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" href="#check-in" role="tab">
+                                <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
+                                <span class="d-none d-sm-block">NHẬN PHÒNG</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#check-out" role="tab">
+                                <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
+                                <span class="d-none d-sm-block">TRẢ PHÒNG</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content py-3">
+                        <div class="tab-pane active" id="check-in" role="tabpanel">
+                            <div class="table-responsive">
+                                <table class="table align-middle table-nowrap">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Từ</th>
+                                            <th scope="col">Đến</th>
+                                            <th scope="col">Phần trăm</th>
+                                            <th scope="col" style="width: 100px;">Hành động</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="item in earlyCheckinSurcharges">
+                                            <td>{{item.timeStart | date:'HH:mm'}}</td>
+                                            <td>{{item.timeEnd | date:'HH:mm'}}</td>
+                                            <td>
+                                                <input ng-model="item.percent" style="width: 70px;" type="number"
+                                                    class="form-control form-control-sm" min="0" max="100">
+                                            </td>
+                                            </td>
+                                            <td>
+                                                <ul class="list-unstyled hstack gap-1 mb-0">
+                                                    <li>
+                                                        <button class="btn btn-sm btn-soft-info">
+                                                            <i class="mdi mdi-pencil-outline"></i>
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        <button ng-click="removeHostedAt(item)"
+                                                            class="btn btn-sm btn-soft-danger"><i
+                                                                class="mdi mdi-delete-outline"></i></button>
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="check-out" role="tabpanel">
+                            <div class="table-responsive">
+                                <table class="table align-middle table-nowrap">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Từ</th>
+                                            <th scope="col">Đến</th>
+                                            <th scope="col">Phần trăm</th>
+                                            <th scope="col" style="width: 100px;">Hành động</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="item in lateCheckoutSurcharges">
+                                            <td>{{item.timeStart | date:'HH:mm'}}</td>
+                                            <td>{{item.timeEnd | date:'HH:mm'}}</td>
+                                            <td>
+                                                <input ng-model="item.percent" style="width: 70px;" type="number"
+                                                    class="form-control form-control-sm" min="0" max="100">
+                                            </td>
+                                            <td>
+                                                <ul class="list-unstyled hstack gap-1 mb-0">
+                                                    <li>
+                                                        <button class="btn btn-sm btn-soft-info">
+                                                            <i class="mdi mdi-pencil-outline"></i>
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        <button ng-click="removeHostedAt(item)"
+                                                            class="btn btn-sm btn-soft-danger"><i
+                                                                class="mdi mdi-delete-outline"></i></button>
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -69,7 +146,7 @@
                         <label for="formrow-firstname-input" class="form-label">Giờ trả phòng</label>
                         <input ng-model="setting.checkoutTime" class="form-control" type="time">
                     </div>
-                    <button ng-click="update()" class="btn btn-primary">Cập nhật</button>
+                    <button ng-click="handlerUpdateSetting()" class="btn btn-primary">Cập nhật</button>
                 </div>
             </div>
         </div>

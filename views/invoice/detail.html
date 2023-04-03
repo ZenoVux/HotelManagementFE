@@ -3,9 +3,12 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="fw-semibold">Hoá đơn #{{invoice.code}}</h5>
+                    <!-- <h5 class="fw-semibold">Hoá đơn #{{invoice.code}}</h5> -->
                     <table class="table mb-3 table-bordered">
                         <tbody>
+                            <tr>
+                                <th colspan="2" class="fw-semibold text-center bg-light"><h4>Hoá đơn #{{invoice.code}}</h4></th>
+                            </tr>
                             <tr>
                                 <th scope="row" style="width: 300px;">Họ và tên</th>
                                 <td>{{invoice.booking.customer.fullName}}</td>
@@ -25,6 +28,10 @@
                             <tr>
                                 <th scope="row">Địa chỉ</th>
                                 <td>{{invoice.booking.customer.address}}</td>
+                            </tr>
+                            <tr class="d-print-none">
+                                <th scope="row">Trạng thái</th>
+                                <td>{{invoice.status == 1 ? 'Đang chờ' : (invoice.status == 2 ? 'Chưa thanh toán' :  (invoice.status == 3 ? 'Chờ thanh toán' : (invoice.status == 4 ? 'Hoàn thành' : 'Đã huỷ')))}}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -171,9 +178,11 @@
                         <a href="javascript:window.print()" class="btn btn-primary waves-effect waves-light me-1"><i class="fa fa-print"></i></a>
                         <!-- <button ng-show="isSplitInvoice()" class="btn btn-primary waves-effect waves-light me-1"><i
                                 class="bx bx-money"></i> Tách hoá đơn</button> -->
-                        <button ng-show="isPaymentInvoice()" ng-click="modalPayment('show')"
+                        <button ng-show="invoice.status == 2" ng-click="modalPayment('show')"
                             class="btn btn-success waves-effect waves-light"><i class="bx bx-money"></i> Thanh
                             toán</button>
+                        <button ng-show="invoice.status == 3" ng-click="confirmPayment()"
+                            class="btn btn-success waves-effect waves-light"><i class="bx bx-money"></i> Xác nhận</button>
                     </div>
                 </div>
             </div>

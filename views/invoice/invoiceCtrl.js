@@ -197,6 +197,20 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
         });
     }
 
+    $scope.confirmPayment = function() {
+        if (!confirm("Bạn muốn xác nhận thanh toán hoá đơn " + $scope.invoice.code +  "?")) {
+            return;
+        }
+        $http.post("http://localhost:8000/api/hotel/confirm-payment", {
+            invoiceCode: $scope.invoice.code
+        }).then(function (resp) {
+            alert("Xác nhận thành công!");
+            $window.location.reload();
+        }, function () {
+            alert("Xác nhận thất bại!");
+        });
+    }
+
     $scope.init();
 
 });

@@ -35,12 +35,16 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
                     language: {
                         url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
                     },
+                    dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
                     columnDefs: [
                         {
                             targets: 5,
                             orderable: false
                         }
                     ]
+                });
+                $('#search-datatable-customer').keyup(function(){
+                    tableCustomer.search($(this).val()).draw() ;
                 });
             });
         } else {
@@ -132,10 +136,11 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
             await $http.get("http://localhost:8000/api/services").then(function (resp) {
                 $scope.serviceRooms = resp.data;
                 $(document).ready(function () {
-                    $('#datatable-service-room').DataTable({
+                    tableServiceRoom = $('#datatable-service-room').DataTable({
                         language: {
                             url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
                         },
+                        dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
                         columnDefs: [
                             {
                                 targets: 4,
@@ -143,9 +148,16 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
                             }
                         ]
                     });
+                    $('#search-datatable-service-room').keyup(function(){
+                        tableServiceRoom.search($(this).val()).draw() ;
+                    });
                 });
             });
         } else {
+            $(document).ready(function () {
+                tableServiceRoom.clear();
+                tableServiceRoom.destroy();
+            });
             $scope.serviceRooms = [];
         }
         $('#modal-service-room').modal(action);

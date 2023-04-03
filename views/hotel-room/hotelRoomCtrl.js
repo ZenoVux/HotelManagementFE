@@ -211,6 +211,7 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
                     language: {
                         url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
                     },
+                    dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
                     columnDefs: [
                         {
                             targets: 5,
@@ -222,12 +223,19 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
                     language: {
                         url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
                     },
+                    dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
                     columnDefs: [
                         {
                             targets: 5,
                             orderable: false
                         }
                     ]
+                });
+                $('#search-datatable-hosted-at').keyup(function(){
+                    tableHostedAt.search($(this).val()).draw() ;
+                });
+                $('#search-datatable-customer').keyup(function(){
+                    tableCustomer.search($(this).val()).draw() ;
                 });
             });
         } else {
@@ -266,6 +274,7 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
                     language: {
                         url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
                     },
+                    dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
                     columnDefs: [
                         {
                             targets: 4,
@@ -277,12 +286,19 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
                     language: {
                         url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
                     },
+                    dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
                     columnDefs: [
                         {
                             targets: 6,
                             orderable: false
                         }
                     ]
+                });
+                $('#search-datatable-service-room').keyup(function(){
+                    tableServiceRoom.search($(this).val()).draw() ;
+                });
+                $('#search-datatable-used-service').keyup(function(){
+                    tableUsedService.search($(this).val()).draw() ;
                 });
             });
         } else {
@@ -337,7 +353,7 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
                         language: {
                             url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
                         },
-                        dom: 'lrt',
+                        dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
                         columnDefs: [
                             {
                                 targets: 4,
@@ -346,7 +362,6 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
                         ]
                     });
                     $('#search-datatable-change-room').keyup(function(){
-                        console.log($(this).val());
                         tableChangeRoom.search($(this).val()).draw() ;
                     });
                 });

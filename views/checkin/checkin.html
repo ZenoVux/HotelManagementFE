@@ -173,7 +173,7 @@
 
     <div id="modal-people-room" class="modal modal-lg fade" data-bs-backdrop="static" data-bs-keyboard="false"
         tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Thêm khánh hàng</h5>
@@ -196,6 +196,7 @@
                     </ul>
                     <div class="tab-content py-3">
                         <div class="tab-pane active" id="customer-tab" role="tabpanel">
+                            <input class="form-control" type="search" placeholder="Tìm kiếm" id="search-datatable-customer">
                             <div class="table-responsive">
                                 <table id="datatable-customer" class="table align-middle table-nowrap table-hover">
                                     <thead>
@@ -319,13 +320,14 @@
     </div>
     <div id="modal-service-room" class="modal modal-lg fade" data-bs-backdrop="static" tabindex="-1" role="dialog"
         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Dịch vụ</h5>
                     <button ng-click="modalServiceRoom('hide')" type="button" class="btn-close"></button>
                 </div>
                 <div class="modal-body">
+                    <input class="form-control" type="search" placeholder="Tìm kiếm" id="search-datatable-service-room">
                     <div class="table-responsive">
                         <table id="datatable-service-room" class="table align-middle table-nowrap table-hover">
                             <thead>

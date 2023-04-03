@@ -138,6 +138,10 @@ app.controller("createBookingCtrl", function ($scope, $http) {
     $scope.currentSection = 0;
     $scope.rooms = [];
     $scope.totalPrice = 0;
+    $scope.booking.idCard = null;
+
+
+    //   $scope.uploadImage(imageData);
 
     $scope.nextSection = function () {
         $scope.currentSection++;
@@ -241,10 +245,6 @@ app.controller("createBookingCtrl", function ($scope, $http) {
 
         $scope.customer.dateOfBirth = new Date($scope.customer.dateOfBirth);
 
-        $scope.customer.gender == 1 ? $scope.customer.gender = true : $scope.customer.gender = false;
-
-        console.log($scope.customer.gender);
-
         $http.post('http://localhost:8000/api/bookings', {
             customer: $scope.customer,
             rooms: $scope.rooms,
@@ -266,5 +266,138 @@ app.controller("createBookingCtrl", function ($scope, $http) {
         });
 
     }
+
+    $scope.uploadImage = function (imageData) {
+        var url = 'https://api.fpt.ai/vision/idr/vnm';
+        var apiKey = 'XlSryATn7VAJHi5gzUJegB6gp20D6vYC';
+        var formData = new FormData();
+
+        // Convert the base64-encoded image data to a Blob object.
+        var binary = atob(imageData.split(',')[1]);
+        var array = [];
+        for (var i = 0; i < binary.length; i++) {
+            array.push(binary.charCodeAt(i));
+        }
+        var blob = new Blob([new Uint8Array(array)], { type: 'image/jpeg' });
+
+        // Append the image data to the form data object.
+        formData.append('image', blob);
+
+        // Define the request object.
+        var request = {
+            method: 'POST',
+            url: url,
+            headers: {
+                'api-key': apiKey,
+                'Content-Type': undefined
+            },
+            transformRequest: angular.identity,
+            data: formData
+        };
+
+        // Send the request to the FPT.AI Vision API.
+        $http(request)
+            .then(function (response) {
+                console.log(response.data.data[0]);
+                $scope.customer.fullName = response.data.data[0].name;
+                $scope.customer.dateOfBirth = response.data.data[0].dob;
+                $scope.customer.gender = response.data.data[0].sex === 'NAM' ? true : false;
+                $scope.customer.peopleId = response.data.data[0].id;
+                $scope.customer.address = response.data.data[0].address;
+                $scope.customer.placeOfBirth = response.data.data[0].home;
+            })
+            .catch(function (error) {
+                console.log(error);
+                alert('Không thể nhận diện được ảnh!');
+            });
+    };
+
+    $scope.frontIdCard = null;
+    $scope.backIdCard = null;
+
+    $scope.takeFrontPicture = function () {
+        takePicture('front');
+    };
+
+    $scope.takeBackPicture = function () {
+        takePicture('back');
+    };
+
+    function takePicture(type) {
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function (stream) {
+                var video = document.createElement('video');
+                video.srcObject = stream;
+                video.play();
+
+                var modal = document.createElement('div');
+                modal.style.position = 'fixed';
+                modal.style.top = '0';
+                modal.style.left = '0';
+                modal.style.width = '100%';
+                modal.style.height = '100%';
+                modal.style.background = 'rgba(0, 0, 0, 0.5)';
+                modal.style.display = 'flex';
+                modal.style.justifyContent = 'center';
+                modal.style.alignItems = 'center';
+                modal.style.flexDirection = 'column';
+
+                modal.appendChild(video);
+
+                var noteContainer = document.createElement('div');
+                noteContainer.style.display = 'flex';
+                noteContainer.style.marginTop = '15px';
+                noteContainer.style.justifyContent = 'center';
+                noteContainer.style.alignItems = 'center';
+
+                var note = document.createElement('div');
+                note.textContent = 'Nhấn SPACE để chụp, ESC để hủy';
+                note.classList.add('alert', 'alert-secondary');
+                noteContainer.appendChild(note);
+
+                document.addEventListener('keydown', function (event) {
+                    if (event.code === 'Space') {
+                        event.preventDefault();
+                        captureImage();
+                    }
+                    if (event.code === 'Escape') {
+                        event.preventDefault();
+                        stream.getTracks().forEach(function (track) {
+                            track.stop();
+                        });
+                        modal.remove();
+                    }
+                });
+
+                function captureImage() {
+                    var canvas = document.createElement('canvas');
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+
+                    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                    stream.getTracks().forEach(function (track) {
+                        track.stop();
+                    });
+
+                    $scope.$apply(function () {
+                        if (type === 'front') {
+                            $scope.frontIdCard = canvas.toDataURL('image/jpeg');
+                            $scope.uploadImage($scope.frontIdCard);
+                        } else if (type === 'back') {
+                            $scope.backIdCard = canvas.toDataURL('image/jpeg');
+                        }
+                    });
+
+                    modal.remove();
+                }
+
+                modal.appendChild(noteContainer);
+                document.body.appendChild(modal);
+            })
+            .catch(function (err) {
+                console.log('An error occurred: ' + err);
+            });
+    };
 
 });

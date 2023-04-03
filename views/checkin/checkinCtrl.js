@@ -2,11 +2,11 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
     $scope.hostedAts = [];
     $scope.serviceRooms = [];
     $scope.usedServices = [];
+    $scope.customers = [];
     $scope.bookingDetail = {};
-    $scope.people = {
+    $scope.customer = {
         gender: false
     };
-    $scope.isCustomer = false;
 
     $scope.init = async function () {
         await $scope.loadBookingDetail();
@@ -21,79 +21,110 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
         });
     }
 
-    $scope.modalPeopleRoom = function (action) {
+    $scope.loadCustomers = async function () {
+        await $http.get("http://localhost:8000/api/customers").then(function (resp) {
+            $scope.customers = resp.data;
+        });
+    }
+
+    $scope.modalPeopleRoom = async function (action) {
         if (action == "show") {
-            $scope.people = {
+            await $scope.loadCustomers();
+            $(document).ready(function () {
+                tableCustomer = $('#datatable-customer').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
+                    },
+                    columnDefs: [
+                        {
+                            targets: 5,
+                            orderable: false
+                        }
+                    ]
+                });
+            });
+        } else {
+            $(document).ready(function () {
+                tableCustomer.clear();
+                tableCustomer.destroy();
+            });
+            $scope.customers = [];
+            $scope.customer = {
                 gender: false
             };
         }
         $('#modal-people-room').modal(action);
     }
 
-    $scope.searchCustomer = function () {
-        $http.get("http://localhost:8000/api/customers/search-by-people-id/" + $scope.people.peopleId).then(function (resp) {
-            $scope.people = resp.data;
-            $scope.people.dateOfBirth = new Date($scope.people.dateOfBirth);
-            $scope.isCustomer = true;
-        }, function () {
-            alert("Khách hàng không tồn tại!");
-            $scope.people = {
-                gender: false
-            };
-            $scope.isCustomer = false;
-        });
-    }
-
-    $scope.addPeople = async function (customerForm) {
-        const numAdults = $scope.bookingDetail.numAdults;
-        const numChildren = $scope.bookingDetail.numChildren;
-        const numPeople = $scope.hostedAts.length + 1;
-        if (numPeople > (numAdults + numChildren)) {
-            alert("max people");
+    $scope.handlerAddCustomer = function (_customer) {
+        if ($scope.hostedAts.find(hostedAt => hostedAt.customer.peopleId == _customer.peopleId)) {
+            alert("khách hàng đã tồn tại!");
             return;
-        }
-        if ($scope.isCustomer) {
-            const customer = $scope.hostedAts.find(item => item.customer.id == $scope.people.id);
-            if (customer) {
-                alert("Khách hàng đã tồn tại!");
-                $scope.people = {
-                    gender: false
-                };
-                customerForm.$setPristine();
-                customerForm.$setUntouched();
+        } else {
+            if (!confirm("Bạn muốn thêm khách hàng " + _customer.fullName + " vào phòng?")) {
                 return;
             }
             $scope.hostedAts.push({
-                customer: $scope.people
+                customer: _customer
             });
-            $scope.people = {
-                gender: false
-            };
-            $scope.isCustomer = false;
-            customerForm.$setPristine();
-            customerForm.$setUntouched();
-            $('#modal-people-room').modal('hide');
+            alert("Thêm khách hàng thành công!");
+        }
+    }
+
+    $scope.handlerCreateCustomer = async function () {
+        if (!$scope.customer.peopleId) {
+            alert("Vui lòng nhập CCCD/CMND!");
+            $("#peopleId").focus();
             return;
         }
-        if (customerForm.$valid) {
-            await $http.post("http://localhost:8000/api/customers", $scope.people).then(function (resp) {
-                $scope.people = resp.data;
-                const hostedAt = {
-                    customer: $scope.people
-                }
-                $scope.hostedAts.push(hostedAt);
-                $scope.people = {
-                    gender: false
-                };
-                customerForm.$setPristine();
-                customerForm.$setUntouched();
-                $('#modal-people-room').modal('hide');
-            }, function () {
-                alert("Thêm khách hàng thất bại!");
-            });
-        } else {
-            alert("Vui lòng nhập đầy đủ thông tin!")
+        if ($scope.customers.find(_customer => _customer.peopleId == $scope.customer.peopleId)) {
+            alert("CCCD/CMND đã tồn tại!");
+            $("#peopleId").focus();
+            return;
         }
+        if (!$scope.customer.fullName) {
+            alert("Vui lòng nhập họ và tên!");
+            $("#fullName").focus();
+            return;
+        }
+        if (!$scope.customer.phoneNumber) {
+            alert("Vui lòng nhập SĐT!");
+            $("#phoneNumber").focus();
+            return;
+        }
+        if (!$scope.customer.email) {
+            alert("Vui lòng nhập email!");
+            $("#email").focus();
+            return;
+        }
+        if (!$scope.customer.dateOfBirth) {
+            alert("Vui lòng nhập ngày sinh!");
+            $("#dateOfBirth").focus();
+            return;
+        }
+        if (!$scope.customer.placeOfBirth) {
+            alert("Vui lòng nhập quê quán!");
+            $("#placeOfBirth").focus();
+            return;
+        }
+        if (!$scope.customer.address) {
+            alert("Vui lòng nhập địa chỉ!");
+            $("#address").focus();
+            return;
+        }
+        if (!confirm("Bạn muốn thêm mới khách hàng?")) {
+            return;
+        }
+        $http.post("http://localhost:8000/api/customers/create-member", $scope.customer).then(function (_resp) {
+            alert("Thêm khách hàng mới thành công!");
+            $('.nav-tabs a[href="#customer-tab"]').tab('show');
+            $scope.customers.push(_resp.data);
+            $scope.customer = {
+                gender: false
+            };
+        }, function () {
+            alert("Thêm khách hàng mới thất bại!");
+        });
     }
 
     $scope.modalServiceRoom = async function (action) {

@@ -224,79 +224,99 @@
                     <button ng-click="modalUsedService('hide')" type="button" class="btn-close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="table-responsive mb-3">
-                        <table id="datatable-service-room"
-                            class="table align-middle table-nowrap table-hover">
-                            <thead>
-                                <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">Tên dịch vụ</th>
-                                    <th scope="col">Loại</th>
-                                    <th scope="col">Giá</th>
-                                    <th scope="col" style="width: 100px;">Hành động</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr ng-repeat="item in services">
-                                    <th scope="row">
-                                        {{item.code}}
-                                    </th>
-                                    <td>{{item.name}}</td>
-                                    <td>{{item.serviceType.name}}</td>
-                                    <td>{{item.price | currency: '' : 0}}đ</td>
-                                    <td>
-                                        <ul class="list-unstyled hstack gap-1 mb-0">
-                                            <li>
-                                                <button ng-click="addServiceRoom(item)"
-                                                    class="btn btn-sm btn-soft-success"><i
-                                                        class="mdi mdi-plus"></i></button>
-                                            </li>
-                                        </ul>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="table-responsive">
-                        <table id="datatable-used-service"
-                            class="table align-middle table-nowrap table-hover">
-                            <thead>
-                                <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">Tên dịch vụ</th>
-                                    <th scope="col">Loại</th>
-                                    <th scope="col">Giá</th>
-                                    <th scope="col">Số lượng</th>
-                                    <th scope="col">Thành tiền</th>
-                                    <th scope="col" style="width: 100px;">Hành động</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr ng-repeat="item in usedServices">
-                                    <th scope="row">
-                                        {{item.serviceRoom.code}}
-                                    </th>
-                                    <td>{{item.serviceRoom.name}}</td>
-                                    <td>{{item.serviceRoom.serviceType.name}}</td>
-                                    <td>{{item.serviceRoom.price}}</td>
-                                    <td><input ng-model="item.quantity"
-                                            ng-blur="updateServiceRoom(item)" style="width: 70px;"
-                                            type="number" class="form-control form-control-sm" min="1">
-                                    </td>
-                                    <td>{{item.serviceRoom.price * item.quantity | currency: '' : 0}}đ
-                                    </td>
-                                    <td>
-                                        <ul class="list-unstyled hstack gap-1 mb-0">
-                                            <li>
-                                                <button ng-click="removeServiceRoom(item)"
-                                                    class="btn btn-sm btn-soft-danger"><i
-                                                        class="mdi mdi-delete-outline"></i></button>
-                                            </li>
-                                        </ul>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" href="#used-service-tab" role="tab">
+                                <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
+                                <span class="d-none d-sm-block">SỬ DỤNG DỊCH VỤ</span> 
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#service-tab" role="tab">
+                                <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
+                                <span class="d-none d-sm-block">DỊCH VỤ</span> 
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content py-3">
+                        <div class="tab-pane active" id="used-service-tab" role="tabpanel">
+                            <div class="table-responsive">
+                                <table id="datatable-used-service"
+                                    class="table align-middle table-nowrap table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Tên dịch vụ</th>
+                                            <th scope="col">Loại</th>
+                                            <th scope="col">Giá</th>
+                                            <th scope="col">Số lượng</th>
+                                            <th scope="col">Thành tiền</th>
+                                            <th scope="col" style="width: 100px;">Hành động</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="item in usedServices">
+                                            <th scope="row">
+                                                {{item.serviceRoom.code}}
+                                            </th>
+                                            <td>{{item.serviceRoom.name}}</td>
+                                            <td>{{item.serviceRoom.serviceType.name}}</td>
+                                            <td>{{item.serviceRoom.price}}</td>
+                                            <td><input ng-model="item.quantity"
+                                                    ng-blur="updateServiceRoom(item)" style="width: 70px;"
+                                                    type="number" class="form-control form-control-sm" min="1">
+                                            </td>
+                                            <td>{{item.serviceRoom.price * item.quantity | currency: '' : 0}}đ
+                                            </td>
+                                            <td>
+                                                <ul class="list-unstyled hstack gap-1 mb-0">
+                                                    <li>
+                                                        <button ng-click="removeServiceRoom(item)"
+                                                            class="btn btn-sm btn-soft-danger"><i
+                                                                class="mdi mdi-delete-outline"></i></button>
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="service-tab" role="tabpanel">
+                            <div class="table-responsive mb-3">
+                                <table id="datatable-service-room"
+                                    class="table align-middle table-nowrap table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Tên dịch vụ</th>
+                                            <th scope="col">Loại</th>
+                                            <th scope="col">Giá</th>
+                                            <th scope="col" style="width: 100px;">Hành động</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="item in services">
+                                            <th scope="row">
+                                                {{item.code}}
+                                            </th>
+                                            <td>{{item.name}}</td>
+                                            <td>{{item.serviceType.name}}</td>
+                                            <td>{{item.price | currency: '' : 0}}đ</td>
+                                            <td>
+                                                <ul class="list-unstyled hstack gap-1 mb-0">
+                                                    <li>
+                                                        <button ng-click="addServiceRoom(item)"
+                                                            class="btn btn-sm btn-soft-success"><i
+                                                                class="mdi mdi-plus"></i></button>
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -313,39 +333,177 @@
                     <button ng-click="modalHostedAt('hide')" type="button" class="btn-close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="table-responsive mb-3">
-                        <table id="datatable-hosted-at" class="table align-middle table-nowrap table-hover">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Họ tên</th>
-                                    <th scope="col">SĐT</th>
-                                    <th scope="col">Giới tính</th>
-                                    <th scope="col">Ngày sinh</th>
-                                    <th scope="col">CCCD/CMT</th>
-                                    <th scope="col" style="width: 100px;">Hành động</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr ng-repeat="item in hostedAts">
-                                    <th scope="row">
-                                        {{item.customer.fullName}}
-                                    </th>
-                                    <td>{{item.customer.phoneNumber}}</td>
-                                    <td>{{item.customer.gender ? "Nữ" : "Nam"}}</td>
-                                    <td>{{item.customer.dateOfBirth | date:'dd/MM/yyyy'}}</td>
-                                    <td>{{item.customer.peopleId}}</td>
-                                    <td>
-                                        <ul class="list-unstyled hstack gap-1 mb-0">
-                                            <li>
-                                                <button ng-click="removeHostedAt(item)"
-                                                    class="btn btn-sm btn-soft-danger"><i
-                                                        class="mdi mdi-delete-outline"></i></button>
-                                            </li>
-                                        </ul>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" href="#hosted-at-tab" role="tab">
+                                <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
+                                <span class="d-none d-sm-block">DS NGƯỜI Ở</span> 
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#customer-tab" role="tab">
+                                <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
+                                <span class="d-none d-sm-block">DS KHÁCH HÀNG</span> 
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#add-customer-tab" role="tab">
+                                <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
+                                <span class="d-none d-sm-block">THÊM KHÁCH HÀNG</span> 
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content py-3">
+                        <div class="tab-pane active" id="hosted-at-tab" role="tabpanel">
+                            <div class="table-responsive">
+                                <table id="datatable-hosted-at" class="table align-middle table-nowrap table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Họ tên</th>
+                                            <th scope="col">SĐT</th>
+                                            <th scope="col">Giới tính</th>
+                                            <th scope="col">Ngày sinh</th>
+                                            <th scope="col">CCCD/CMT</th>
+                                            <th scope="col" style="width: 100px;">Hành động</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="item in hostedAts">
+                                            <th scope="row">
+                                                {{item.customer.fullName}}
+                                            </th>
+                                            <td>{{item.customer.phoneNumber}}</td>
+                                            <td>{{item.customer.gender ? "Nữ" : "Nam"}}</td>
+                                            <td>{{item.customer.dateOfBirth | date:'dd/MM/yyyy'}}</td>
+                                            <td>{{item.customer.peopleId}}</td>
+                                            <td>
+                                                <ul class="list-unstyled hstack gap-1 mb-0">
+                                                    <li>
+                                                        <button ng-click="removeHostedAt(item)"
+                                                            class="btn btn-sm btn-soft-danger"><i
+                                                                class="mdi mdi-delete-outline"></i></button>
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="customer-tab" role="tabpanel">
+                            <div class="table-responsive">
+                                <table id="datatable-customer" class="table align-middle table-nowrap table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Họ tên</th>
+                                            <th scope="col">SĐT</th>
+                                            <th scope="col">Giới tính</th>
+                                            <th scope="col">Ngày sinh</th>
+                                            <th scope="col">CCCD/CMT</th>
+                                            <th scope="col" style="width: 100px;">Hành động</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="item in customers">
+                                            <th scope="row">
+                                                {{item.fullName}}
+                                            </th>
+                                            <td>{{item.phoneNumber}}</td>
+                                            <td>{{item.gender ? "Nữ" : "Nam"}}</td>
+                                            <td>{{item.dateOfBirth | date:'dd/MM/yyyy'}}</td>
+                                            <td>{{item.peopleId}}</td>
+                                            <td>
+                                                <ul class="list-unstyled hstack gap-1 mb-0">
+                                                    <li>
+                                                        <button ng-click="handlerAddCustomer(item)"
+                                                            class="btn btn-sm btn-soft-success"><i
+                                                                class="mdi mdi-plus"></i></button>
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="add-customer-tab" role="tabpanel">
+                            <form>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="mb-3">
+                                            <label for="peopleId" class="form-label">CCCD/CMND</label>
+                                            <input ng-model="customer.peopleId" class="form-control" id="peopleId">
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="mb-3">
+                                            <label for="fullName" class="form-label">Họ và tên</label>
+                                            <input ng-model="customer.fullName" class="form-control" id="fullName">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="mb-3">
+                                            <label for="phoneNumber" class="form-label">SĐT</label>
+                                            <input ng-model="customer.phoneNumber" class="form-control" id="phoneNumber">
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="mb-3">
+                                            <label for="email" class="form-label">Email</label>
+                                            <input ng-model="customer.email" type="email" class="form-control" id="email">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="mb-3">
+                                            <label for="dateOfBirth" class="form-label">Ngày sinh</label>
+                                            <input ng-model="customer.dateOfBirth" type="date" class="form-control" id="dateOfBirth">
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="mb-3">
+                                            <label for="placeOfBirth" class="form-label">Quê quán</label>
+                                            <input ng-model="customer.placeOfBirth" class="form-control" id="placeOfBirth">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="mb-3">
+                                            <label class="form-label">Giới tính</label>
+                                            <div class="d-flex">
+                                                <div class="form-check  form-check-inline">
+                                                    <input ng-model="customer.gender" class="form-check-input" type="radio"
+                                                        id="form-radio-male" ng-value="false">
+                                                    <label class="form-check-label" for="form-radio-male">
+                                                        Nam
+                                                    </label>
+                                                </div>
+                                                <div class="form-check  form-check-inline">
+                                                    <input ng-model="customer.gender" class="form-check-input" type="radio"
+                                                        id="form-radio-female" ng-value="true">
+                                                    <label class="form-check-label" for="form-radio-female">
+                                                        Nữ
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="mb-3">
+                                            <label for="address" class="form-label">Địa chỉ</label>
+                                            <textarea ng-model="customer.address" rows="3" class="form-control" id="address"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button ng-click="handlerCreateCustomer()" class="btn btn-success">Thêm mới</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">

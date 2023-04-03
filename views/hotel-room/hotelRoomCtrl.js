@@ -29,22 +29,25 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
             name: "Không hoạt động"
         }
     ]
+    $scope.loading = false;
     $scope.statusCounts = [];
     $scope.hotelRooms = [];
-    $scope.selectRoom = {};
-    $scope.peoples = [];
-    $scope.loading = false;
-    $scope.invoiceDetail = {};
-    $scope.bookingDetail = {};
     $scope.services = [];
     $scope.usedServices = [];
     $scope.hostedAts = [];
     $scope.roomTypes = [];
-    $scope.room = {};
     $scope.rooms = [];
+    $scope.customers = [];
+    $scope.room = {};
+    $scope.selectRoom = {};
+    $scope.invoiceDetail = {};
+    $scope.bookingDetail = {};
     $scope.extendCheckoutRoom = {};
     $scope.cancelRoom = {};
     $scope.changeRoom = {};
+    $scope.customer = {
+        gender: false
+    };
 
     $scope.init = async function () {
         $scope.loading = true;
@@ -109,12 +112,18 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
         });
     }
 
+    $scope.loadCustomers = async function () {
+        await $http.get("http://localhost:8000/api/customers").then(function (resp) {
+            $scope.customers = resp.data;
+        });
+    }
+
     $scope.addServiceRoom = function (service) {
-        var usedService = $scope.usedServices.find(item => item.serviceRoom.id == service.id);
+        const usedService = $scope.usedServices.find(item => item.serviceRoom.id == service.id);
         if (usedService) {
             alert("Dịch vụ đã tồn tại!");
         } else {
-            if (!confirm("Xác nhận thêm " + service.name + "?")) {
+            if (!confirm("Bạn muốn thêm " + service.name + "?")) {
                 return;
             }
             $http.post("http://localhost:8000/api/hotel/used-service", {
@@ -123,6 +132,7 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
                 quantity: 1
             }).then(function (resp) {
                 alert("Thêm dịch vụ thành công!");
+                $('.nav-tabs a[href="#used-service-tab"]').tab('show');
                 $scope.usedServices.push(resp.data);
             }, function () {
                 alert("Thêm dịch vụ thất bại!");
@@ -158,7 +168,7 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
     }
 
     $scope.getColor = function (name, status) {
-        return name + (status == 0 ? '-success' : (status == 1 ? '-sliver' : (status == 2 ? '-danger' : (status == 3 ? '-secondary' : (status == 4 ? '-primary' : (status == 5 ? '-warning' : '-secondary'))))))
+        return name + (status == 0 ? '-success' : (status == 1 ? '-sliver' : (status == 2 ? '-danger' : (status == 3 ? '-purple' : (status == 4 ? '-primary' : (status == 5 ? '-warning' : '-secondary'))))))
     }
 
     $scope.roomDetail = function (item) {
@@ -188,7 +198,6 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
         } else {
             $scope.room = {};
         }
-        console.log("aaaaaaaaaaa");
         $('#modal-info-room').modal(action);
     }
 
@@ -196,10 +205,55 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
         $scope.selectRoom = room;
         if (action == 'show') {
             await $scope.loadHostedAts();
+            await $scope.loadCustomers();
+            $(document).ready(function () {
+                tableHostedAt = $('#datatable-hosted-at').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
+                    },
+                    columnDefs: [
+                        {
+                            targets: 5,
+                            orderable: false
+                        }
+                    ]
+                });
+                tableCustomer = $('#datatable-customer').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
+                    },
+                    columnDefs: [
+                        {
+                            targets: 5,
+                            orderable: false
+                        }
+                    ]
+                });
+            });
         } else {
+            $(document).ready(function () {
+                tableHostedAt.clear();
+                tableHostedAt.destroy();
+                tableCustomer.clear();
+                tableCustomer.destroy();
+            });
             $scope.hostedAts = [];
+            $scope.customers = [];
+            $scope.customer = {
+                gender: false
+            };
         }
         $('#modal-hosted-at').modal(action);
+    }
+
+    $scope.modalAddCustomer = function (action) {
+        if (action == "show") {
+            $scope.modalHostedAt('hide');
+            $scope.customer = {
+                gender: false
+            };
+        }
+        $('#modal-add-customer').modal(action);
     }
 
     $scope.modalUsedService = async function (action, room) {
@@ -304,6 +358,97 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
             $scope.rooms = [];
         }
         $('#modal-change-room').modal(action);
+    }
+
+    $scope.handlerAddCustomer = async function (_customer) {
+        const hostedAt = $scope.hostedAts.find(hostedAt => hostedAt.customer.id == _customer.id);
+        if (hostedAt) {
+            alert("Khách hàng đã tồn tại!");
+        } else {
+            if (!confirm("Bạn muốn thêm khách hàng " + _customer.fullName + " vào phòng " + $scope.selectRoom.code + "?")) {
+                return;
+            }
+            $http.post("http://localhost:8000/api/hosted-ats", {
+                invoiceDetail: {
+                    id: $scope.selectRoom.invoiceDetailId
+                },
+                customer: _customer
+            }).then(function (_resp) {
+                alert("Thêm khách hàng thành công!");
+                $('.nav-tabs a[href="#hosted-at-tab"]').tab('show');
+                $scope.hostedAts.push(_resp.data);
+            }, function () {
+                alert("Thêm khách hàng thất bại!");
+            });
+        }
+    }
+
+    $scope.removeHostedAt = function (hostedAt) {
+        if (!confirm("Bạn muốn loại bỏ khách hàng này khỏi phòng?")) {
+            return;
+        }
+        $http.delete("http://localhost:8000/api/hosted-ats/" + hostedAt.id).then(function () {
+            alert("Loại bỏ khách hàng thành công!");
+            $scope.loadHostedAts();
+        }, function () {
+            alert("Loại bỏ khách hàng thất bại!");
+        });
+    }
+
+    $scope.handlerCreateCustomer = async function () {
+        if (!$scope.customer.peopleId) {
+            alert("Vui lòng nhập CCCD/CMND!");
+            $("#peopleId").focus();
+            return;
+        }
+        if ($scope.customers.find(_customer => _customer.peopleId == $scope.customer.peopleId)) {
+            alert("CCCD/CMND đã tồn tại!");
+            $("#peopleId").focus();
+            return;
+        }
+        if (!$scope.customer.fullName) {
+            alert("Vui lòng nhập họ và tên!");
+            $("#fullName").focus();
+            return;
+        }
+        if (!$scope.customer.phoneNumber) {
+            alert("Vui lòng nhập SĐT!");
+            $("#phoneNumber").focus();
+            return;
+        }
+        if (!$scope.customer.email) {
+            alert("Vui lòng nhập email!");
+            $("#email").focus();
+            return;
+        }
+        if (!$scope.customer.dateOfBirth) {
+            alert("Vui lòng nhập ngày sinh!");
+            $("#dateOfBirth").focus();
+            return;
+        }
+        if (!$scope.customer.placeOfBirth) {
+            alert("Vui lòng nhập quê quán!");
+            $("#placeOfBirth").focus();
+            return;
+        }
+        if (!$scope.customer.address) {
+            alert("Vui lòng nhập địa chỉ!");
+            $("#address").focus();
+            return;
+        }
+        if (!confirm("Bạn muốn thêm mới khách hàng?")) {
+            return;
+        }
+        $http.post("http://localhost:8000/api/customers/create-member", $scope.customer).then(function (_resp) {
+            alert("Thêm khách hàng mới thành công!");
+            $('.nav-tabs a[href="#customer-tab"]').tab('show');
+            $scope.customers.push(_resp.data);
+            $scope.customer = {
+                gender: false
+            };
+        }, function () {
+            alert("Thêm khách hàng mới thất bại!");
+        });
     }
 
     $scope.handlerExtendDateRoom = async function () {

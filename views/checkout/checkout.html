@@ -94,14 +94,14 @@
                                     <td colspan="5" class="border-0 text-end">Tiền phòng</td>
                                     <td class="border-0 text-end">{{totalRoom() | currency: '' : 0}}₫</td>
                                 </tr>
-                                <!-- <tr>
-                                    <td colspan="5" class="border-0 text-end">Nhận phòng sớm</td>
-                                    <td class="border-0 text-end">0₫</td>
-                                </tr> -->
                                 <tr>
+                                    <td colspan="5" class="border-0 text-end">Trả trước</td>
+                                    <td class="border-0 text-end">{{invoiceDetail.deposit  | currency: '' : 0}}₫</td>
+                                </tr>
+                                <!-- <tr>
                                     <td colspan="5" class="border-0 text-end">Trả phòng muộn</td>
                                     <td class="border-0 text-end">0₫</td>
-                                </tr>
+                                </tr> -->
                                 <tr>
                                     <td colspan="5" class="border-0 text-end">
                                         <strong>Tổng tiền phòng</strong></td>

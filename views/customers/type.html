@@ -1,4 +1,20 @@
 <app-layout name="">
+
+    <div class="row mb-2">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4 text-center">
+            <div id="loading-spinner" ng-show="loading">
+                <i class="fa fa-spinner fa-spin" style="font-size: 30px"></i>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="text-sm-end">
+                <a class="btn btn-success btn-lg" ng-href="/#!/customers" role="button">
+                    <i class="fas fa-arrow-left"></i> Back</a>
+            </div>
+        </div>
+    </div>
+
     <div class="container-fluid">
         <div class="row">
             <div class="col-6">

@@ -86,7 +86,11 @@ app.controller("accountListCtrl", function ($scope, $window, $http) {
         $http.get("http://localhost:8000/api/accounts").then(function (resp) {
             $scope.accounts = resp.data;
             $(document).ready(function () {
-                $('#datatable-accounts').DataTable();
+                $('#datatable-accounts').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
+                    },
+                });
             });
         });
     }

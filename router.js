@@ -42,6 +42,11 @@ app.config(function ($routeProvider,$httpProvider) {
       templateUrl: "/views/invoice/detail.html",
       controller: "invoiceDetailCtrl",
     })
+  //setting
+      .when("/setting", {
+        templateUrl: "/views/setting/index.html",
+        controller: "settingCtrl",
+      })
 	//Checkin-Checkout
     .when("/checkin/:roomCode", {
       templateUrl: "/views/checkin/checkin.html",

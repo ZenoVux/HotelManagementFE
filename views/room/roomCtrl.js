@@ -85,6 +85,7 @@ app.controller("roomCreateFormCtrl", function ($scope, $http, $location) {
         },
         status: 0
     };
+
     $scope.floors = [];
 
     $scope.supplys = {};
@@ -94,6 +95,8 @@ app.controller("roomCreateFormCtrl", function ($scope, $http, $location) {
     $scope.bedTypeSelected = [];
 
     $scope.chooseImageRoom = [];
+
+    $scope.roomNumber = [];
 
     // Load data room
     $scope.initialize = function () {
@@ -208,25 +211,29 @@ app.controller("roomCreateFormCtrl", function ($scope, $http, $location) {
     }
 
     $scope.uploadImageStorage = function (files) {
-        var file = new FormData();
+        var fileImages = [];
         for (var index = 0; index < files.length; index++) {
+            var file = new FormData();
             file.append("file", files[index]);
+            fileImages.push(file);
         }
-        $http.post("http://localhost:8000/api/storage", file, {
-            transformRequest: angular.identity,
-            headers: {'Content-Type' : undefined},
-            transformResponse: [
-                function (file) { 
-                    return file; 
-                }
-            ]
-        }).then(resp => {
-            $scope.chooseImageRoom.push(resp.data);
-        }).catch(error => {
-            console.log("Error", error);
+        fileImages.forEach(item => {
+            $http.post("http://localhost:8000/api/storage", item, {
+                transformRequest: angular.identity,
+                headers: {'Content-Type' : undefined},
+                transformResponse: [
+                    function (item) { 
+                        return item; 
+                    }
+                ]
+            }).then(resp => {
+                $scope.chooseImageRoom.push(resp.data);
+            }).catch(error => {
+                console.log("Error", error);
+            })
         })
     }
-
+    
     $scope.deleteImageStorage = function(imageName){
         $http.delete("http://localhost:8000/api/storage/" + imageName).then(resp => {
             const index = $scope.chooseImageRoom.findIndex(name => name == imageName);
@@ -241,6 +248,18 @@ app.controller("roomCreateFormCtrl", function ($scope, $http, $location) {
             return `http://localhost:8000/api/storage/${imageName}`;
     }
 
+    $scope.floorChange = function() {
+        $scope.roomNumber = [];
+        var name = $scope.form.floor.name.slice(5);
+        for (let index = 1; index < 11; index++) {
+            if (index == 10) {
+                $scope.roomNumber.push(name + index);
+            }else{
+                $scope.roomNumber.push(name + "0" + index);
+            }
+        }
+    }
+        
     $scope.createImage = function (room) {
         $scope.chooseImageRoom.forEach(item => {
             var image = {
@@ -267,7 +286,6 @@ app.controller("roomCreateFormCtrl", function ($scope, $http, $location) {
         })
     }
 
-    // Create room
     $scope.create = async function () {
         var room = angular.copy($scope.form);
         await $http.post("http://localhost:8000/api/rooms", room).then(resp => { 
@@ -281,7 +299,7 @@ app.controller("roomCreateFormCtrl", function ($scope, $http, $location) {
             console.log("Error", error);
         })
     }
-    //Reset form
+
     $scope.reset = function () {
         $scope.form = {
             code: "",
@@ -322,12 +340,31 @@ app.controller("roomCreateFormCtrl", function ($scope, $http, $location) {
         $scope.chooseImageRoom = [];
         document.getElementById('formrow-image-input').value = null;
     };
-
+    
     $scope.initialize();
+    // Room type
+    $scope.formRoomType = {};
+    $scope.roomTypes = [];
+    
+    $scope.createRoomType = function () {
+        var roomType = angular.copy($scope.form);
+        $http.post("http://localhost:8000/api/room-types", roomType).then(resp =>{
+            alert("Create thành công")
+        }).catch(error=>{
+            alert("Create thất bại")
+            console.log("Error", error);
+        })
+    }
+
+    $scope.resetRoomType = function () {
+        $scope.formRoomType = {};
+    };
 });
 
 app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $location) {
     $scope.form = {};
+
+    $scope.floors = [];
 
     $scope.supplys = [];
     $scope.supplyRooms = [];
@@ -339,6 +376,8 @@ app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $loc
 
     $scope.imageRoom = [];
     $scope.chooseImageRoom = [];
+
+    
 
     // Load data room
     $scope.initialize = async function () {
@@ -408,6 +447,15 @@ app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $loc
             alert("Error load bed room")
             console.log("Error", error);
         })
+
+        //Load data floors
+        $http.get("http://localhost:8000/api/floors").then(resp => {
+            $scope.floors = resp.data;
+        }).catch(error => {
+            alert("Error load supply")
+            console.log("Error", error);
+        })
+
         //Load bed type
         await $http.get("http://localhost:8000/api/bed-types").then(resp => {
             $scope.bedTypes = resp.data;
@@ -492,7 +540,6 @@ app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $loc
                 supply,
                 quantity
             }
-            console.log(supplyRoom);
             $http.post("http://localhost:8000/api/supply-rooms", supplyRoom).then(resp => {
             }).catch(error => {
                 console.log("Error", error);
@@ -529,22 +576,26 @@ app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $loc
     }
 
     $scope.uploadImageStorage = function (files) {
-        var file = new FormData();
+        var fileImages = [];
         for (var index = 0; index < files.length; index++) {
+            var file = new FormData();
             file.append("file", files[index]);
+            fileImages.push(file);
         }
-        $http.post("http://localhost:8000/api/storage", file, {
-            transformRequest: angular.identity,
-            headers: {'Content-Type' : undefined},
-            transformResponse: [
-                function (file) { 
-                    return file; 
-                }
-            ]
-        }).then(resp => {
-            $scope.chooseImageRoom.push(resp.data);
-        }).catch(error => {
-            console.log("Error", error);
+        fileImages.forEach(item => {
+            $http.post("http://localhost:8000/api/storage", item, {
+                transformRequest: angular.identity,
+                headers: {'Content-Type' : undefined},
+                transformResponse: [
+                    function (item) { 
+                        return item; 
+                    }
+                ]
+            }).then(resp => {
+                $scope.chooseImageRoom.push(resp.data);
+            }).catch(error => {
+                console.log("Error", error);
+            })
         })
     }
 
@@ -608,6 +659,20 @@ app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $loc
         return `http://localhost:8000/api/storage/${imageName}`;
     }
 
+    $scope.floorChange = function() {
+        alert("a")
+        $scope.roomNumber = [];
+        var item = $scope.floors.find(item => item.id == $scope.form.floor.id);
+        var name = item.name.slice(5);
+        for (let index = 1; index < 11; index++) {
+            if (index == 10) {
+                $scope.roomNumber.push(name + index);
+            }else{
+                $scope.roomNumber.push(name + "0" + index);
+            }
+        }
+    }
+
     //Update room
     $scope.update = function () {
         var room = angular.copy($scope.form);
@@ -649,5 +714,5 @@ app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $loc
         $scope.supplySelected = [];
     };
     $scope.initialize();
-
+   
 });

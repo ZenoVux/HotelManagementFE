@@ -20,15 +20,15 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="formrow-roomNumber-input" class="form-label">Room number</label>
-                                    <input ng-model="form.code" type="text" class="form-control" id="formrow-roomNumber-input"
-                                        placeholder="Enter Room Number">
+                                    <select ng-model="form.code" id="formrow-roomNumber-select" class="form-select">
+                                        <option ng-repeat= "item in roomNumber" ng-value = "item">{{item}}</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="formrow-price-input" class="form-label">Price</label>
                                 <div class="input-group">
-                                    <input ng-model="form.price" type="text" class="form-control" id="formrow-price-input"
-                                        placeholder="Choose room type">
+                                    <input ng-model="form.price" type="text" class="form-control" id="formrow-price-input">
                                 </div>
                             </div>
                         </div>
@@ -58,16 +58,20 @@
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="formrow-floor-input" class="form-label">Floor</label>
-                                <select ng-model="form.floor.id" id="formrow-floor-select" class="form-select">
-                                    <option ng-repeat= "floor in floors" ng-value = "floor.id">{{floor.name}}</option>
+                                <select ng-model="form.floor" id="formrow-floor-select" class="form-select" ng-change="floorChange()">
+                                    <option ng-repeat= "floor in floors" ng-value = "floor">{{floor.name}}</option>
                                 </select>
                             </div>
-                            <div class="col-md-3 mb-3">
-                                <label for="formrow-isSmoking-input" class="form-label">Is smoking</label>
-                                <select ng-model="form.isSmoking" id="formrow-isSmoking-select" class="form-select">
-                                    <option ng-value = "true">Có</option>
-                                    <option ng-value = "false">Không</option>
-                                </select>
+                            <div class="col-md-3 mb-4">
+                                <label for="formrow-isSmoking-input" class="form-label">Is smoking</label><br>
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input" name="btnradio" id="btnradio1" ng-model="form.isSmoking"  ng-value="true">
+                                    <label class="form-check-label" for="btnradio1">Có</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input" name="btnradio" id="btnradio2" ng-model="form.isSmoking"  ng-value="false">
+                                    <label class="form-check-label" for="btnradio2">Không</label>
+                                </div>
                             </div>
                         </div>
                         <div class="row mb-3">
@@ -89,7 +93,81 @@
                                 </div>
                             </div>
                             <div class="col-md-3 mb-3 mt-auto d-grid">
-                                <a href="/#!/room-type/create" class="btn btn-outline-primary waves-effect waves-light w-100"><i class="fas fa-plus me-3"></i>Create room type</a>
+                                <a href="/#!/room-type/create" class="btn btn-outline-primary waves-effect waves-light w-100" data-bs-toggle="modal" data-bs-target="#createRoomType">
+                                    <i class="fas fa-plus me-3"></i>Create room type
+                                </a>
+                                 <!-- Model create room type-->
+                                <div class="modal fade" id="createRoomType" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="createRoomTypeLabel">Create room type</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body ">
+                                                <form>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label for="formrow-name-input" class="form-label">Name</label>
+                                                                <input ng-model="formRoomType.name" type="text" class="form-control" id="formrow-name-input"
+                                                                    placeholder="Enter name room type">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 mb-3">
+                                                            <label for="formrow-adultSurcharge-input" class="form-label">Adult surcharge</label>
+                                                            <div class="input-group">
+                                                                <input ng-model="formRoomType.adultSurcharge" type="text" class="form-control" id="formrow-adultSurcharge-input"
+                                                                    placeholder="Enter adult surcharge">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label for="formrow-childSurcharge-input" class="form-label">Child surcharge</label>
+                                                                <input ng-model="formRoomType.childSurcharge" type="text" class="form-control" id="formrow-childSurcharge-input"
+                                                                    placeholder="Enter child surcharge">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 mb-3">
+                                                            <label for="formrow-cancellationPolicy-input" class="form-label">Cancellation policy</label>
+                                                            <div class="input-group">
+                                                                <input ng-model="formRoomType.cancellationPolicy" type="text" class="form-control" id="formrow-cancellationPolicy-input"
+                                                                    placeholder="Enter cancellation policy">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label for="formrow-otherPolicy-input" class="form-label">Other policy</label>
+                                                                <input ng-model="formRoomType.otherPolicy" type="text" class="form-control" id="formrow-otherPolicy-input"
+                                                                    placeholder="Enter other policy">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 mb-3">
+                                                            <div class="mb-3">
+                                                                <label for="formrow-description-input">Description</label>
+                                                                <textarea ng-model="formRoomType.description" id="formrow-description-input" class="form-control" rows="3"
+                                                                    placeholder="Enter Description"></textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <button ng-click="createRoomType()" class="btn btn-success waves-effect waves-light btn-rounded mb-2">Create</button>
+                                                        <button ng-click="resetRoomType()" class="btn btn-danger waves-effect waves-light btn-rounded mb-2">Reset</button>
+                                                    </div>
+                                                    
+                                                </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- End model create room type -->
                             </div>
                             
                             <div class="col-md-3 mb-3 mt-auto">

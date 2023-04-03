@@ -2,82 +2,60 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
+                <h5 class="card-header bg-transparent border-bottom text-uppercase">
+                    <i class="bx bxs-circle text-danger"></i>
+                    <i class="bx bxs-circle text-warning"></i>
+                    <i class="bx bxs-circle text-success"></i>
+                </h5>
                 <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <h5 class="fw-semibold flex-grow-1">Thông tin</h5>
-                        <div class="flex-shrink-0">
-                            <!-- <button ng-click="editable = !editable" class="btn btn-sm btn-soft-info"
-                                data-bs-toggle="button"><i class="mdi mdi-pencil-outline"></i></button> -->
-                            <button class="btn btn-sm btn-soft-success"><i class="mdi mdi-content-save"></i></button>
+                    <div class="row">
+                        <div class="col-6">
+                            <h5 class="mb-2">Khách hàng</h5>
+                            <table class="table mb-0 table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th scope="row" style="width: 300px;">Họ và tên</th>
+                                        <td>{{bookingDetail.booking.customer.fullName}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">CCCD/CMND</th>
+                                        <td>{{bookingDetail.booking.customer.peopleId}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Email</th>
+                                        <td>{{bookingDetail.booking.customer.email}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">SĐT</th>
+                                        <td>{{bookingDetail.booking.customer.phoneNumber}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-6">
+                            <h5 class="mb-2">Phòng {{bookingDetail.room.code}}</h5>
+                            <table class="table mb-0 table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th scope="row" style="width: 300px;">Loại phòng</th>
+                                        <td>{{bookingDetail.room.roomType.name}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Giá phòng</th>
+                                        <td>{{bookingDetail.room.price | currency: '' : 0}}₫</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Ngày nhận</th>
+                                        <td>{{bookingDetail.booking.checkinExpected | date:'dd/MM/yyyy'}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Ngày trả</th>
+                                        <td>{{bookingDetail.booking.checkoutExpected | date:'dd/MM/yyyy'}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                    <p class="mb-2">Số phòng: <span class="text-primary">{{bookingDetail.room.code}}</span></p>
-                    <p class="mb-2">Tầng: <span class="text-primary">{{bookingDetail.room.floor.name}}</span></p>
-                    <p class="mb-2">Loại phòng: <span class="text-primary">{{bookingDetail.room.roomType.name}}</span>
-                    <p class="mb-4">Giá phòng: <span class="text-primary">{{bookingDetail.room.price | currency : "VNĐ "}}/ngày</span>
-                    <form>
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="mb-3">
-                                    <label for="formrow-fullname-input" class="form-label">Khách hàng</label>
-                                    <input ng-value="bookingDetail.booking.customer.fullName" class="form-control"
-                                        id="formrow-fullname-input" readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="mb-3">
-                                    <label for="formrow-email-input" class="form-label">CCCD/CMT</label>
-                                    <input ng-value="bookingDetail.booking.customer.peopleId" class="form-control"
-                                        id="formrow-email-input" readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="mb-3">
-                                    <label for="formrow-email-input" class="form-label">SĐT</label>
-                                    <input ng-value="bookingDetail.booking.customer.phoneNumber" class="form-control"
-                                        id="formrow-email-input" readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="mb-3">
-                                    <label for="formrow-firstname-input" class="form-label">Email</label>
-                                    <input ng-value="bookingDetail.booking.customer.email" class="form-control"
-                                        id="formrow-firstname-input" readonly>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="mb-3">
-                                    <label for="formrow-firstname-input" class="form-label">Ngày nhận</label>
-                                    <input ng-value="bookingDetail.booking.checkinExpected | date:'dd/MM/yyyy'"
-                                        type="text" class="form-control" id="formrow-firstname-input" readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="mb-3">
-                                    <label for="formrow-firstname-input" class="form-label">Ngày trả</label>
-                                    <input ng-value="bookingDetail.booking.checkoutExpected | date:'dd/MM/yyyy'"
-                                        type="text" class="form-control" id="formrow-firstname-input" readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="mb-3">
-                                    <label for="formrow-firstname-input" class="form-label">Số lượng người lớn</label>
-                                    <input ng-value="bookingDetail.numAdults" type="number" class="form-control"
-                                        id="formrow-firstname-input">
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="mb-3">
-                                    <label for="formrow-firstname-input" class="form-label">Số lượng trẻ em</label>
-                                    <input ng-value="bookingDetail.numChildren" type="number" class="form-control"
-                                        id="formrow-firstname-input">
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-
                 </div>
                 <!-- end card body -->
                 <div class="card-body border-top">
@@ -86,10 +64,6 @@
                         <div class="flex-shrink-0">
                             <button ng-click="modalPeopleRoom('show')" class="btn btn-sm btn-soft-success"><i
                                     class="mdi mdi-plus"></i></button>
-                            <!-- <button ng-click="modalListCustomer('show')" class="btn btn-sm btn-soft-primary"><i
-                                    class="mdi mdi-format-list-bulleted"></i></button> -->
-                            <button ng-click="loadhostedAts()" class="btn btn-sm btn-light"><i
-                                    class="mdi mdi-refresh"></i></button>
                         </div>
                     </div>
                     <div class="table-responsive">
@@ -142,15 +116,15 @@
                         <div class="flex-shrink-0">
                             <button ng-click="modalServiceRoom('show')" class="btn btn-sm btn-soft-primary"><i
                                     class="mdi mdi-format-list-bulleted"></i></button>
-                            <button ng-click="loadUsedServices()" class="btn btn-sm btn-light"><i
-                                    class="mdi mdi-refresh"></i></button>
+                            <!-- <button ng-click="loadUsedServices()" class="btn btn-sm btn-light"><i
+                                    class="mdi mdi-refresh"></i></button> -->
                         </div>
                     </div>
                     <div class="table-responsive">
                         <table class="table align-middle table-nowrap">
                             <thead>
                                 <tr>
-                                    <th scope="col">Tên DV</th>
+                                    <th scope="col">Tên dịch vụ</th>
                                     <th scope="col">Loại</th>
                                     <th scope="col">Giá</th>
                                     <th scope="col">Số lượng</th>
@@ -164,11 +138,11 @@
                                         {{item.serviceRoom.name}}
                                     </th>
                                     <td>{{item.serviceRoom.serviceType.name}}</td>
-                                    <td>{{item.serviceRoom.price}}</td>
+                                    <td>{{item.serviceRoom.price | currency: '' : 0}}₫</td>
                                     <td><input ng-model="item.quantity" ng-blur="updateServiceRoom(item)"
                                             style="width: 70px;" type="number" class="form-control form-control-sm"
                                             min="1"></td>
-                                    <td>{{item.serviceRoom.price * item.quantity}}</td>
+                                    <td>{{item.serviceRoom.price * item.quantity | currency: '' : 0}}₫</td>
                                     <td>
                                         <ul class="list-unstyled hstack gap-1 mb-0">
                                             <!-- <li>
@@ -187,20 +161,18 @@
                         </table>
                     </div>
                 </div>
-                <!-- end card body -->
                 <div class="card-body border-top">
-                    <div class="d-flex flex-wrap gap-2">
-                        <button ng-click="checkin()" class="btn btn-primary waves-effect waves-light">Nhận phòng</button>
+                    <div class="d-flex flex-row-reverse ">
+                        <button ng-click="checkin()" class="btn btn-primary waves-effect waves-light float-end"><i
+                                class="mdi mdi-login-variant"></i> Nhận phòng</button>
                     </div>
                 </div>
-                <!-- end card body -->
             </div>
-            <!-- end card -->
         </div>
     </div>
 
-    <div id="modal-people-room" class="modal modal-lg fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="checkoutModalLabel" aria-hidden="true">
+    <div id="modal-people-room" class="modal modal-lg fade" data-bs-backdrop="static" data-bs-keyboard="false"
+        tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -208,112 +180,145 @@
                     <button ng-click="modalPeopleRoom('hide')" type="button" class="btn-close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="formrow-password-input" class="form-label">People ID</label>
-                                <div class="input-group">
-                                    <input ng-model="people.peopleId" class="form-control" id="formrow-password-input">
-                                    <button ng-click="searchCustomer()" class="btn btn-outline-secondary" type="button">
-                                        <i class="mdi mdi-account-search-outline"></i>
-                                    </button>
+                    <ng-form name="customerForm" novalidate>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="peopleId" class="form-label">CCCD/CMND</label>
+                                    <div class="input-group has-validation">
+                                        <input ng-model="people.peopleId" class="form-control" id="peopleId"
+                                            name="peopleId" required
+                                            ng-class="{'is-invalid': customerForm.peopleId.$invalid && customerForm.peopleId.$dirty, 'is-valid': customerForm.peopleId.$valid && customerForm.peopleId.$dirty}">
+                                        <button ng-click="searchCustomer()" class="btn btn-secondary"
+                                            type="button">
+                                            <i class="bx bx-search-alt"></i>
+                                        </button>
+                                        <div class="invalid-feedback">
+                                            Vui lòng nhập CCCD/CMND.
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="formrow-fullname-input" class="form-label">Full Name</label>
-                                <input ng-model="people.fullName" class="form-control" id="formrow-fullname-input">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="formrow-email-input" class="form-label">Phone Number</label>
-                                <input ng-model="people.phoneNumber" class="form-control" id="formrow-email-input">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="formrow-firstname-input" class="form-label">Email</label>
-                                <input ng-model="people.email" type="email" class="form-control"
-                                    id="formrow-firstname-input">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="formrow-password-input" class="form-label">Date of Birth</label>
-                                <input ng-model="people.dateOfBirth" type="date" class="form-control"
-                                    id="formrow-password-input">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="formrow-firstname-input" class="form-label">Place of Birth</label>
-                                <input ng-model="people.placeOfBirth" class="form-control" id="formrow-firstname-input">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="mb-3">
-                                <label class="form-label">Gender</label>
-                                <div class="d-flex">
-                                    <div class="form-check  form-check-inline">
-                                        <input ng-model="people.gender" class="form-check-input" type="radio"
-                                            id="form-radio-male" ng-value="false">
-                                        <label class="form-check-label" for="form-radio-male">
-                                            Male
-                                        </label>
-                                    </div>
-                                    <div class="form-check  form-check-inline">
-                                        <input ng-model="people.gender" class="form-check-input" type="radio"
-                                            id="form-radio-female" ng-value="true">
-                                        <label class="form-check-label" for="form-radio-female">
-                                            Female
-                                        </label>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="fullName" class="form-label">Họ và tên</label>
+                                    <input ng-model="people.fullName" class="form-control" id="fullName" name="fullName"
+                                        required
+                                        ng-class="{'is-invalid': customerForm.fullName.$invalid && customerForm.fullName.$dirty, 'is-valid': customerForm.fullName.$valid && customerForm.fullName.$dirty}">
+                                    <div class="invalid-feedback">
+                                        Vui lòng nhập họ và tên.
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="mb-3">
-                                <label for="formrow-firstname-input" class="form-label">Address</label>
-                                <textarea ng-model="people.address" class="form-control" id="formrow-firstname-input"
-                                    rows="3"></textarea>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="phoneNumber" class="form-label">SĐT</label>
+                                    <input ng-model="people.phoneNumber" class="form-control" id="phoneNumber"
+                                        name="phoneNumber" required
+                                        ng-class="{'is-invalid': customerForm.phoneNumber.$invalid && customerForm.phoneNumber.$dirty, 'is-valid': customerForm.phoneNumber.$valid && customerForm.phoneNumber.$dirty}">
+                                        <div class="invalid-feedback">
+                                            Vui lòng nhập SĐT.
+                                        </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input ng-model="people.email" type="email" class="form-control" id="email"
+                                        name="email" required
+                                        ng-class="{'is-invalid': customerForm.email.$invalid && customerForm.email.$dirty, 'is-valid': customerForm.email.$valid && customerForm.email.$dirty}">
+                                    <div class="invalid-feedback">
+                                        Vui lòng nhập email.
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="dateOfBirth" class="form-label">Ngày sinh</label>
+                                    <input ng-model="people.dateOfBirth" type="date" class="form-control"
+                                        id="dateOfBirth" name="dateOfBirth" required
+                                        ng-class="{'is-invalid': customerForm.dateOfBirth.$invalid && customerForm.dateOfBirth.$dirty, 'is-valid': customerForm.dateOfBirth.$valid && customerForm.dateOfBirth.$dirty}">
+                                    <div class="invalid-feedback">
+                                        Vui lòng nhập ngày sinh.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="placeOfBirth" class="form-label">Quê quán</label>
+                                    <input ng-model="people.placeOfBirth" class="form-control" id="placeOfBirth"
+                                        name="placeOfBirth" required
+                                        ng-class="{'is-invalid': customerForm.placeOfBirth.$invalid && customerForm.placeOfBirth.$dirty, 'is-valid': customerForm.placeOfBirth.$valid && customerForm.placeOfBirth.$dirty}">
+                                    <div class="invalid-feedback">
+                                        Vui lòng nhập quê quán.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label class="form-label">Giới tính</label>
+                                    <div class="d-flex">
+                                        <div class="form-check  form-check-inline">
+                                            <input ng-model="people.gender" class="form-check-input" type="radio"
+                                                id="form-radio-male" ng-value="false">
+                                            <label class="form-check-label" for="form-radio-male">
+                                                Nam
+                                            </label>
+                                        </div>
+                                        <div class="form-check  form-check-inline">
+                                            <input ng-model="people.gender" class="form-check-input" type="radio"
+                                                id="form-radio-female" ng-value="true">
+                                            <label class="form-check-label" for="form-radio-female">
+                                                Nữ
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label for="address" class="form-label">Địa chỉ</label>
+                                    <textarea ng-model="people.address" rows="3" class="form-control" id="address"
+                                        name="address" required
+                                        ng-class="{'is-invalid': customerForm.address.$invalid && customerForm.address.$dirty, 'is-valid': customerForm.address.$valid && customerForm.address.$dirty}"></textarea>
+                                    <div class="invalid-feedback">
+                                        Vui lòng nhập địa chỉ.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-form>
                 </div>
                 <div class="modal-footer">
-                    <button ng-click="addPeople()" class="btn btn-primary">Thêm</button>
+                    <button ng-click="addPeople(customerForm)" class="btn btn-primary">Thêm</button>
                     <button ng-click="modalPeopleRoom('hide')" class="btn btn-secondary">Đóng</button>
                 </div>
             </div>
         </div>
     </div>
-    <div id="modal-service-room" class="modal modal-lg fade" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-hidden="true">
+    <div id="modal-service-room" class="modal modal-lg fade" data-bs-backdrop="static" tabindex="-1" role="dialog"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Dịch vụ phòng</h5>
+                    <h5 class="modal-title">Dịch vụ</h5>
                     <button ng-click="modalServiceRoom('hide')" type="button" class="btn-close"></button>
                 </div>
                 <div class="modal-body">
-                    <label>
-                        <span>Search:</span>
-                        <input ng-model="searchService" type="search" class="form-control form-control-sm">
-                    </label>
                     <div class="table-responsive">
                         <table id="datatable-service-room" class="table align-middle table-nowrap table-hover">
                             <thead>
                                 <tr>
-                                    <th scope="col">Tên DV</th>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Tên dịch vụ</th>
                                     <th scope="col">Loại</th>
                                     <th scope="col">Giá</th>
                                     <th scope="col" style="width: 100px;">Hành động</th>
@@ -322,10 +327,11 @@
                             <tbody>
                                 <tr ng-repeat="item in serviceRooms | filter:searchService">
                                     <th scope="row">
-                                        {{item.name}}
+                                        {{item.code}}
                                     </th>
+                                    <td>{{item.name}}</td>
                                     <td>{{item.serviceType.name}}</td>
-                                    <td>{{item.price}}</td>
+                                    <td>{{item.price | currency: '' : 0}}₫</td>
                                     <td>
                                         <ul class="list-unstyled hstack gap-1 mb-0">
                                             <li>
@@ -342,59 +348,6 @@
                 </div>
                 <div class="modal-footer">
                     <button ng-click="modalServiceRoom('hide')" class="btn btn-secondary">Đóng</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div id="modal-list-customer" class="modal modal-lg fade" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Service room</h5>
-                    <button ng-click="modalListCustomer('hide')" type="button" class="btn-close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label>
-                            <span>Search:</span>
-                            <input ng-model="searchCustomer" type="search" class="form-control form-control-sm">
-                        </label>
-                    </div>
-                    <div class="table-responsive">
-                        <table id="datatable-service-room" class="table align-middle table-nowrap table-hover">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Full Name</th>
-                                    <th scope="col">Phone Number</th>
-                                    <th scope="col">Gender</th>
-                                    <th scope="col">Date of Birth</th>
-                                    <th scope="col">People ID</th>
-                                    <th scope="col" style="width: 100px;">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr ng-repeat="item in customers | filter:searchCustomer">
-                                    <th scope="row">
-                                        {{item.fullName}}
-                                    </th>
-                                    <td>{{item.phoneNumber}}</td>
-                                    <td>{{item.gender ? "Nữ" : "Nam"}}</td>
-                                    <td>{{item.dateOfBirth | date:'dd/MM/yyyy'}}</td>
-                                    <td>{{item.peopleId}}</td>
-                                    <td>
-                                        <ul class="list-unstyled hstack gap-1 mb-0">
-                                            <button ng-click="addHostedAt(item)" class="btn btn-sm btn-soft-success"><i
-                                                    class="mdi mdi-plus"></i></button>
-                                            </li>
-                                        </ul>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button ng-click="modalListCustomer('hide')" class="btn btn-secondary">Đóng</button>
                 </div>
             </div>
         </div>

@@ -6,6 +6,8 @@ app.controller("listBookingCtrl", function ($scope, $http) {
     $scope.showConfirmedTable = false;
     $scope.showPendingTable = false;
     $scope.currentTable = 0;
+    $scope.booking = {};
+    $scope.booking.reasonCancel = "";
 
     $scope.init = function () {
         $scope.loading = true;
@@ -107,6 +109,21 @@ app.controller("listBookingCtrl", function ($scope, $http) {
             console.error('Error fetching data:', error);
             $scope.loading = false;
         });
+    };
+
+    $scope.cancelBooking = function () {
+        var confirmationMessage = "Xác nhận huỷ booking " + $scope.currentBooking.code + "";
+        if (window.confirm(confirmationMessage)) {
+            $scope.currentBooking.note = $scope.currentBooking.note + " ----- Lí do huỷ: "
+                + $scope.booking.reasonCancel + " ----- Người huỷ: Minh";
+            $http.put("http://localhost:8000/api/bookings/cancel", $scope.currentBooking).then(function (resp) {
+                $scope.booking.reasonCancel = "";
+                $scope.init();
+                $('#booking-modal').modal('hide');
+            }).catch(function (error) {
+                console.error('Error fetching data:', error);
+            });
+        }
     };
 
 });

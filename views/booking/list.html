@@ -214,8 +214,37 @@
                                         </table>
                                     </div>
 
-
                                 </div>
+                                <!-- card footer -->
+                                <div class="card-footer">
+                                    <div ng-if="currentBooking.status == 0" class="row mb-2">
+                                        <div class="alert alert-danger text-center" role="alert">
+                                            <h4>ĐÃ HUỶ</h4>
+                                        </div>
+                                    </div>
+                                    <div ng-if="currentBooking.status != 0" class="row mb-2">
+                                        <div class="col-sm-5"></div>
+                                        <div class="col-sm-6">
+                                            <div class="row">
+                                                <div class="col-2">
+                                                    <label class="col-form-label">Lí do huỷ</label>
+                                                </div>
+                                                <div class="col-10">
+                                                    <textarea type="text" class="form-control"
+                                                        ng-model="booking.reasonCancel"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-1">
+                                            <div class="text-sm-end">
+                                                <a class="btn btn-danger btn-lg" ng-click="cancelBooking()"
+                                                    role="button">
+                                                    Huỷ</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                         </div> <!-- end col -->
                     </div> <!-- end row -->

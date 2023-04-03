@@ -13,7 +13,6 @@ app.controller("roomListCtrl", function ($scope, $http) {
                 $('#datatable-rooms').DataTable();
             });
         }).catch(error => {
-            alert("Error load data room")
             console.log("Error", error);
         })
     }
@@ -23,7 +22,6 @@ app.controller("roomListCtrl", function ($scope, $http) {
         $http.get("http://localhost:8000/api/supply-rooms/" + codeRoom).then(resp => {
             $scope.supplyRooms = resp.data;
         }).catch(error => {
-            alert("Error load data room")
             console.log("Error", error);
         })
     }
@@ -33,7 +31,6 @@ app.controller("roomListCtrl", function ($scope, $http) {
         $http.get("http://localhost:8000/api/bed-rooms/" + codeRoom).then(resp => {
             $scope.bedRooms = resp.data;
         }).catch(error => {
-            alert("Error load data bed room")
             console.log("Error", error);
         })
     }
@@ -43,7 +40,6 @@ app.controller("roomListCtrl", function ($scope, $http) {
             $http.get("http://localhost:8000/api/room-images/" + codeRoom).then(resp => {
                 $scope.imageRooms = resp.data;
             }).catch(error => {
-                alert("Error load data room")
                 console.log("Error", error);
             })
         }
@@ -104,14 +100,12 @@ app.controller("roomCreateFormCtrl", function ($scope, $http, $location) {
         $http.get("http://localhost:8000/api/room-types").then(resp => {
             $scope.roomTypes = resp.data;
         }).catch(error => {
-            alert("Error load room type")
             console.log("Error", error);
         })
         //Load data floors
         $http.get("http://localhost:8000/api/floors").then(resp => {
             $scope.floors = resp.data;
         }).catch(error => {
-            alert("Error load supply")
             console.log("Error", error);
         })
         //Load data supplys
@@ -122,7 +116,6 @@ app.controller("roomCreateFormCtrl", function ($scope, $http, $location) {
                 item.checked = false;
             });
         }).catch(error => {
-            alert("Error load supply")
             console.log("Error", error);
         })
 
@@ -134,7 +127,6 @@ app.controller("roomCreateFormCtrl", function ($scope, $http, $location) {
                 item.checked = false;
             });
         }).catch(error => {
-            alert("Error load data bed type")
             console.log("Error", error);
         })
     }
@@ -223,7 +215,7 @@ app.controller("roomCreateFormCtrl", function ($scope, $http, $location) {
                 headers: {'Content-Type' : undefined},
                 transformResponse: [
                     function (item) { 
-                        return item; 
+                        return item;
                     }
                 ]
             }).then(resp => {
@@ -385,7 +377,6 @@ app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $loc
         await $http.get("http://localhost:8000/api/rooms/" + $routeParams.id).then(resp => {
             $scope.form = resp.data;
         }).catch(error => {
-            alert("Error load form update")
             console.log("Error", error);
         })
 
@@ -393,7 +384,6 @@ app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $loc
         $http.get("http://localhost:8000/api/room-types").then(resp => {
             $scope.roomTypes = resp.data;
         }).catch(error => {
-            alert("Error load room type")
             console.log("Error", error);
         })
 
@@ -401,7 +391,6 @@ app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $loc
         $http.get("http://localhost:8000/api/floors").then(resp => {
             $scope.floors = resp.data;
         }).catch(error => {
-            alert("Error load supply")
             console.log("Error", error);
         })
 
@@ -414,7 +403,6 @@ app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $loc
                 $scope.supplySelected.push(supply);
             })
         }).catch(error => {
-            alert("Error load supply room")
             console.log("Error", error);
         })
 
@@ -431,7 +419,6 @@ app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $loc
                 })
             })
         }).catch(error => {
-            alert("Error load supply")
             console.log("Error", error);
         })
 
@@ -444,7 +431,6 @@ app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $loc
                 $scope.bedTypeSelected.push(bedRoom);
             })
         }).catch(error => {
-            alert("Error load bed room")
             console.log("Error", error);
         })
 
@@ -452,7 +438,6 @@ app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $loc
         $http.get("http://localhost:8000/api/floors").then(resp => {
             $scope.floors = resp.data;
         }).catch(error => {
-            alert("Error load supply")
             console.log("Error", error);
         })
 
@@ -469,7 +454,6 @@ app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $loc
                 })
             })
         }).catch(error => {
-            alert("Error load bed type")
             console.log("Error", error);
         })
 
@@ -480,7 +464,6 @@ app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $loc
                 $scope.chooseImageRoom.push(item.image.url);
         })
         }).catch(error => {
-            alert("Error load bed type")
             console.log("Error", error);
         })
     }
@@ -660,7 +643,6 @@ app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $loc
     }
 
     $scope.floorChange = function() {
-        alert("a")
         $scope.roomNumber = [];
         var item = $scope.floors.find(item => item.id == $scope.form.floor.id);
         var name = item.name.slice(5);

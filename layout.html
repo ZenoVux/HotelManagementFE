@@ -139,13 +139,13 @@
               <span>Booking</span>
             </a>
           </li>
-          <li ng-if="isAdmin">
+          <li ng-show="isAdmin">
             <a ng-href="/#!/invoices">
               <i class="bx bx-receipt"></i>
               <span>Invoice</span>
             </a>
           </li>
-          <li ng-if="isAdmin">
+          <li ng-show="isAdmin">
             <a href="javascript: void(0);" class="has-arrow waves-effect">
               <i class="bx bx-user"></i>
               <span>Account</span>
@@ -157,19 +157,19 @@
             </ul>
           </li>
          <!-- Room -->
-          <li ng-if="isAdmin">
+          <li ng-show="isAdmin">
             <a href="/#!/room" class="waves-effect">
               <i class="bx bxs-hotel"></i>
               <span>Room</span>
             </a>
           </li>
           <!-- Room Type -->
-          <li ng-if="isAdmin">
+          <li ng-show="isAdmin">
             <a href="/#!/room-type" class="waves-effect">
               <i class="bx bxs-layer"></i>
               <span>Room Type</span>
             </a>
-          <li ng-if="isAdmin">
+          <li ng-show="isAdmin">
             <a href="javascript: void(0);" class="has-arrow waves-effect">
               <i class="bx bx-bell"></i>
               <span>Service</span>

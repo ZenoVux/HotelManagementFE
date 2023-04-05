@@ -126,6 +126,25 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
             $scope.customer = {
                 gender: false
             };
+            $(document).ready(function () {
+                tableCustomer.clear();
+                tableCustomer.destroy();
+                tableCustomer = $('#datatable-customer').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
+                    },
+                    dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                    columnDefs: [
+                        {
+                            targets: 5,
+                            orderable: false
+                        }
+                    ]
+                });
+                $('#search-datatable-customer').keyup(function(){
+                    tableCustomer.search($(this).val()).draw() ;
+                });
+            });
         }, function () {
             alert("Thêm khách hàng mới thất bại!");
         });
@@ -168,6 +187,9 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
         if (usedService) {
             alert("Dịch vụ đã tồn tại!");
         } else {
+            if (!confirm("Bạn muốn thêm " + service.name + "?")) {
+                return;
+            }
             usedService = {
                 serviceRoom: service,
                 bookingDetail: $scope.bookingDetail,
@@ -229,7 +251,7 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
                 serviceId: usedService.serviceRoom.id,
                 quantity: usedService.quantity
             }
-        })
+        });
         $http.post("http://localhost:8000/api/hotel/checkin", {
             code: $routeParams.roomCode,
             customers: customers,

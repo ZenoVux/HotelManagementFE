@@ -118,22 +118,137 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
         });
     }
 
+    $scope.initTableUsedService = function () {
+        $(document).ready(async function () {
+            tableUsedService = $('#datatable-used-service').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
+                },
+                dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                columnDefs: [
+                    {
+                        targets: 6,
+                        orderable: false
+                    }
+                ]
+            });
+            $('#search-datatable-used-service').keyup(function () {
+                tableUsedService.search($(this).val()).draw();
+            });
+        });
+    }
+
+    $scope.clearTableUsedService = function () {
+        $(document).ready(function () {
+            tableUsedService.clear();
+            tableUsedService.destroy();
+        });
+    }
+
+    $scope.initTableServiceRoom = function () {
+        $(document).ready(async function () {
+            tableServiceRoom = $('#datatable-service-room').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
+                },
+                dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                columnDefs: [
+                    {
+                        targets: 4,
+                        orderable: false
+                    }
+                ]
+            });
+            $('#search-datatable-service-room').keyup(function () {
+                tableServiceRoom.search($(this).val()).draw();
+            });
+        });
+    }
+
+    $scope.clearTableServiceRoom = function () {
+        $(document).ready(function () {
+            tableServiceRoom.clear();
+            tableServiceRoom.destroy();
+        });
+    }
+
+    $scope.initTableHostedAt = function () {
+        $(document).ready(async function () {
+            tableHostedAt = $('#datatable-hosted-at').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
+                },
+                dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                columnDefs: [
+                    {
+                        targets: 5,
+                        orderable: false
+                    }
+                ]
+            });
+        });
+
+        $('#search-datatable-hosted-at').keyup(function () {
+            tableHostedAt.search($(this).val()).draw();
+        });
+    }
+
+    $scope.clearTableHostedAt = function () {
+        $(document).ready(function () {
+            tableHostedAt.clear();
+            tableHostedAt.destroy();
+        });
+    }
+
+    $scope.initTableCustomer = function () {
+        $(document).ready(function () {
+            tableCustomer = $('#datatable-customer').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
+                },
+                dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                columnDefs: [
+                    {
+                        targets: 5,
+                        orderable: false
+                    }
+                ]
+            });
+            $('#search-datatable-customer').keyup(function () {
+                tableCustomer.search($(this).val()).draw();
+            });
+        });
+    }
+
+    $scope.clearTableCustomer = function () {
+        $(document).ready(function () {
+            tableCustomer.clear();
+            tableCustomer.destroy();
+        });
+    }
+
     $scope.addServiceRoom = function (service) {
-        const usedService = $scope.usedServices.find(item => item.serviceRoom.id == service.id);
+        const usedService = $scope.usedServices.find(item => item.serviceRoom.id == service.id && !item.isUsed);
         if (usedService) {
             alert("Dịch vụ đã tồn tại!");
         } else {
             if (!confirm("Bạn muốn thêm " + service.name + "?")) {
                 return;
             }
-            $http.post("http://localhost:8000/api/hotel/used-service", {
-                serviceId: service.id,
-                invoiceDetailId: $scope.selectRoom.invoiceDetailId,
+            $http.post("http://localhost:8000/api/used-services", {
+                serviceRoom: {
+                    id: service.id
+                },
+                invoiceDetail: {
+                    id: $scope.selectRoom.invoiceDetailId
+                },
                 quantity: 1
-            }).then(function (resp) {
+            }).then(async function (resp) {
                 alert("Thêm dịch vụ thành công!");
+                await $scope.clearTableUsedService();
+                await $scope.loadUsedServices();
+                await $scope.initTableUsedService();
                 $('.nav-tabs a[href="#used-service-tab"]').tab('show');
-                $scope.usedServices.push(resp.data);
             }, function () {
                 alert("Thêm dịch vụ thất bại!");
             });
@@ -144,22 +259,22 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
         if (!confirm("Bạn muốn cập nhật dịch vụ này?")) {
             return;
         }
-        $http.post("http://localhost:8000/api/hotel/used-service", {
-            serviceId: usedService.serviceRoom.id,
-            invoiceDetailId: $scope.selectRoom.invoiceDetailId,
-            quantity: usedService.quantity
-        }).then(function (resp) {
+        $http.put("http://localhost:8000/api/used-services", usedService).then(function (resp) {
             alert("Cập nhật dịch vụ thành công!");
         }, function () {
             alert("Cập nhật dịch vụ thất bại!");
         });
     }
 
-    $scope.removeServiceRoom = function (service) {
+    $scope.removeServiceRoom = function (usedService) {
+        if (usedService.status) {
+            alert("Không thể xoá dịch vụ đã sử dụng!");
+            return;
+        }
         if (!confirm("Bạn muốn loại bỏ dịch vụ này khỏi phòng?")) {
             return;
         }
-        $http.delete("http://localhost:8000/api/used-services/" + service.id).then(function () {
+        $http.delete("http://localhost:8000/api/used-services/" + usedService.id).then(function () {
             alert("Loại bỏ dịch vụ thành công!");
             $scope.loadUsedServices();
         }, function () {
@@ -206,52 +321,28 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
         if (action == 'show') {
             await $scope.loadHostedAts();
             await $scope.loadCustomers();
-            $(document).ready(function () {
-                tableHostedAt = $('#datatable-hosted-at').DataTable({
-                    language: {
-                        url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
-                    },
-                    dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
-                    columnDefs: [
-                        {
-                            targets: 5,
-                            orderable: false
-                        }
-                    ]
-                });
-                tableCustomer = $('#datatable-customer').DataTable({
-                    language: {
-                        url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
-                    },
-                    dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
-                    columnDefs: [
-                        {
-                            targets: 5,
-                            orderable: false
-                        }
-                    ]
-                });
-                $('#search-datatable-hosted-at').keyup(function(){
-                    tableHostedAt.search($(this).val()).draw() ;
-                });
-                $('#search-datatable-customer').keyup(function(){
-                    tableCustomer.search($(this).val()).draw() ;
-                });
-            });
+            await $scope.initTableHostedAt();
+            await $scope.initTableCustomer();
         } else {
-            $(document).ready(function () {
-                tableHostedAt.clear();
-                tableHostedAt.destroy();
-                tableCustomer.clear();
-                tableCustomer.destroy();
-            });
+            $scope.clearTableHostedAt();
+            $scope.clearTableCustomer();
             $scope.hostedAts = [];
             $scope.customers = [];
             $scope.customer = {
                 gender: false
             };
         }
-        $('#modal-hosted-at').modal(action);
+        await $('#modal-hosted-at').modal(action);
+        $('.nav-tabs a[href="#hosted-at-tab"]').click(function () {
+            $('#search-datatable-hosted-at').focus()
+        });
+        $('.nav-tabs a[href="#customer-tab"]').click(function () {
+            $('#search-datatable-customer').focus()
+        });
+        $('.nav-tabs a[href="#hosted-at-tab"]').tab('show');
+        setTimeout(function () {
+            $('#search-datatable-hosted-at').focus()
+        }, 1000);
     }
 
     $scope.modalAddCustomer = function (action) {
@@ -269,49 +360,25 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
         if (action == 'show') {
             await $scope.loadServices();
             await $scope.loadUsedServices();
-            $(document).ready(function () {
-                tableServiceRoom = $('#datatable-service-room').DataTable({
-                    language: {
-                        url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
-                    },
-                    dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
-                    columnDefs: [
-                        {
-                            targets: 4,
-                            orderable: false
-                        }
-                    ]
-                });
-                tableUsedService = $('#datatable-used-service').DataTable({
-                    language: {
-                        url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
-                    },
-                    dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
-                    columnDefs: [
-                        {
-                            targets: 6,
-                            orderable: false
-                        }
-                    ]
-                });
-                $('#search-datatable-service-room').keyup(function(){
-                    tableServiceRoom.search($(this).val()).draw() ;
-                });
-                $('#search-datatable-used-service').keyup(function(){
-                    tableUsedService.search($(this).val()).draw() ;
-                });
-            });
+            await $scope.initTableUsedService();
+            await $scope.initTableServiceRoom();
         } else {
-            $(document).ready(function () {
-                tableServiceRoom.clear();
-                tableServiceRoom.destroy();
-                tableUsedService.clear();
-                tableUsedService.destroy();
-            });
+            $scope.clearTableUsedService();
+            $scope.clearTableServiceRoom();
             $scope.services = [];
             $scope.usedServices = [];
         }
-        $('#modal-used-service').modal(action);
+        await $('#modal-used-service').modal(action);
+        $('.nav-tabs a[href="#used-service-tab"]').click(function () {
+            $('#search-datatable-used-service').focus()
+        });
+        $('.nav-tabs a[href="#service-tab"]').click(function () {
+            $('#search-datatable-service-room').focus()
+        });
+        $('.nav-tabs a[href="#used-service-tab"]').tab('show');
+        setTimeout(function () {
+            $('#search-datatable-used-service').focus()
+        }, 1000);
     }
 
     $scope.modalCancelRoom = async function (action, room) {
@@ -344,9 +411,12 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
 
     $scope.modalChangeRoom = async function (action, room) {
         $scope.selectRoom = room;
+        $scope.changeRoom.toRoomCode = null;
         if (action == 'show') {
             await $scope.loadInvoiceDetail();
-            await $http.get("http://localhost:8000/api/rooms/unbooked?start-date=" + $scope.selectRoom.checkinExpected + "&end-date=" + $scope.selectRoom.checkoutExpected).then(resp => {
+            const checkinDate = new Date($scope.selectRoom.checkinExpected);
+            const checkoutDate = new Date($scope.selectRoom.checkoutExpected);
+            await $http.get("http://localhost:8000/api/rooms/unbooked?checkin-date=" + checkinDate.toLocaleDateString('vi-VN') + "&checkout-date=" + checkoutDate.toLocaleDateString('vi-VN')).then(resp => {
                 $scope.rooms = resp.data;
                 $(document).ready(function () {
                     tableChangeRoom = $('#datatable-change-room').DataTable({
@@ -361,8 +431,8 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
                             }
                         ]
                     });
-                    $('#search-datatable-change-room').keyup(function(){
-                        tableChangeRoom.search($(this).val()).draw() ;
+                    $('#search-datatable-change-room').keyup(function () {
+                        tableChangeRoom.search($(this).val()).draw();
                     });
                 });
             }).catch(error => {

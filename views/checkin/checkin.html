@@ -42,15 +42,15 @@
                                     </tr>
                                     <tr>
                                         <th scope="row">Giá phòng</th>
-                                        <td>{{bookingDetail.room.price | currency: '' : 0}}₫</td>
+                                        <td>{{bookingDetail.roomPrice | currency: '' : 0}}₫</td>
                                     </tr>
                                     <tr>
                                         <th scope="row">Ngày nhận</th>
-                                        <td>{{bookingDetail.booking.checkinExpected | date:'dd/MM/yyyy'}}</td>
+                                        <td>{{bookingDetail.checkinExpected | date:'dd/MM/yyyy'}}</td>
                                     </tr>
                                     <tr>
                                         <th scope="row">Ngày trả</th>
-                                        <td>{{bookingDetail.booking.checkoutExpected | date:'dd/MM/yyyy'}}</td>
+                                        <td>{{bookingDetail.checkoutExpected | date:'dd/MM/yyyy'}}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -127,8 +127,7 @@
                                     <th scope="col">Tên dịch vụ</th>
                                     <th scope="col">Loại</th>
                                     <th scope="col">Giá</th>
-                                    <th scope="col">Số lượng</th>
-                                    <th scope="col">Thành tiền</th>
+                                    <th scope="col">Mô tả</th>
                                     <th scope="col" style="width: 150px;">Hành động</th>
                                 </tr>
                             </thead>
@@ -139,10 +138,7 @@
                                     </th>
                                     <td>{{item.serviceRoom.serviceType.name}}</td>
                                     <td>{{item.serviceRoom.price | currency: '' : 0}}₫</td>
-                                    <td><input ng-model="item.quantity" ng-blur="updateServiceRoom(item)"
-                                            style="width: 70px;" type="number" class="form-control form-control-sm"
-                                            min="1"></td>
-                                    <td>{{item.serviceRoom.price * item.quantity | currency: '' : 0}}₫</td>
+                                    <td>{{item.serviceRoom.description}}</td>
                                     <td>
                                         <ul class="list-unstyled hstack gap-1 mb-0">
                                             <!-- <li>

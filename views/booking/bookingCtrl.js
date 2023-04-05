@@ -97,11 +97,14 @@ app.controller("listBookingCtrl", function ($scope, $http) {
     $scope.viewBooking = function (booking) {
         $scope.loading = true;
         $scope.currentBooking = booking;
-        $scope.currentBooking.checkin = new Date(booking.checkin);
-        $scope.currentBooking.checkout = new Date(booking.checkout);
         console.log(booking);
         $http.get("http://localhost:8000/api/bookings/" + booking.code).then(function (resp) {
             $scope.bookingInfo = resp.data;
+            for (var i = 0; i < $scope.bookingInfo.bkList.length; i++) {
+                var bk = $scope.bookingInfo.bkList[i];
+                bk.checkinExpected = new Date(bk.checkinExpected);
+                bk.checkoutExpected = new Date(bk.checkoutExpected);
+            }
             console.log($scope.bookingInfo);
             $('#booking-modal').modal('show');
             $scope.loading = false;
@@ -131,17 +134,22 @@ app.controller("listBookingCtrl", function ($scope, $http) {
 app.controller("createBookingCtrl", function ($scope, $http, $location) {
 
     $scope.booking = {};
-    $scope.booking.numAdults = 0;
-    $scope.booking.numChildren = 0;
+    $scope.booking.adults = 2;
+    $scope.booking.children = 0;
     $scope.customer = {};
     $scope.loading = false;
     $scope.currentSection = 0;
     $scope.rooms = [];
     $scope.totalPrice = 0;
+    const checkinDateDisplay = new Date().toISOString().split('T')[0].split('-').reverse().join('/').replace('/', '-').replace('/', '-');
+    const checkinDate = new Date();
+    $scope.booking.checkinDate = checkinDateDisplay;
+
     $scope.booking.idCard = null;
 
-
-    //   $scope.uploadImage(imageData);
+    $scope.closeDropdown = function () {
+        $('.dropdown-menu').removeClass('show');
+    };
 
     $scope.nextSection = function () {
         $scope.currentSection++;
@@ -152,23 +160,6 @@ app.controller("createBookingCtrl", function ($scope, $http, $location) {
     };
 
     $scope.init = function () {
-        // $scope.loading = true;
-
-        //bookingsInfo
-        // $http.get('http://localhost:8000/api/bookings/info', {
-        //     params: {
-        //         checkinDate: new Date(1990, 1, 1),
-        //         checkoutDate: new Date(1990, 1, 1),
-        //         roomType: ''
-        //     }
-        // }).then(function (response) {
-        //     $scope.bookings = response.data;
-        //     $scope.loading = false;
-        // }).catch(function (error) {
-        //     console.error('Error fetching data booking:', error);
-        //     $scope.loading = false;
-        // });
-
         //roomTypes
         $http.get("http://localhost:8000/api/room-types").then(function (resp) {
             $scope.roomTypes = resp.data;
@@ -179,7 +170,6 @@ app.controller("createBookingCtrl", function ($scope, $http, $location) {
         //paymentMethods
         $http.get("http://localhost:8000/api/payment-methods").then(function (resp) {
             $scope.paymentMethods = resp.data;
-            console.log($scope.paymentMethods);
         }).catch(function (error) {
             console.error('Error fetching data payment method:', error);
         });
@@ -188,6 +178,11 @@ app.controller("createBookingCtrl", function ($scope, $http, $location) {
     $scope.init();
 
     $scope.checkRoom = function () {
+
+        if ($scope.booking.checkinDate != checkinDateDisplay) {
+            checkinDate = $scope.booking.checkinDate;
+        }
+
         var today = new Date();
 
         if ($scope.booking.roomType === undefined) {
@@ -204,7 +199,7 @@ app.controller("createBookingCtrl", function ($scope, $http, $location) {
             $scope.loading = true;
             $http.get('http://localhost:8000/api/bookings/info', {
                 params: {
-                    checkinDate: $scope.booking.checkinDate,
+                    checkinDate: checkinDate,
                     checkoutDate: $scope.booking.checkoutDate,
                     roomType: $scope.booking.roomType
                 }
@@ -219,15 +214,43 @@ app.controller("createBookingCtrl", function ($scope, $http, $location) {
     };
 
     $scope.updateSelectedRooms = function (info) {
+
+        // $scope.totalPrice = 0;
+        // $scope.rooms = [];
+        // var numAdults = $scope.booking.adults;
+        // var numChildren = $scope.booking.children;
+        // var maxAdults = 0;
+        // var maxChildren = 0;
+        // angular.forEach($scope.rooms, function (room) {
+        //     $scope.rooms.push(room);
+        //     $scope.totalPrice += room.price;
+        //     $scope.deposit = $scope.totalPrice * 0.1;
+        //     maxAdults += 0;
+        //     maxChildren += 0;
+        //     console.log(room);
+        // });
+
+        // if (numAdults > maxAdults || numChildren > maxChildren) {
+        //     $scope.showAlert = true;
+        //     $scope.alertMessage = 'Bạn cần chọn thêm cho ' + (numAdults - maxAdults) + ' người lớn và ' + (numChildren - maxChildren) + ' trẻ em nữa!';
+        // } else {
+        //     $scope.showAlert = true;
+        //     $scope.alertMessage = 'Đã chọn ' + $scope.rooms.length + ' phòng';
+        // }
+
+        // console.log($scope.rooms);
+
         $scope.totalPrice = 0;
         $scope.rooms = [];
-        var selectedCount = 0;
+        var numAdults = $scope.booking.adults;
+        var numChildren = $scope.booking.children;
+        var maxAdults = 0;
+        var maxChildren = 0;
         angular.forEach(info.listRooms, function (room) {
             if (room.selected) {
-                selectedCount++;
+                console.log(room);
             }
         });
-        info.roomCount = selectedCount;
         for (var i = 0; i < $scope.bookings.length; i++) {
             var info = $scope.bookings[i];
             for (var j = 0; j < info.listRooms.length; j++) {
@@ -239,6 +262,9 @@ app.controller("createBookingCtrl", function ($scope, $http, $location) {
                 }
             }
         }
+
+        console.log($scope.rooms);
+        $scope.showAlert = true;
     };
 
     $scope.getBookings = function () {
@@ -248,8 +274,8 @@ app.controller("createBookingCtrl", function ($scope, $http, $location) {
         $http.post('http://localhost:8000/api/bookings', {
             customer: $scope.customer,
             rooms: $scope.rooms,
-            numChildren: $scope.booking.numChildren,
-            numAdults: $scope.booking.numAdults,
+            numChildren: $scope.booking.children,
+            numAdults: $scope.booking.adults,
             checkinExpected: $scope.booking.checkinDate,
             checkoutExpected: $scope.booking.checkoutDate,
             paymentCode: $scope.booking.payment,
@@ -269,8 +295,9 @@ app.controller("createBookingCtrl", function ($scope, $http, $location) {
     }
 
     $scope.uploadImage = function (imageData) {
+
         var url = 'https://api.fpt.ai/vision/idr/vnm';
-        var apiKey = 'XlSryATn7VAJHi5gzUJegB6gp20D6vYC';
+        var apiKey = 'JDHgIXkN3u8uTUFy8NxdHBv5WELtQotk';
         var formData = new FormData();
 
         // Convert the base64-encoded image data to a Blob object.
@@ -311,6 +338,7 @@ app.controller("createBookingCtrl", function ($scope, $http, $location) {
                 console.log(error);
                 alert('Không thể nhận diện được ảnh!');
             });
+
     };
 
     $scope.frontIdCard = null;

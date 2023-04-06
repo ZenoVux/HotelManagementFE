@@ -38,19 +38,19 @@ app.controller("roomListCtrl", function ($scope, $http) {
         })
     }
 
-        // Load data image room
-        $scope.loadImageRoom = function (codeRoom) {
-            $http.get("http://localhost:8000/api/room-images/" + codeRoom).then(resp => {
-                $scope.imageRooms = resp.data;
-            }).catch(error => {
-                alert("Error load data room")
-                console.log("Error", error);
-            })
-        }
+    // Load data image room
+    $scope.loadImageRoom = function (codeRoom) {
+        $http.get("http://localhost:8000/api/room-images/" + codeRoom).then(resp => {
+            $scope.imageRooms = resp.data;
+        }).catch(error => {
+            alert("Error load data room")
+            console.log("Error", error);
+        })
+    }
 
-        $scope.url = function(imageName){
-            return `http://localhost:8000/api/storage/${imageName}`;
-        }
+    $scope.url = function (imageName) {
+        return `http://localhost:8000/api/storage/${imageName}`;
+    }
     //Pagination
     $scope.pager = {
     }
@@ -220,10 +220,10 @@ app.controller("roomCreateFormCtrl", function ($scope, $http, $location) {
         fileImages.forEach(item => {
             $http.post("http://localhost:8000/api/storage", item, {
                 transformRequest: angular.identity,
-                headers: {'Content-Type' : undefined},
+                headers: { 'Content-Type': undefined },
                 transformResponse: [
-                    function (item) { 
-                        return item; 
+                    function (item) {
+                        return item;
                     }
                 ]
             }).then(resp => {
@@ -233,8 +233,8 @@ app.controller("roomCreateFormCtrl", function ($scope, $http, $location) {
             })
         })
     }
-    
-    $scope.deleteImageStorage = function(imageName){
+
+    $scope.deleteImageStorage = function (imageName) {
         $http.delete("http://localhost:8000/api/storage/" + imageName).then(resp => {
             const index = $scope.chooseImageRoom.findIndex(name => name == imageName);
             $scope.chooseImageRoom.splice(index, 1);
@@ -244,22 +244,22 @@ app.controller("roomCreateFormCtrl", function ($scope, $http, $location) {
         })
     }
 
-    $scope.url = function(imageName){
-            return `http://localhost:8000/api/storage/${imageName}`;
+    $scope.url = function (imageName) {
+        return `http://localhost:8000/api/storage/${imageName}`;
     }
 
-    $scope.floorChange = function() {
+    $scope.floorChange = function () {
         $scope.roomNumber = [];
         var name = $scope.form.floor.name.slice(5);
         for (let index = 1; index < 11; index++) {
             if (index == 10) {
                 $scope.roomNumber.push(name + index);
-            }else{
+            } else {
                 $scope.roomNumber.push(name + "0" + index);
             }
         }
     }
-        
+
     $scope.createImage = function (room) {
         $scope.chooseImageRoom.forEach(item => {
             var image = {
@@ -288,7 +288,7 @@ app.controller("roomCreateFormCtrl", function ($scope, $http, $location) {
 
     $scope.create = async function () {
         var room = angular.copy($scope.form);
-        await $http.post("http://localhost:8000/api/rooms", room).then(resp => { 
+        await $http.post("http://localhost:8000/api/rooms", room).then(resp => {
             $scope.createSupplyRoom(resp.data);
             $scope.createBedRoom(resp.data);
             $scope.createImage(resp.data);
@@ -340,17 +340,17 @@ app.controller("roomCreateFormCtrl", function ($scope, $http, $location) {
         $scope.chooseImageRoom = [];
         document.getElementById('formrow-image-input').value = null;
     };
-    
+
     $scope.initialize();
     // Room type
     $scope.formRoomType = {};
     $scope.roomTypes = [];
-    
+
     $scope.createRoomType = function () {
         var roomType = angular.copy($scope.form);
-        $http.post("http://localhost:8000/api/room-types", roomType).then(resp =>{
+        $http.post("http://localhost:8000/api/room-types", roomType).then(resp => {
             alert("Create thành công")
-        }).catch(error=>{
+        }).catch(error => {
             alert("Create thất bại")
             console.log("Error", error);
         })
@@ -377,7 +377,7 @@ app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $loc
     $scope.imageRoom = [];
     $scope.chooseImageRoom = [];
 
-    
+
 
     // Load data room
     $scope.initialize = async function () {
@@ -476,9 +476,9 @@ app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $loc
         //Load image room
         await $http.get("http://localhost:8000/api/room-images/" + $scope.form.code).then(resp => {
             $scope.imageRoom = resp.data;
-            $scope.imageRoom.forEach(item =>{
+            $scope.imageRoom.forEach(item => {
                 $scope.chooseImageRoom.push(item.image.url);
-        })
+            })
         }).catch(error => {
             alert("Error load bed type")
             console.log("Error", error);
@@ -558,6 +558,8 @@ app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $loc
         }
 
         var room = room1;
+        room.numAdults = 0;
+        room.numChilds = 0;
         await $scope.bedTypeSelected.forEach(item => {
             var bedType = item;
             var quantityBed = item.count;
@@ -571,7 +573,18 @@ app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $loc
             }).catch(error => {
                 console.log("Error", error);
             })
+
+            room.numAdults += bedType.maxAdults * quantityBed;
+            room.numChilds += bedType.maxChilds * quantityBed;
+
+            $http.put("http://localhost:8000/api/rooms", room).then(resp => {
+
+            }).catch(error => {
+                console.log("Error", error);
+            });
+
         });
+
         $scope.reset();
     }
 
@@ -585,10 +598,10 @@ app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $loc
         fileImages.forEach(item => {
             $http.post("http://localhost:8000/api/storage", item, {
                 transformRequest: angular.identity,
-                headers: {'Content-Type' : undefined},
+                headers: { 'Content-Type': undefined },
                 transformResponse: [
-                    function (item) { 
-                        return item; 
+                    function (item) {
+                        return item;
                     }
                 ]
             }).then(resp => {
@@ -599,7 +612,7 @@ app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $loc
         })
     }
 
-    $scope.deleteImageStorage = async function(imageName){
+    $scope.deleteImageStorage = async function (imageName) {
         await $http.delete("http://localhost:8000/api/storage/" + imageName).then(resp => {
             const index = $scope.chooseImageRoom.findIndex(name => name == imageName);
             $scope.chooseImageRoom.splice(index, 1);
@@ -609,8 +622,8 @@ app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $loc
         })
     }
 
-    $scope.deleteImage = function() {
-        $scope.imageRoom.forEach(item =>{
+    $scope.deleteImage = function () {
+        $scope.imageRoom.forEach(item => {
             $http.delete("http://localhost:8000/api/images/" + item.image.id).then(resp => {
             }).catch(error => {
                 console.log("Error", error);
@@ -618,48 +631,48 @@ app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $loc
         })
     }
 
-    $scope.deleteImageRoom = function(){
+    $scope.deleteImageRoom = function () {
         $scope.imageRoom.forEach(item => {
-            $http.delete("http://localhost:8000/api/room-images/" + item.id).then(resp => { 
+            $http.delete("http://localhost:8000/api/room-images/" + item.id).then(resp => {
             }).catch(error => {
                 console.log("Error", error);
             })
         })
     }
 
-    $scope.updateImageRoom =function(image, room) {
+    $scope.updateImageRoom = function (image, room) {
         var roomImage = {
             code: null,
             image,
             room
         };
-        $http.post("http://localhost:8000/api/room-images", roomImage).then(resp =>{
-        }).catch(error =>{
+        $http.post("http://localhost:8000/api/room-images", roomImage).then(resp => {
+        }).catch(error => {
             console.log("Error", error);
         })
     }
 
-    $scope.updateImage = async function(room){
+    $scope.updateImage = async function (room) {
         await $scope.deleteImageRoom();
         $scope.deleteImage();
-        $scope.chooseImageRoom.forEach(item =>{
+        $scope.chooseImageRoom.forEach(item => {
             var image = {
                 code: null,
                 url: item
             }
-            $http.post("http://localhost:8000/api/images", image).then(resp =>{
+            $http.post("http://localhost:8000/api/images", image).then(resp => {
                 $scope.updateImageRoom(resp.data, room);
-            }).catch(error =>{
+            }).catch(error => {
                 console.log("Error", error);
             })
         })
     }
 
-    $scope.url = function(imageName){
+    $scope.url = function (imageName) {
         return `http://localhost:8000/api/storage/${imageName}`;
     }
 
-    $scope.floorChange = function() {
+    $scope.floorChange = function () {
         alert("a")
         $scope.roomNumber = [];
         var item = $scope.floors.find(item => item.id == $scope.form.floor.id);
@@ -667,7 +680,7 @@ app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $loc
         for (let index = 1; index < 11; index++) {
             if (index == 10) {
                 $scope.roomNumber.push(name + index);
-            }else{
+            } else {
                 $scope.roomNumber.push(name + "0" + index);
             }
         }
@@ -714,5 +727,5 @@ app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $loc
         $scope.supplySelected = [];
     };
     $scope.initialize();
-   
+
 });

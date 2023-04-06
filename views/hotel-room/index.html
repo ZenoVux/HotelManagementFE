@@ -70,7 +70,8 @@
                         </p>
                         <div class="text-center">
                             <h5 class="font-size-16 text-truncate mb-2">{{room.code}}</h5>
-                            <p class="font-size-14 text-truncate">{{room.customer ? room.customer : '---'}}</p>
+                            <p class="font-size-14 text-truncate">{{room.customer ? room.customer :
+                                getStatus(room.status).name}}</p>
                         </div>
                         <div class="d-flex">
                             <div class="overflow-hidden me-auto">
@@ -249,10 +250,10 @@
                                         <tr>
                                             <th scope="col">#</th>
                                             <th scope="col">Tên dịch vụ</th>
+                                            <th scope="col">Loại</th>
                                             <th scope="col">Giá</th>
-                                            <th scope="col">Từ</th>
-                                            <th scope="col">Đến</th>
-                                            <th scope="col">Trạng thái</th>
+                                            <th scope="col">Từ ngày</th>
+                                            <th scope="col">Đến ngày</th>
                                             <th scope="col" style="width: 100px;">Hành động</th>
                                         </tr>
                                     </thead>
@@ -262,16 +263,21 @@
                                                 {{item.code}}
                                             </th>
                                             <td>{{item.serviceRoom.name}}</td>
+                                            <td>{{item.serviceRoom.serviceType.name}}</td>
                                             <td>{{item.servicePrice | currency: '' : 0}}₫</td>
-                                            <td>{{item.startedTime | date:'dd/MM/yyyy'}}</td>
-                                            <td>{{item.endedTime ? (item.endedTime | date:'dd/MM/yyyy') : '---'}}</td>
-                                            <td>{{item.isUsed ? 'Ngừng sử dụng' : 'Đang sử dụng'}}</td>
+                                            <td>{{item.startedTime | date:'dd/MM'}}</td>
+                                            <td>{{item.endedTime | date:'dd/MM'}}</td>
                                             <td>
                                                 <ul class="list-unstyled hstack gap-1 mb-0">
                                                     <li>
-                                                        <button title="Ngừng sử dụng" ng-disabled="item.isUsed" ng-click="removeServiceRoom(item)"
-                                                            class="btn btn-sm btn-soft-success"><i
-                                                                class="mdi mdi-check"></i></button>
+                                                        <button title="Ngừng sử dụng" ng-disabled="item.isUsed"
+                                                            ng-click="removeServiceRoom(item)"
+                                                            class="btn btn-sm btn-soft-secondary"><i
+                                                                class="mdi mdi-stop"></i></button>
+                                                    </li>
+                                                    <li>
+                                                        <button class="btn btn-sm btn-soft-danger"><i
+                                                                class="mdi mdi-delete-outline"></i></button>
                                                     </li>
                                                 </ul>
                                             </td>
@@ -281,6 +287,22 @@
                             </div>
                         </div>
                         <div class="tab-pane" id="service-tab" role="tabpanel">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label for="startedTime" class="form-label">Từ ngày</label>
+                                        <input ng-model="usedServiceDate.startedTime" type="date" class="form-control"
+                                            id="startedTime">
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label for="endedTime" class="form-label">Đến ngày</label>
+                                        <input ng-model="usedServiceDate.endedTime" type="date" class="form-control"
+                                            id="endedTime">
+                                    </div>
+                                </div>
+                            </div>
                             <input class="form-control" type="search" placeholder="Tìm kiếm"
                                 id="search-datatable-service-room">
                             <div class="table-responsive mb-3">

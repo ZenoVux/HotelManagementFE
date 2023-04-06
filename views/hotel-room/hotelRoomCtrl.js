@@ -22,7 +22,7 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
         },
         {
             id: 6,
-            name: "Đang dọn"
+            name: "Đang dọn dẹp"
         },
         {
             id: 1,
@@ -45,9 +45,18 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
     $scope.extendCheckoutRoom = {};
     $scope.cancelRoom = {};
     $scope.changeRoom = {};
+    $scope.usedServiceDate = {};
     $scope.customer = {
         gender: false
     };
+
+    $scope.getStatus = function (_status) {
+        return $scope.statuses.find(item => item.id == _status);;
+    }
+
+    $scope.getColor = function (name, status) {
+        return name + (status == 0 ? '-success' : (status == 1 ? '-sliver' : (status == 2 ? '-danger' : (status == 3 ? '-purple' : (status == 4 ? '-primary' : (status == 5 ? '-warning' : '-secondary'))))))
+    }
 
     $scope.init = async function () {
         $scope.loading = true;
@@ -232,6 +241,21 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
         if (usedService) {
             alert("Dịch vụ đã tồn tại!");
         } else {
+            const now = new Date();
+            now.setHours(0, 0, 0, 0);
+            const checkoutExpected = new Date($scope.selectRoom.checkoutExpected);
+            if (now > $scope.usedServiceDate.startedTime) {
+                alert("Không thể chọn ngày bắt đầu trước ngày hiện tại!");
+                return;
+            }
+            if (checkoutExpected < $scope.usedServiceDate.endedTime) {
+                alert("Không thể chọn ngày kết thúc sau ngày trả phòng!");
+                return;
+            }
+            if (!($scope.usedServiceDate.startedTime > $scope.usedServiceDate.endedTime) && !($scope.usedServiceDate.startedTime < $scope.usedServiceDate.endedTime)) {
+                alert("Không thể chọn ngày bắt đầu trùng ngày kết thúc!");
+                return;
+            }
             if (!confirm("Bạn muốn thêm " + service.name + "?")) {
                 return;
             }
@@ -242,6 +266,8 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
                 invoiceDetail: {
                     id: $scope.selectRoom.invoiceDetailId
                 },
+                startedTime: $scope.usedServiceDate.startedTime,
+                endedTime: $scope.usedServiceDate.endedTime,
                 quantity: 1
             }).then(async function (resp) {
                 alert("Thêm dịch vụ thành công!");
@@ -280,14 +306,6 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
         }, function () {
             alert("Loại bỏ dịch vụ thất bại!");
         });
-    }
-
-    $scope.getColor = function (name, status) {
-        return name + (status == 0 ? '-success' : (status == 1 ? '-sliver' : (status == 2 ? '-danger' : (status == 3 ? '-purple' : (status == 4 ? '-primary' : (status == 5 ? '-warning' : '-secondary'))))))
-    }
-
-    $scope.roomDetail = function (item) {
-        $scope.checkinRoom(item);
     }
 
     $scope.checkin = function (room) {
@@ -358,6 +376,9 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
     $scope.modalUsedService = async function (action, room) {
         $scope.selectRoom = room;
         if (action == 'show') {
+            $scope.usedServiceDate.startedTime = new Date();
+            $scope.usedServiceDate.startedTime.setHours(0, 0, 0, 0);
+            $scope.usedServiceDate.endedTime = new Date($scope.selectRoom.checkoutExpected);
             await $scope.loadServices();
             await $scope.loadUsedServices();
             await $scope.initTableUsedService();
@@ -367,6 +388,7 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
             $scope.clearTableServiceRoom();
             $scope.services = [];
             $scope.usedServices = [];
+            $scope.usedServiceDate = {};
         }
         await $('#modal-used-service').modal(action);
         $('.nav-tabs a[href="#used-service-tab"]').click(function () {

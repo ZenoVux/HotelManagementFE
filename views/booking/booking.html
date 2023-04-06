@@ -325,12 +325,15 @@
                                                         placeholder="Email" required ng-model="customer.email">
                                                 </div>
                                                 <div class="mb-3">
-                                                    <label for="email" class="form-label">Chụp ảnh cmnd/cccd</label>
+                                                    <label for="email" class="form-label">Chụp ảnh cmnd/cccd
+                                                        <button type="button" class="btn btn-secondary btn-sm"
+                                                            ng-click="takePicture()">Camera</button>
+                                                    </label>
                                                     <div class="row">
-                                                        <div class="col-md-6" ng-click="takeFrontPicture()">
+                                                        <div class="col-md-6">
                                                             <div class="card mb-3">
                                                                 <div class="card-header">
-                                                                    Mặt trước (Ấn để mở camera)
+                                                                    Mặt trước
                                                                 </div>
                                                                 <div class="card-body">
                                                                     <img ng-src="{{ frontIdCard }}"
@@ -341,7 +344,7 @@
                                                         <div class="col-md-6">
                                                             <div class="card mb-3">
                                                                 <div class="card-header">
-                                                                    Mặt sau (Ấn để mở camera)
+                                                                    Mặt sau
                                                                 </div>
                                                                 <div class="card-body">
                                                                     <img ng-src="{{ backIdCard }}"

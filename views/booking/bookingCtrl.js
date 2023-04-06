@@ -94,6 +94,7 @@ app.controller("listBookingCtrl", function ($scope, $http) {
         }
     };
 
+
     $scope.viewBooking = function (booking) {
         $scope.loading = true;
         $scope.currentBooking = booking;
@@ -137,6 +138,7 @@ app.controller("createBookingCtrl", function ($scope, $http, $location) {
     $scope.booking.adults = 2;
     $scope.booking.children = 0;
     $scope.customer = {};
+    $scope.frontIdResp = {};
     $scope.loading = false;
     $scope.currentSection = 0;
     $scope.rooms = [];
@@ -144,14 +146,26 @@ app.controller("createBookingCtrl", function ($scope, $http, $location) {
     const checkinDateDisplay = new Date().toISOString().split('T')[0].split('-').reverse().join('/').replace('/', '-').replace('/', '-');
     const checkinDate = new Date();
     $scope.booking.checkinDate = checkinDateDisplay;
-
-    $scope.booking.idCard = null;
+    $scope.frontIdCard = null;
+    $scope.backIdCard = null;
 
     $scope.closeDropdown = function () {
         $('.dropdown-menu').removeClass('show');
     };
 
     $scope.nextSection = function () {
+        // if ($scope.currentSection == 0) {
+        //     if ($scope.rooms.length == 0) {
+        //         alert("Vui lòng chọn phòng!");
+        //         return;
+        //     }
+        // }
+        // if ($scope.currentSection == 1) {
+        //     if () {
+        //         alert("Vui lòng nhập đủ thông tin khách hàng!");
+        //         return;
+        //     }
+        // }
         $scope.currentSection++;
     };
 
@@ -215,56 +229,39 @@ app.controller("createBookingCtrl", function ($scope, $http, $location) {
 
     $scope.updateSelectedRooms = function (info) {
 
-        // $scope.totalPrice = 0;
-        // $scope.rooms = [];
-        // var numAdults = $scope.booking.adults;
-        // var numChildren = $scope.booking.children;
-        // var maxAdults = 0;
-        // var maxChildren = 0;
-        // angular.forEach($scope.rooms, function (room) {
-        //     $scope.rooms.push(room);
-        //     $scope.totalPrice += room.price;
-        //     $scope.deposit = $scope.totalPrice * 0.1;
-        //     maxAdults += 0;
-        //     maxChildren += 0;
-        //     console.log(room);
-        // });
-
-        // if (numAdults > maxAdults || numChildren > maxChildren) {
-        //     $scope.showAlert = true;
-        //     $scope.alertMessage = 'Bạn cần chọn thêm cho ' + (numAdults - maxAdults) + ' người lớn và ' + (numChildren - maxChildren) + ' trẻ em nữa!';
-        // } else {
-        //     $scope.showAlert = true;
-        //     $scope.alertMessage = 'Đã chọn ' + $scope.rooms.length + ' phòng';
-        // }
-
-        // console.log($scope.rooms);
-
         $scope.totalPrice = 0;
         $scope.rooms = [];
         var numAdults = $scope.booking.adults;
         var numChildren = $scope.booking.children;
         var maxAdults = 0;
         var maxChildren = 0;
-        angular.forEach(info.listRooms, function (room) {
-            if (room.selected) {
-                console.log(room);
-            }
-        });
         for (var i = 0; i < $scope.bookings.length; i++) {
             var info = $scope.bookings[i];
             for (var j = 0; j < info.listRooms.length; j++) {
                 var room = info.listRooms[j];
                 if (room.selected) {
                     $scope.rooms.push(room);
+                    maxAdults += room.numAdults;
+                    maxChildren += room.numChilds;
                     $scope.totalPrice += room.price;
                     $scope.deposit = $scope.totalPrice * 0.1;
                 }
             }
         }
-
-        console.log($scope.rooms);
-        $scope.showAlert = true;
+        if (numAdults > maxAdults && numChildren > maxChildren) {
+            $scope.showAlert = true;
+            $scope.alertMessage = 'Đã chọn ' + $scope.rooms.length + ' phòng. Bạn cần chọn thêm cho ' + (numAdults - maxAdults) + ' người lớn và ' + (numChildren - maxChildren) + ' trẻ em nữa!';
+        } else if (numAdults > maxAdults) {
+            $scope.showAlert = true;
+            $scope.alertMessage = 'Đã chọn ' + $scope.rooms.length + ' phòng. Bạn cần chọn thêm cho ' + (numAdults - maxAdults) + ' người lớn nữa!';
+        } else if (numChildren > maxChildren) {
+            $scope.showAlert = true;
+            $scope.alertMessage = 'Bạn cần chọn thêm cho ' + (numChildren - maxChildren) + ' trẻ em nữa!';
+        }
+        else {
+            $scope.showAlert = true;
+            $scope.alertMessage = 'Đã chọn ' + $scope.rooms.length + ' phòng đáp ứng đủ số lượng khách!';
+        }
     };
 
     $scope.getBookings = function () {
@@ -273,6 +270,8 @@ app.controller("createBookingCtrl", function ($scope, $http, $location) {
 
         $http.post('http://localhost:8000/api/bookings', {
             customer: $scope.customer,
+            frontIdCard: $scope.frontIdCard,
+            backIdCard: $scope.backIdCard,
             rooms: $scope.rooms,
             numChildren: $scope.booking.children,
             numAdults: $scope.booking.adults,
@@ -292,72 +291,97 @@ app.controller("createBookingCtrl", function ($scope, $http, $location) {
             console.error('Error fetching data:', error);
         });
 
+        console.log('Front ID card:', $scope.frontIdCard);
+        console.log('Back ID card:', $scope.backIdCard);
+
     }
 
-    $scope.uploadImage = function (imageData) {
 
-        var url = 'https://api.fpt.ai/vision/idr/vnm';
-        var apiKey = 'JDHgIXkN3u8uTUFy8NxdHBv5WELtQotk';
+    $scope.uploadFrontIdCard = function (imageData) {
+
+        $scope.loading = true;
+
+        var url = 'http://localhost:8000/api/bookings/read-front-id-card';
         var formData = new FormData();
-
-        // Convert the base64-encoded image data to a Blob object.
         var binary = atob(imageData.split(',')[1]);
         var array = [];
         for (var i = 0; i < binary.length; i++) {
             array.push(binary.charCodeAt(i));
         }
         var blob = new Blob([new Uint8Array(array)], { type: 'image/jpeg' });
-
-        // Append the image data to the form data object.
         formData.append('image', blob);
 
-        // Define the request object.
-        var request = {
-            method: 'POST',
-            url: url,
-            headers: {
-                'api-key': apiKey,
-                'Content-Type': undefined
-            },
+        console.log("---------START---------");
+        return $http.post(url, formData, {
             transformRequest: angular.identity,
-            data: formData
-        };
-
-        // Send the request to the FPT.AI Vision API.
-        $http(request)
-            .then(function (response) {
-                console.log(response.data.data[0]);
+            headers: {
+                'Content-Type': undefined
+            }
+        }).then(function (response) {
+            if (response.data != '') {
                 $scope.customer.fullName = response.data.data[0].name;
                 $scope.customer.dateOfBirth = response.data.data[0].dob;
                 $scope.customer.gender = response.data.data[0].sex === 'NAM' ? true : false;
                 $scope.customer.peopleId = response.data.data[0].id;
                 $scope.customer.address = response.data.data[0].address;
                 $scope.customer.placeOfBirth = response.data.data[0].home;
-            })
-            .catch(function (error) {
-                console.log(error);
-                alert('Không thể nhận diện được ảnh!');
-            });
+                console.log(1);
+                console.log("---------END1---------");
+                $scope.loading = false;
+                return response;
+            } else {
+                console.log(2);
+                console.log("---------END2---------");
+                $scope.loading = false;
+                return response;
+            }
+        }).catch(function (error) {
+            console.log(3);
+            console.log("---------END3---------");
+            console.log(error);
+            $scope.loading = false;
+            return error;
+        });
 
     };
 
-    $scope.frontIdCard = null;
-    $scope.backIdCard = null;
 
-    $scope.takeFrontPicture = function () {
-        takePicture('front');
+    $scope.uploadBackIdCard = function (imageData) {
+
+        $scope.loading = true;
+
+        var url = 'http://localhost:8000/api/bookings/read-back-id-card';
+        var formData = new FormData();
+        var binary = atob(imageData.split(',')[1]);
+        var array = [];
+        for (var i = 0; i < binary.length; i++) {
+            array.push(binary.charCodeAt(i));
+        }
+        var blob = new Blob([new Uint8Array(array)], { type: 'image/jpeg' });
+        formData.append('image', blob);
+        return $http.post(url, formData, {
+            transformRequest: angular.identity,
+            headers: {
+                'Content-Type': undefined
+            }
+        }).then(function (response) {
+            console.log(response);
+            $scope.loading = false;
+            return response;
+        }).catch(function (error) {
+            console.log(error);
+            $scope.loading = false;
+            return error;
+        });
+
     };
 
-    $scope.takeBackPicture = function () {
-        takePicture('back');
-    };
+    $scope.isFrontImageCaptured = false;
 
-    function takePicture(type) {
+    $scope.takePicture = function () {
+
         navigator.mediaDevices.getUserMedia({ video: true })
             .then(function (stream) {
-                var video = document.createElement('video');
-                video.srcObject = stream;
-                video.play();
 
                 var modal = document.createElement('div');
                 modal.style.position = 'fixed';
@@ -371,7 +395,12 @@ app.controller("createBookingCtrl", function ($scope, $http, $location) {
                 modal.style.alignItems = 'center';
                 modal.style.flexDirection = 'column';
 
-                modal.appendChild(video);
+                var video = document.createElement('video');
+                navigator.mediaDevices.getUserMedia({ video: true })
+                    .then(function (stream) {
+                        video.srcObject = stream;
+                        video.play();
+                    });
 
                 var noteContainer = document.createElement('div');
                 noteContainer.style.display = 'flex';
@@ -380,7 +409,7 @@ app.controller("createBookingCtrl", function ($scope, $http, $location) {
                 noteContainer.style.alignItems = 'center';
 
                 var note = document.createElement('div');
-                note.textContent = 'Nhấn SPACE để chụp, ESC để hủy';
+                note.textContent = 'Chụp mặt trước CMND/CCCD. Nhấn SPACE để chụp, ESC để hủy.';
                 note.classList.add('alert', 'alert-secondary');
                 noteContainer.appendChild(note);
 
@@ -398,31 +427,78 @@ app.controller("createBookingCtrl", function ($scope, $http, $location) {
                     }
                 });
 
-                function captureImage() {
-                    var canvas = document.createElement('canvas');
-                    canvas.width = video.videoWidth;
-                    canvas.height = video.videoHeight;
-
-                    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-
-                    stream.getTracks().forEach(function (track) {
-                        track.stop();
-                    });
-
-                    $scope.$apply(function () {
-                        if (type === 'front') {
-                            $scope.frontIdCard = canvas.toDataURL('image/jpeg');
-                            $scope.uploadImage($scope.frontIdCard);
-                        } else if (type === 'back') {
-                            $scope.backIdCard = canvas.toDataURL('image/jpeg');
-                        }
-                    });
-
-                    modal.remove();
-                }
-
+                modal.appendChild(video);
                 modal.appendChild(noteContainer);
                 document.body.appendChild(modal);
+
+                async function captureImage() {
+
+                    if ($scope.isFrontImageCaptured == false) {
+                        const canvasFront = document.createElement('canvas');
+                        canvasFront.width = video.videoWidth;
+                        canvasFront.height = video.videoHeight;
+
+                        canvasFront.getContext('2d').drawImage(video, 0, 0, canvasFront.width, canvasFront.height);
+                        video.pause();
+
+                        const frontResponse = await $scope.uploadFrontIdCard(canvasFront.toDataURL('image/jpeg'));
+
+                        console.log(frontResponse);
+                        if (frontResponse != undefined && frontResponse.data != '') {
+                            video.play();
+                            note.textContent = 'Chụp mặt sau CMND/CCCD. Nhấn SPACE để chụp, ESC để hủy.';
+                            $scope.$apply(function () {
+                                $scope.frontIdCard = canvasFront.toDataURL('image/jpeg');
+                            });
+                            $scope.isFrontImageCaptured = true;
+                        } else {
+                            stream.getTracks().forEach(function (track) {
+                                track.stop();
+                            });
+                            modal.remove();
+                            canvasFront.remove();
+                            alert('Không thể nhận diện được ảnh! Vui lòng chụp lại! 111');
+                            $scope.isFrontImageCaptured = false;
+                        }
+                    }
+
+                    if ($scope.isFrontImageCaptured == true) {
+                        const canvasBack = document.createElement('canvas');
+                        canvasBack.width = video.videoWidth;
+                        canvasBack.height = video.videoHeight;
+
+                        document.addEventListener('keydown', async function (event) {
+                            if (event.code === 'Space') {
+                                event.preventDefault();
+                                canvasBack.getContext('2d').drawImage(video, 0, 0, canvasBack.width, canvasBack.height);
+                                video.pause();
+                                const backResponse = await $scope.uploadBackIdCard(canvasBack.toDataURL('image/jpeg'));
+                                if (backResponse.data != '') {
+                                    $scope.$apply(function () {
+                                        $scope.backIdCard = canvasBack.toDataURL('image/jpeg');
+                                    });
+                                    alert('Chụp CCCD/CMND thành công!');
+                                    stream.getTracks().forEach(function (track) {
+                                        track.stop();
+                                    });
+                                    modal.remove();
+                                } else {
+                                    alert('Không thể nhận diện được ảnh! Vui lòng chụp lại! 222');
+                                    stream.getTracks().forEach(function (track) {
+                                        track.stop();
+                                    });
+                                    modal.remove();
+                                    canvasBack.remove();
+                                }
+
+                            }
+                            if (event.code === 'Escape') {
+                                event.preventDefault();
+                                modal.remove();
+                            }
+                        });
+                    }
+                }
             })
             .catch(function (err) {
                 console.log('An error occurred: ' + err);
@@ -430,3 +506,5 @@ app.controller("createBookingCtrl", function ($scope, $http, $location) {
     };
 
 });
+
+

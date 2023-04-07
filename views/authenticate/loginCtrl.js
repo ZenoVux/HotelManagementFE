@@ -1,26 +1,32 @@
-app.controller("loginCtrl", function ($scope, $http,$routeParams,$window,$location) {
+app.controller("loginCtrl", function ($scope, $http,$routeParams,$location,authService,$timeout) {
 	$scope.form = {};
+	$scope.loading=false;
 	$scope.myEmail = {}
 	$scope.Pass = {token:$routeParams.token}
 	$scope.initialize = function () {
 	}
 	$scope.initialize();
 
-	
 
-
-    $scope.authenticate = function () { 
-		var item = angular.copy($scope.form);
-		$http.post("http://localhost:8000/auth/login", item).then(resp => {
+	$scope.authenticate = function () { 
+		$scope.loading = true;
+		$timeout(function() {
+		  var item = angular.copy($scope.form);
+		  $http.post("http://localhost:8000/auth/login", item).then(resp => {
 			localStorage.setItem('token', resp.data.token);
-			alert("Login success !")
-			$window.history.back()
-		}).catch(error => {
+			$scope.loading=false;
+			if(authService.hasRole('ADMIN')){
+			  $location.path('/');
+			}else{
+			  $location.path('/bookings');
+			}
+		  }).catch(error => {
 			alert("Login failed !")
 			console.log("Error", error)
-		})
-
-	}
+		  });
+		}, 1500); 
+	  }
+	  
 	$scope.close = function () {
 		var myModalEl = document.getElementById('exampleModal');
 		var modal = bootstrap.Modal.getInstance(myModalEl)

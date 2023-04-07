@@ -92,7 +92,7 @@
             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <img class="rounded-circle header-profile-user" src="assets/images/users/avatar-1.jpg"
               alt="Header Avatar" />
-            <span class="d-none d-xl-inline-block ms-1" key="t-henry">Henry</span>
+            <span class="d-none d-xl-inline-block ms-1" key="t-henry">{{nameUser}}</span>
             <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end">
@@ -135,7 +135,7 @@
           </li>
           <li>
             <a ng-href="/#!/bookings">
-              <i class="bx bx-user"></i>
+              <i class="bx bx-log-in-circle"></i>
               <span>Booking</span>
             </a>
           </li>
@@ -147,7 +147,7 @@
           </li>
           <li ng-show="isAdmin">
             <a href="javascript: void(0);" class="has-arrow waves-effect">
-              <i class="bx bx-user"></i>
+              <i class="bx bx-check-shield"></i>
               <span>Account</span>
             </a>
             <ul class="sub-menu" aria-expanded="false">
@@ -156,18 +156,17 @@
             </ul>
           </li>
          <!-- Room -->
-          <li ng-show="isAdmin">
-            <a href="/#!/room" class="waves-effect">
-              <i class="bx bxs-hotel"></i>
+         <li ng-show="isAdmin">
+          <a href="javascript: void(0);" class="has-arrow waves-effect">
+            <i class="bx bx-hotel"></i>
               <span>Room</span>
-            </a>
-          </li>
-          <!-- Room Type -->
-          <li ng-show="isAdmin">
-            <a href="/#!/room-type" class="waves-effect">
-              <i class="bx bxs-layer"></i>
-              <span>Room Type</span>
-            </a>
+          </a>
+          <ul class="sub-menu" aria-expanded="false">
+            <li><a href="/#!/room">Management</a></li>
+            <li><a href="/#!/room-type">Room Type</a></li>
+          </ul>
+        </li>
+
           <li ng-show="isAdmin">
             <a href="javascript: void(0);" class="has-arrow waves-effect">
               <i class="bx bx-bell"></i>
@@ -195,15 +194,21 @@
               <i class="bx bx-box"></i>
               <span>Supply</span>
             </a>
-            <!-- <ul class="sub-menu" aria-expanded="false">
-              
-              <li><a ng-href="/#!/supply/type">Type</a></li>
-            </ul> -->
           </li>
           <li>
-            <a ng-href="/#!/promotion">
+            <a href="javascript: void(0);" class="has-arrow waves-effect">
               <i class="bx bx-barcode"></i>
               <span>Promotion</span>
+            </a>
+            <ul class="sub-menu" aria-expanded="false">
+              <li><a ng-href="/#!/promotion">Management</a></li>
+              <li><a ng-href="/#!/promotion/room">Deal with room</a></li>
+            </ul>
+          </li>
+          <li>
+            <a ng-href="/#!/statistical" class="waves-effect">
+              <i class="bx bx-line-chart"></i>
+              <span>Statistical</span>
             </a>
           </li>
           <li ng-show="isAdmin">

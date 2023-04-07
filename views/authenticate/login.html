@@ -2,6 +2,11 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-6 col-xl-5">
+                <div class="load-bar" ng-show="loading">
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                  </div>
                 <div class="card overflow-hidden">
                     <div class="bg-primary bg-soft">
                         <div class="row">
@@ -96,6 +101,7 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-content">
         <div class="modal-header">
             <h1 class="modal-title fs-5" id="exampleModalLabel">Reset Password</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
             <form class="form-horizontal">

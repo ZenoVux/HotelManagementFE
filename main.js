@@ -3,16 +3,19 @@ app.component("appLayout", {
   templateUrl: "layout.html",
   transclude: true,
   controller: function ($scope, $window, $location,authService) {
-    $scope.isLogin=false
-    if( authService.getToken()){
-    $scope.isLogin =true;
-    }
     $scope.isAdmin = authService.hasRole('ADMIN');
+    $scope.isLogin=false
+    $scope.nameUser="Welcome!"
+    if(authService.getToken()){
+    $scope.isLogin =true;
+    $scope.nameUser= authService.getUsername();
+    }else{
+      $location.path('/login');
+    }
     $scope.logout = function() {
       var confirmLogout = $window.confirm('Bạn có chắc muốn đăng xuất?');
       if (confirmLogout) {
         $window.localStorage.removeItem('token');
-        $location.path('/');
       }
     };
     (function ($) {

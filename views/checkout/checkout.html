@@ -66,9 +66,9 @@
                                 <tr>
                                     <th scope="col">#</th>
                                     <th scope="col">Tên dịch vụ</th>
-                                    <th scope="col">Loại</th>
-                                    <th scope="col" class="text-end">Giá</th>
-                                    <th scope="col" class="text-end" style="width: 250px;">Số lượng</th>
+                                    <th scope="col">Từ ngày</th>
+                                    <th scope="col">Đến ngày</th>
+                                    <th scope="col" class="text-end" style="width: 250px;">Giá</th>
                                     <th scope="col" class="text-end" style="width: 250px;">Thành tiền</th>
                                 </tr>
                             </thead>
@@ -78,10 +78,10 @@
                                         {{item.serviceRoom.code}}
                                     </th>
                                     <td>{{item.serviceRoom.name}}</td>
-                                    <td>{{item.serviceRoom.serviceType.name}}</td>
+                                    <td>{{item.startedTime | date:'dd/MM'}}</td>
+                                    <td>{{item.endedTime | date:'dd/MM'}}</td>
                                     <td class="text-end">{{item.servicePrice | currency: '' : 0}}₫</td>
-                                    <td class="text-end">{{item.quantity}}</td>
-                                    <td class="text-end">{{item.serviceRoom.price * item.quantity | currency: '' : 0}}₫</td>
+                                    <td class="text-end">{{getTotalService(item) | currency: '' : 0}}₫</td>
                                 </tr>
                                 <tr ng-show="value.usedServices.length == 0">
                                     <td colspan="6" class="text-center">Dịch vụ trống</td>
@@ -113,13 +113,47 @@
                 </div>
                 <!-- end card body -->
                 <div class="card-body border-top">
-                    <div class="d-flex flex-row-reverse ">
-                        <button ng-click="checkout()" class="btn btn-primary waves-effect waves-light float-end"><i class="mdi mdi-logout-variant"></i> Trả phòng</button>
+                    <div class="float-end">
+                        <button ng-click="modalEdit('show')" class="btn btn-secondary waves-effect waves-light me-1"><i class="mdi mdi-pencil-outline"></i></button>
+                        <button ng-click="checkout()" class="btn btn-primary waves-effect waves-light"><i class="mdi mdi-logout-variant"></i> Trả phòng</button>
                     </div>
                 </div>
                 <!-- end card body -->
             </div>
             <!-- end card -->
+        </div>
+    </div>
+    <div id="modal-edit" class="modal fade" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Phòng {{invoiceDetail.room.code}}</h5>
+                    <button ng-click="modalEdit('hide')" type="button" class="btn-close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label for="formrow-note-input" class="form-label">Trả trước</label>
+                                <input ng-model="invoiceDetail.deposit" class="form-control" id="placeOfBirth">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label for="formrow-note-input" class="form-label">Ghi chú</label>
+                                <textarea ng-model="cancelRoom.note" class="form-control" id="formrow-note-input"
+                                    rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button ng-click="handlerCancelRoom()" class="btn btn-primary">Xác nhận</button>
+                    <button ng-click="modalEdit('hide')" class="btn btn-secondary">Đóng</button>
+                </div>
+            </div>
         </div>
     </div>
 </app-layout>

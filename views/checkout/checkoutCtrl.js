@@ -26,11 +26,24 @@ app.controller("checkoutCtrl", function ($scope, $routeParams, $location, $http)
         });
     }
 
+    $scope.modalEdit = async function (action) {
+        $('#modal-edit').modal(action);
+    }
+
+    $scope.getTotalService = function (usedService) {
+        const startedTime = new Date(usedService.startedTime);
+        startedTime.setHours(0, 0, 0, 0);
+        const endedTime = new Date(usedService.endedTime);
+        endedTime.setHours(0, 0, 0, 0);
+        const days = (endedTime.getTime() - startedTime.getTime())  / (1000 * 3600 * 24);
+        return usedService.servicePrice * days;
+    }
+
     $scope.totalUsedService = function () {
         if (!$scope.usedServices) {
             return 0;
         }
-        return $scope.usedServices.reduce((total, usedService) => total + (usedService.servicePrice * usedService.quantity), 0);
+        return $scope.usedServices.reduce((total, usedService) => total + $scope.getTotalService(usedService), 0);
     }
 
     $scope.getDate = function () {

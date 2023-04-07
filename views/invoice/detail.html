@@ -74,8 +74,9 @@
                                     <tr>
                                         <th scope="col">Tên dich vụ</th>
                                         <th scope="col">Loại</th>
-                                        <th scope="col" class="text-end">Giá</th>
-                                        <th scope="col" class="text-end" style="width: 250px;">Số lượng</th>
+                                        <th scope="col" class="text-end">Từ ngày</th>
+                                        <th scope="col" class="text-end">Đến ngày</th>
+                                        <th scope="col" class="text-end" style="width: 250px;">Giá</th>
                                         <th scope="col" class="text-end" style="width: 250px;">Thành tiền</th>
                                     </tr>
                                 </thead>
@@ -85,8 +86,9 @@
                                             {{usedService.serviceRoom.name}}
                                         </th>
                                         <td>{{usedService.serviceRoom.serviceType.name}}</td>
+                                        <td class="text-end">{{usedService.startedTime | date:'dd/MM'}}</td>
+                                        <td class="text-end">{{usedService.endedTime | date:'dd/MM'}}</td>
                                         <td class="text-end">{{usedService.serviceRoom.price | currency: '' : 0}}₫</td>
-                                        <td class="text-end">{{usedService.quantity}}</td>
                                         <td class="text-end">{{usedService.serviceRoom.price * usedService.quantity |
                                             currency: '' : 0}}₫</td>
                                     </tr>
@@ -94,19 +96,19 @@
                                         <td colspan="5" class="text-center">Dịch vụ trống</td>
                                     </tr>
                                     <tr>
-                                        <td colspan="4" class="border-0 text-end">Tiền dịch vụ</td>
+                                        <td colspan="5" class="border-0 text-end">Tiền dịch vụ</td>
                                         <td class="border-0 text-end">{{(invoiceDetail.status == 1 ?
                                             getTotalUsedService(invoiceDetail.usedServices) : invoiceDetail.totalServiceFee) |
                                             currency: '' : 0}}₫</td>
                                     </tr>
                                     <tr>
-                                        <td colspan="4" class="border-0 text-end">Tiền phòng</td>
+                                        <td colspan="5" class="border-0 text-end">Tiền phòng</td>
                                         <td class="border-0 text-end">{{(invoiceDetail.status == 1 ?
                                             getTotalRoom(invoiceDetail) : invoiceDetail.totalRoomFee) | currency: '' : 0}}₫
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="4" class="border-0 text-end">Trả trước</td>
+                                        <td colspan="5" class="border-0 text-end">Trả trước</td>
                                         <td class="border-0 text-end">{{invoiceDetail.deposit | currency: '' : 0}}₫
                                         </td>
                                     </tr>
@@ -121,7 +123,7 @@
                                         </td>
                                     </tr> -->
                                     <tr>
-                                        <td colspan="4" class="border-0 text-end">
+                                        <td colspan="5" class="border-0 text-end">
                                             Tổng tiền phòng
                                         </td>
                                         <td class="border-0 text-end">

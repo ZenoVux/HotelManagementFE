@@ -70,8 +70,10 @@
                         </p>
                         <div class="text-center">
                             <h5 class="font-size-16 text-truncate mb-2">{{room.code}}</h5>
-                            <p class="font-size-14 text-truncate">{{room.customer ? room.customer :
-                                getStatus(room.status).name}}</p>
+                            <p class="font-size-14 text-truncate">
+                                {{(room.status == 4 || room.status == 5 || room.status == 2) ? room.customer :
+                                getStatus(room.status).name}}
+                            </p>
                         </div>
                         <div class="d-flex">
                             <div class="overflow-hidden me-auto">
@@ -127,6 +129,15 @@
                             </tr>
                         </tbody>
                     </table>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label for="extendCheckoutRoomDate" class="form-label">Ngày trả</label>
+                                <input ng-model="extendCheckoutRoom.extendDate" type="date" class="form-control"
+                                    id="extendCheckoutRoomDate">
+                            </div>
+                        </div>
+                    </div>
                     <input class="form-control" type="search" placeholder="Tìm kiếm" id="search-datatable-change-room">
                     <div class="table-responsive mb-3">
                         <table id="datatable-change-room" class="table align-middle table-nowrap table-hover">
@@ -218,7 +229,8 @@
             </div>
         </div>
     </div>
-    <div id="modal-used-service" class="modal fade" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+    <div id="modal-used-service" class="modal fade" data-bs-backdrop="static" tabindex="-1" aria-hidden="true"
+        data-bs-keyboard="false">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -250,23 +262,23 @@
                                         <tr>
                                             <th scope="col">#</th>
                                             <th scope="col">Tên dịch vụ</th>
-                                            <th scope="col">Loại</th>
                                             <th scope="col">Giá</th>
                                             <th scope="col">Từ ngày</th>
                                             <th scope="col">Đến ngày</th>
+                                            <th scope="col">Thành tiền</th>
                                             <th scope="col" style="width: 100px;">Hành động</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr ng-repeat="item in usedServices">
                                             <th scope="row">
-                                                {{item.code}}
+                                                {{item.serviceRoom.code}}
                                             </th>
                                             <td>{{item.serviceRoom.name}}</td>
-                                            <td>{{item.serviceRoom.serviceType.name}}</td>
                                             <td>{{item.servicePrice | currency: '' : 0}}₫</td>
                                             <td>{{item.startedTime | date:'dd/MM'}}</td>
                                             <td>{{item.endedTime | date:'dd/MM'}}</td>
+                                            <td>{{getTotalUsedService(item) | currency: '' : 0}}₫</td>
                                             <td>
                                                 <ul class="list-unstyled hstack gap-1 mb-0">
                                                     <li>
@@ -275,10 +287,10 @@
                                                             class="btn btn-sm btn-soft-secondary"><i
                                                                 class="mdi mdi-stop"></i></button>
                                                     </li>
-                                                    <li>
+                                                    <!-- <li>
                                                         <button class="btn btn-sm btn-soft-danger"><i
                                                                 class="mdi mdi-delete-outline"></i></button>
-                                                    </li>
+                                                    </li> -->
                                                 </ul>
                                             </td>
                                         </tr>
@@ -341,12 +353,14 @@
                     </div>
                 </div>
                 <div class="modal-footer">
+                    <button ng-click="modalHostedAt('show', selectRoom)" class="btn btn-primary">Modal</button>
                     <button ng-click="modalUsedService('hide')" class="btn btn-secondary">Đóng</button>
                 </div>
             </div>
         </div>
     </div>
-    <div id="modal-hosted-at" class="modal fade" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+    <div id="modal-hosted-at" class="modal fade" data-bs-backdrop="static" tabindex="-1" aria-hidden="true"
+        data-bs-keyboard="false">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -396,7 +410,7 @@
                                                 {{item.customer.fullName}}
                                             </th>
                                             <td>{{item.customer.phoneNumber}}</td>
-                                            <td>{{item.customer.gender ? "Nữ" : "Nam"}}</td>
+                                            <td>{{item.customer.gender ? "Nam" : "Nữ"}}</td>
                                             <td>{{item.customer.dateOfBirth | date:'dd/MM/yyyy'}}</td>
                                             <td>{{item.customer.peopleId}}</td>
                                             <td>
@@ -434,7 +448,7 @@
                                                 {{item.fullName}}
                                             </th>
                                             <td>{{item.phoneNumber}}</td>
-                                            <td>{{item.gender ? "Nữ" : "Nam"}}</td>
+                                            <td>{{item.gender ? "Nam" : "Nữ"}}</td>
                                             <td>{{item.dateOfBirth | date:'dd/MM/yyyy'}}</td>
                                             <td>{{item.peopleId}}</td>
                                             <td>
@@ -506,14 +520,14 @@
                                             <div class="d-flex">
                                                 <div class="form-check  form-check-inline">
                                                     <input ng-model="customer.gender" class="form-check-input"
-                                                        type="radio" id="form-radio-male" ng-value="false">
+                                                        type="radio" id="form-radio-male" ng-value="true">
                                                     <label class="form-check-label" for="form-radio-male">
                                                         Nam
                                                     </label>
                                                 </div>
                                                 <div class="form-check  form-check-inline">
                                                     <input ng-model="customer.gender" class="form-check-input"
-                                                        type="radio" id="form-radio-female" ng-value="true">
+                                                        type="radio" id="form-radio-female" ng-value="false">
                                                     <label class="form-check-label" for="form-radio-female">
                                                         Nữ
                                                     </label>
@@ -594,23 +608,20 @@
                         <tbody>
                             <tr>
                                 <th scope="row" style="width: 300px;">Loại phòng</th>
-                                <td>{{selectRoom.status != 4 ? invoiceDetail.room.roomType.name :
-                                    bookingDetail.room.roomType.name}}</td>
+                                <td>{{bookingDetail.room.roomType.name}}</td>
                             </tr>
                             <tr>
                                 <th scope="row">Giá phòng</th>
-                                <td>{{selectRoom.status != 4 ? invoiceDetail.roomPrice : bookingDetail.room.price |
+                                <td>{{bookingDetail.roomPrice |
                                     currency: '' : 0}}₫</td>
                             </tr>
                             <tr>
                                 <th scope="row">Ngày nhận</th>
-                                <td>{{selectRoom.status != 4 ? invoiceDetail.checkinExpected :
-                                    bookingDetail.booking.checkinExpected | date:'dd/MM/yyyy'}}</td>
+                                <td>{{bookingDetail.checkinExpected | date:'dd/MM/yyyy'}}</td>
                             </tr>
                             <tr>
                                 <th scope="row">Ngày trả</th>
-                                <td>{{selectRoom.status != 4 ? invoiceDetail.checkoutExpected :
-                                    bookingDetail.booking.checkoutExpected | date:'dd/MM/yyyy'}}</td>
+                                <td>{{bookingDetail.checkoutExpected | date:'dd/MM/yyyy'}}</td>
                             </tr>
                         </tbody>
                     </table>

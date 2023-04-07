@@ -50,14 +50,6 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
         gender: false
     };
 
-    $scope.getStatus = function (_status) {
-        return $scope.statuses.find(item => item.id == _status);;
-    }
-
-    $scope.getColor = function (name, status) {
-        return name + (status == 0 ? '-success' : (status == 1 ? '-sliver' : (status == 2 ? '-danger' : (status == 3 ? '-purple' : (status == 4 ? '-primary' : (status == 5 ? '-warning' : '-secondary'))))))
-    }
-
     $scope.init = async function () {
         $scope.loading = true;
         await $scope.loadHotelRooms();
@@ -110,7 +102,7 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
     }
 
     $scope.loadUsedServices = async function () {
-        await $http.get("http://localhost:8000/api/used-services/invoice-detail/" + $scope.selectRoom.invoiceDetailId).then(function (resp) {
+        await $http.get("http://localhost:8000/api/used-services?invoiceDetailId=" + $scope.selectRoom.invoiceDetailId + "&status=true").then(function (resp) {
             $scope.usedServices = resp.data;
         });
     }
@@ -125,6 +117,23 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
         await $http.get("http://localhost:8000/api/customers").then(function (resp) {
             $scope.customers = resp.data;
         });
+    }
+
+    $scope.getStatus = function (_status) {
+        return $scope.statuses.find(item => item.id == _status);;
+    }
+
+    $scope.getColor = function (name, status) {
+        return name + (status == 0 ? '-success' : (status == 1 ? '-sliver' : (status == 2 ? '-danger' : (status == 3 ? '-purple' : (status == 4 ? '-primary' : (status == 5 ? '-warning' : '-secondary'))))))
+    }
+
+    $scope.getTotalUsedService = function (usedService) {
+        const startedTime = new Date(usedService.startedTime);
+        startedTime.setHours(0, 0, 0, 0);
+        const endedTime = new Date(usedService.endedTime);
+        endedTime.setHours(0, 0, 0, 0);
+        const days = (endedTime.getTime() - startedTime.getTime())  / (1000 * 3600 * 24);
+        return usedService.servicePrice * days;
     }
 
     $scope.initTableUsedService = function () {
@@ -237,9 +246,13 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
     }
 
     $scope.addServiceRoom = function (service) {
-        const usedService = $scope.usedServices.find(item => item.serviceRoom.id == service.id && !item.isUsed);
+        const usedService = $scope.usedServices.find(item => {
+            const startedTime = new Date(item.startedTime);
+            const endedTime = new Date(item.endedTime);
+            return item.serviceRoom.id == service.id && startedTime < $scope.usedServiceDate.endedTime && endedTime > $scope.usedServiceDate.startedTime;
+        });
         if (usedService) {
-            alert("Dịch vụ đã tồn tại!");
+            alert("Dịch vụ đang được sử dụng!");
         } else {
             const now = new Date();
             now.setHours(0, 0, 0, 0);
@@ -259,6 +272,7 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
             if (!confirm("Bạn muốn thêm " + service.name + "?")) {
                 return;
             }
+            console.log($scope.usedServiceDate.startedTime, $scope.usedServiceDate.endedTime);
             $http.post("http://localhost:8000/api/used-services", {
                 serviceRoom: {
                     id: service.id
@@ -293,18 +307,23 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
     }
 
     $scope.removeServiceRoom = function (usedService) {
-        if (usedService.status) {
-            alert("Không thể xoá dịch vụ đã sử dụng!");
+        const today = new Date();
+        const startedTime = new Date(usedService.startedTime);
+        const endedTime = new Date(usedService.endedTime);
+        if (endedTime < today) {
+            alert("Dịch vụ này không còn được sử dụng!");
             return;
         }
-        if (!confirm("Bạn muốn loại bỏ dịch vụ này khỏi phòng?")) {
+        if (!confirm("Bạn muốn ngừng sử dụng dịch vụ này?")) {
             return;
         }
-        $http.delete("http://localhost:8000/api/used-services/" + usedService.id).then(function () {
-            alert("Loại bỏ dịch vụ thành công!");
-            $scope.loadUsedServices();
+        $http.post("http://localhost:8000/api/used-services/stop-service/" + usedService.id).then(async function () {
+            alert("Ngừng sử dụng dịch vụ thành công!");
+            await $scope.clearTableUsedService();
+            await $scope.loadUsedServices();
+            await $scope.initTableUsedService();
         }, function () {
-            alert("Loại bỏ dịch vụ thất bại!");
+            alert("Ngừng sử dụng dịch vụ thất bại!");
         });
     }
 
@@ -406,11 +425,7 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
     $scope.modalCancelRoom = async function (action, room) {
         $scope.selectRoom = room;
         if (action == 'show') {
-            if (room.status == 2 || room.status == 5) {
-                await $scope.loadInvoiceDetail();
-            } else {
-                await $scope.loadBookingDetail();
-            }
+            await $scope.loadBookingDetail();
         } else {
             $scope.invoiceDetail = {};
         }
@@ -485,10 +500,12 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
                     id: $scope.selectRoom.invoiceDetailId
                 },
                 customer: _customer
-            }).then(function (_resp) {
+            }).then(async function (_resp) {
                 alert("Thêm khách hàng thành công!");
+                await $scope.clearTableHostedAt();
+                await $scope.loadHostedAts();
+                await $scope.initTableHostedAt();
                 $('.nav-tabs a[href="#hosted-at-tab"]').tab('show');
-                $scope.hostedAts.push(_resp.data);
             }, function () {
                 alert("Thêm khách hàng thất bại!");
             });
@@ -499,9 +516,11 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
         if (!confirm("Bạn muốn loại bỏ khách hàng này khỏi phòng?")) {
             return;
         }
-        $http.delete("http://localhost:8000/api/hosted-ats/" + hostedAt.id).then(function () {
+        $http.delete("http://localhost:8000/api/hosted-ats/" + hostedAt.id).then(async function () {
             alert("Loại bỏ khách hàng thành công!");
-            $scope.loadHostedAts();
+            await $scope.clearTableHostedAt();
+            await $scope.loadHostedAts();
+            await $scope.initTableHostedAt();
         }, function () {
             alert("Loại bỏ khách hàng thất bại!");
         });

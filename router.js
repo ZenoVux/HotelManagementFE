@@ -5,6 +5,9 @@ app.config(function ($routeProvider,$httpProvider) {
     .when("/", {
       templateUrl: "/views/dashboard.html",
     })
+    .when("/statistical", {
+      templateUrl: "/views/statistical/statis.html",
+    })
     .when("/bookings", {
       templateUrl: "/views/booking/list.html",
       controller: "listBookingCtrl",
@@ -95,6 +98,10 @@ app.config(function ($routeProvider,$httpProvider) {
     .when("/promotion", {
       templateUrl: "/views/promotion/promotionView.html",
       controller: "promotionCtrl",
+    })
+    .when("/promotion/room", {
+      templateUrl: "/views/promotion/promotionRoom.html",
+      controller: "promotionRoomCtrl",
     })
 	//Supply
     .when("/supply", {

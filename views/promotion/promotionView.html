@@ -42,10 +42,21 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <label for="formrow-address-input">Description</label>
                             <textarea ng-model="form.description" id="formrow-address-input" class="form-control"
                                 rows="3" placeholder="Enter Your Description"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="formrow-status-input" class="form-label">Loại khuyến mại</label><br>
+                                <input ng-model="form.type" ng-value="true"  type="radio"
+                                    class="form-check-input" name="type" />
+                                <label style="margin-left: 10px;">Cho hoá đơn</label>
+                                <input ng-model="form.type" ng-value="false"  type="radio"
+                                    class="form-check-input" name="type" />
+                                <label style="margin-left: 10px;">Cho phòng</label>
+                            </div>
                         </div>
                     </div>
 
@@ -204,12 +215,22 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <h6 class="m-0 text-right">Status:</h6>
+                                        <h6 class="m-0 text-right">Trạng thái:</h6>
                                     </td>
                                     <td>
                                         <span class="badge rounded-pill "
-                                            ng-class="account.status ? 'bg-success' : 'badge-soft-danger'">{{account.status
+                                            ng-class="form.status ? 'bg-success' : 'badge-soft-danger'">{{form.status
                                             ? 'Có hiệu lực' : 'Hết hạn'}}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <h6 class="m-0 text-right"> Loại khuyến mại:</h6>
+                                    </td>
+                                    <td>
+                                        <span class="badge rounded-pill "
+                                            ng-class="form.type ? 'bg-success' : 'badge-soft-primary'">{{form.type
+                                            ? 'Cho hoá đơn' : 'Cho phòng'}}</span>
                                     </td>
                                 </tr>
                             </tbody>

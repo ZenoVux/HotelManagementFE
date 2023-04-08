@@ -119,6 +119,14 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
         });
     }
 
+    $scope.loadChangeRooms = async function () {
+        await $http.get("http://localhost:8000/api/rooms/unbooked?checkin-date=" + $scope.changeRoom.checkinDate.toLocaleDateString('vi-VN') + "&checkout-date=" + $scope.changeRoom.checkoutDate.toLocaleDateString('vi-VN')).then(resp => {
+            $scope.rooms = resp.data;
+        }).catch(error => {
+            console.log("Error", error);
+        });
+    }
+
     $scope.getStatus = function (_status) {
         return $scope.statuses.find(item => item.id == _status);;
     }
@@ -245,6 +253,33 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
         });
     }
 
+    $scope.initTableChangeRoom = function () {
+        $(document).ready(function () {
+            tableChangeRoom = $('#datatable-change-room').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
+                },
+                dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                columnDefs: [
+                    {
+                        targets: 4,
+                        orderable: false
+                    }
+                ]
+            });
+            $('#search-datatable-change-room').keyup(function () {
+                tableChangeRoom.search($(this).val()).draw();
+            });
+        });
+    }
+
+    $scope.clearTableChangeRoom = function () {
+        $(document).ready(function () {
+            tableChangeRoom.clear();
+            tableChangeRoom.destroy();
+        });
+    }
+
     $scope.addServiceRoom = function (service) {
         const usedService = $scope.usedServices.find(item => {
             const startedTime = new Date(item.startedTime);
@@ -308,6 +343,7 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
 
     $scope.removeServiceRoom = function (usedService) {
         const today = new Date();
+        today.setHours(0, 0, 0, 0);
         const startedTime = new Date(usedService.startedTime);
         const endedTime = new Date(usedService.endedTime);
         if (endedTime < today) {
@@ -450,41 +486,30 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
         $scope.selectRoom = room;
         $scope.changeRoom.toRoomCode = null;
         if (action == 'show') {
+            $scope.changeRoom.checkinDate = new Date($scope.selectRoom.checkinExpected);
+            $scope.changeRoom.checkoutDate = new Date($scope.selectRoom.checkoutExpected);
             await $scope.loadInvoiceDetail();
-            const checkinDate = new Date($scope.selectRoom.checkinExpected);
-            const checkoutDate = new Date($scope.selectRoom.checkoutExpected);
-            await $http.get("http://localhost:8000/api/rooms/unbooked?checkin-date=" + checkinDate.toLocaleDateString('vi-VN') + "&checkout-date=" + checkoutDate.toLocaleDateString('vi-VN')).then(resp => {
-                $scope.rooms = resp.data;
-                $(document).ready(function () {
-                    tableChangeRoom = $('#datatable-change-room').DataTable({
-                        language: {
-                            url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
-                        },
-                        dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
-                        columnDefs: [
-                            {
-                                targets: 4,
-                                orderable: false
-                            }
-                        ]
-                    });
-                    $('#search-datatable-change-room').keyup(function () {
-                        tableChangeRoom.search($(this).val()).draw();
-                    });
-                });
-            }).catch(error => {
-                alert("Error load data room")
-                console.log("Error", error);
-            })
+            await $scope.loadChangeRooms();
+            await $scope.initTableChangeRoom();
+            
         } else {
-            $(document).ready(function () {
-                tableChangeRoom.clear();
-                tableChangeRoom.destroy();
-            });
+            await $scope.clearTableChangeRoom();
             $scope.invoiceDetail = {};
             $scope.rooms = [];
         }
         $('#modal-change-room').modal(action);
+    }
+
+    $scope.handlerFindChangeRoom = async function () {
+        const checkoutExpected = new Date($scope.selectRoom.checkoutExpected);
+        if ($scope.changeRoom.checkoutDate < checkoutExpected) {
+            alert("Ngày trả phòng phải sau ngày trả phòng hiện tại!")
+            return;
+        }
+        $scope.changeRoom.toRoomCode = null;
+        await $scope.clearTableChangeRoom();
+        await $scope.loadChangeRooms();
+        await $scope.initTableChangeRoom();
     }
 
     $scope.handlerAddCustomer = async function (_customer) {

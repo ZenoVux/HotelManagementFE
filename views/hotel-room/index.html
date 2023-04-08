@@ -129,13 +129,12 @@
                             </tr>
                         </tbody>
                     </table>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="mb-3">
-                                <label for="extendCheckoutRoomDate" class="form-label">Ngày trả</label>
-                                <input ng-model="extendCheckoutRoom.extendDate" type="date" class="form-control"
-                                    id="extendCheckoutRoomDate">
-                            </div>
+                    <div class="mb-3">
+                        <label for="changeRoomCheckoutDate" class="form-label">Ngày trả</label>
+                        <div class="input-group">
+                            <input ng-model="changeRoom.checkoutDate" type="date" class="form-control"
+                                id="changeRoomCheckoutDate">
+                            <button ng-click="handlerFindChangeRoom()" class="btn btn-secondary">Tìm</button>
                         </div>
                     </div>
                     <input class="form-control" type="search" placeholder="Tìm kiếm" id="search-datatable-change-room">

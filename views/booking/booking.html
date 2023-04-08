@@ -68,7 +68,8 @@
                                                     data-provide="datepicker" data-date-container='#datepicker6'>
                                                     <input datepicker type="text" class="form-control"
                                                         ng-model="booking.checkinDate" name="start"
-                                                        placeholder="Ngày checkin" readonly ng-change="checkRoom()" />
+                                                        placeholder="Ngày checkin" readonly
+                                                        ng-change="clearDataTable()" />
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
@@ -77,7 +78,8 @@
                                                     data-provide="datepicker" data-date-container='#datepicker6'>
                                                     <input datepicker type="text" class="form-control"
                                                         ng-model="booking.checkoutDate" name="end"
-                                                        placeholder="Ngày checkout" readonly ng-change="checkRoom()" />
+                                                        placeholder="Ngày checkout" readonly
+                                                        ng-change="clearDataTable()" />
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
@@ -314,7 +316,7 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="mb-3">
-                                                    <label for="phoneNumber" class="form-label">SDT</label>
+                                                    <label for="phoneNumber" class="form-label">Số điện thoại</label>
                                                     <input type="text" class="form-control" id="phoneNumber"
                                                         placeholder="Số điện thoại" required
                                                         ng-model="customer.phoneNumber">
@@ -336,7 +338,7 @@
                                                                     Mặt trước
                                                                 </div>
                                                                 <div class="card-body">
-                                                                    <img ng-src="{{ frontIdCard }}"
+                                                                    <img ng-src="{{ frontIdCardDisplay }}"
                                                                         style="width: 100%; height: 100%;">
                                                                 </div>
                                                             </div>
@@ -347,7 +349,7 @@
                                                                     Mặt sau
                                                                 </div>
                                                                 <div class="card-body">
-                                                                    <img ng-src="{{ backIdCard }}"
+                                                                    <img ng-src="{{ backIdCardDisplay }}"
                                                                         style="width: 100%; height: 100%;">
                                                                 </div>
                                                             </div>
@@ -377,9 +379,9 @@
                                                     </div>
                                                     <div class="col-sm-6 text-sm-end">
                                                         <address class="mt-2 mt-sm-0">
-                                                            <strong>Số phòng:</strong><br>
+                                                            <strong>Số điện thoại:</strong><br>
                                                             <i>
-                                                                {{rooms.length}}
+                                                                {{customer.phoneNumber}}
                                                             </i>
                                                         </address>
                                                     </div>
@@ -394,11 +396,12 @@
                                                                     date:'dd-MM-yyyy'}}</i></span><br>
                                                         </address>
                                                     </div>
-                                                    <div class="col-sm-6 mt-3 text-sm-end">
-                                                        <address>
-                                                            <strong>Số đêm:</strong><br>
-                                                            <i>{{(booking.checkoutDate - booking.checkinDate) /
-                                                                (1000*60*60*24)}}</i>
+                                                    <div class="col-sm-6 text-sm-end">
+                                                        <address class="mt-2 mt-sm-0">
+                                                            <strong>Số phòng:</strong><br>
+                                                            <i>
+                                                                {{rooms.length}}
+                                                            </i>
                                                         </address>
                                                     </div>
                                                 </div>
@@ -412,6 +415,7 @@
                                                                 <th style="width: 70px;">STT</th>
                                                                 <th>Phòng</th>
                                                                 <th>Giá 1 đêm</th>
+                                                                <th>Số đêm</th>
                                                                 <th class="text-end">Tổng</th>
                                                             </tr>
                                                         </thead>
@@ -420,6 +424,8 @@
                                                                 <td>{{ $index + 1 }}</td>
                                                                 <td>{{room.code}}</td>
                                                                 <td>{{room.price | currency: '' : 0}}đ</td>
+                                                                <td>{{(booking.checkoutDate - booking.checkinDate) /
+                                                                    (1000*60*60*24)}}</td>
                                                                 <td class="text-end">
                                                                     {{room.price *
                                                                     ((booking.checkoutDate - booking.checkinDate) /
@@ -431,53 +437,25 @@
 
                                                         <tfoot>
                                                             <tr>
-                                                                <td colspan="3" class="border-0 text-end">
+                                                                <td colspan="4" class="border-0 text-end">
                                                                     <strong>Tổng tiền</strong>
                                                                 </td>
                                                                 <td class="border-0 text-end">
-                                                                    <h4 class="m-0">
+                                                                    <h2 class="m-0">
                                                                         {{totalPrice * ((booking.checkoutDate -
                                                                         booking.checkinDate) /
                                                                         (1000*60*60*24))|
                                                                         currency: '' : 0}}đ
-                                                                    </h4>
+                                                                    </h2>
                                                                 </td>
                                                             </tr>
                                                             <tr>
-                                                                <td colspan="3" class="border-0 text-end">
-                                                                    <strong>Thanh toán</strong>
-                                                                </td>
-                                                                <td class="border-0 text-end">
-                                                                    <select class="form-select"
-                                                                        ng-model="booking.payment">
-                                                                        <option value="">Chọn phương thức thanh toán
-                                                                        </option>
-                                                                        <option ng-repeat="method in paymentMethods"
-                                                                            value="{{method.code}}">{{method.name}}
-                                                                        </option>
-                                                                    </select>
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td colspan="3" class="border-0 text-end">
+                                                                <td colspan="4" class="border-0 text-end">
                                                                     <strong>Ghi chú</strong>
                                                                 </td>
                                                                 <td class="border-0 text-end">
                                                                     <textarea class="form-control" rows="3"
                                                                         ng-model="booking.note"></textarea>
-                                                                </td>
-                                                            </tr>
-                                                            <tr style="color: red">
-                                                                <td colspan="3" class="border-0 text-end">
-                                                                    <h2>Tiền cọc (10%)</h2>
-                                                                </td>
-                                                                <td class="border-0 text-end">
-                                                                    <h2 class="m-0">
-                                                                        {{deposit * ((booking.checkoutDate -
-                                                                        booking.checkinDate) /
-                                                                        (1000*60*60*24))|
-                                                                        currency: '' : 0}}đ
-                                                                    </h2>
                                                                 </td>
                                                             </tr>
                                                         </tfoot>

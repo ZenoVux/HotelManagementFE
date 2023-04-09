@@ -1,6 +1,7 @@
-app.controller("checkoutCtrl", function ($scope, $routeParams, $location, $http) {
+app.controller("checkoutCtrl", function ($scope, $routeParams, $location, $http, $window) {
 
     $scope.invoiceDetail = null;
+    $scope.invoiceDetailUpdate = {};
     $scope.usedServices = [];
 
     $scope.init = async function () {
@@ -24,10 +25,6 @@ app.controller("checkoutCtrl", function ($scope, $routeParams, $location, $http)
         await $http.get("http://localhost:8000/api/used-services/invoice-detail/" + $scope.invoiceDetail.id).then(function (resp) {
             $scope.usedServices = resp.data;
         });
-    }
-
-    $scope.modalEdit = async function (action) {
-        $('#modal-edit').modal(action);
     }
 
     $scope.getTotalService = function (usedService) {
@@ -76,10 +73,41 @@ app.controller("checkoutCtrl", function ($scope, $routeParams, $location, $http)
         if (!$scope.usedServices || !$scope.invoiceDetail) {
             return 0;
         }
-        return $scope.totalUsedService() + $scope.totalRoom() - $scope.invoiceDetail.deposit;
+        return $scope.totalUsedService() + $scope.totalRoom() - $scope.invoiceDetail.deposit + $scope.invoiceDetail.earlyCheckinFee + $scope.invoiceDetail.lateCheckoutFee;
     }
 
-    $scope.checkout = function() {
+    $scope.modalUpdateRoom = async function (action) {
+        if (action == "show") {
+            $scope.invoiceDetailUpdate.invoiceDetailId = $scope.invoiceDetail.id;
+            $scope.invoiceDetailUpdate.roomPrice = $scope.invoiceDetail.roomPrice;
+            $scope.invoiceDetailUpdate.deposit = $scope.invoiceDetail.deposit;
+            $scope.invoiceDetailUpdate.earlyCheckinFee = $scope.invoiceDetail.earlyCheckinFee;
+            $scope.invoiceDetailUpdate.lateCheckoutFee = $scope.invoiceDetail.lateCheckoutFee;
+            $scope.invoiceDetailUpdate.note = "";
+        } else {
+            $scope.invoiceDetailUpdate = {};
+        }
+        $('#modal-update-room').modal(action);
+    }
+
+    $scope.handlerUpdateRoom = function() {
+        if ($scope.invoiceDetailUpdate.note === "") {
+            alert("Vui lòng nhập ghi chú!");
+            $('#note').focus()
+            return;
+        }
+        if (!confirm("Bạn muốn cập nhật phòng " + $scope.invoiceDetail.room.code +  "?")) {
+            return;
+        }
+        $http.post("http://localhost:8000/api/hotel/update-invoice-detail", $scope.invoiceDetailUpdate).then(function (resp) {
+            alert("Cập nhật thành công!");
+            $window.location.reload();
+        }, function () {
+            alert("Cập nhật thất bại!");
+        });
+    }
+
+    $scope.handlerCheckout = function() {
         if (!confirm("Bạn muốn trả phòng " + $routeParams.roomCode +  "?")) {
             return;
         }

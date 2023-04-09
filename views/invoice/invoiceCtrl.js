@@ -40,7 +40,10 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
 
     $scope.invoice = {};
     $scope.payment = {};
+    $scope.invoiceDetail = {};
+    $scope.invoiceDetailUpdate = {};
     $scope.invoiceDetails = [];
+    $scope.invoiceDetailHistories = [];
     $scope.paymentMethods = [];
     $scope.promotions = [];
 
@@ -82,12 +85,47 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
         });
     }
 
+    $scope.loadInvoiceDetailHistories = async function () {
+        await $http.get("http://localhost:8000/api/invoice-detail-histories?invoiceDetailId=" + $scope.invoiceDetail.id).then(function (resp) {
+            $scope.invoiceDetailHistories = resp.data;
+        });
+    }
+
+    $scope.initTableInvoiceDetailHistory = function () {
+        $(document).ready(function () {
+            tableInvoiceDetailHistory = $('#datatable-invoice-detail-history').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
+                },
+                dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>'
+            });
+            $('#search-datatable-invoice-detail-history').keyup(function () {
+                tableInvoiceDetailHistory.search($(this).val()).draw();
+            });
+        });
+    }
+
+    $scope.clearTableInvoiceDetailHistory = function () {
+        $(document).ready(function () {
+            tableInvoiceDetailHistory.clear();
+            tableInvoiceDetailHistory.destroy();
+        });
+    }
+
+    $scope.getTotalService = function (usedService) {
+        const startedTime = new Date(usedService.startedTime);
+        startedTime.setHours(0, 0, 0, 0);
+        const endedTime = new Date(usedService.endedTime);
+        endedTime.setHours(0, 0, 0, 0);
+        const days = (endedTime.getTime() - startedTime.getTime()) / (1000 * 3600 * 24);
+        return usedService.servicePrice * days;
+    }
 
     $scope.getTotalUsedService = function (usedServices) {
         if (!usedServices) {
             return 0;
         }
-        return usedServices.reduce((total, usedService) => total + (usedService.serviceRoom.price * usedService.quantity), 0);
+        return usedServices.reduce((total, usedService) => total + $scope.getTotalService(usedService), 0);
     }
 
     $scope.getDays = function (invoiceDetail) {
@@ -103,9 +141,9 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
         if (now.getTime() === checkinExpected.getTime()) {
             return 1;
         } else if (now.getTime() > checkoutExpected.getTime()) {
-            return (checkoutExpected.getTime() - checkinExpected.getTime())  / (1000 * 3600 * 24);
+            return (checkoutExpected.getTime() - checkinExpected.getTime()) / (1000 * 3600 * 24);
         } else {
-            return (now.getTime() - checkinExpected.getTime())  / (1000 * 3600 * 24);
+            return (now.getTime() - checkinExpected.getTime()) / (1000 * 3600 * 24);
         }
     }
 
@@ -132,7 +170,7 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
         if (!usedServices || !invoiceDetail) {
             return 0;
         }
-        return $scope.getTotalUsedService(usedServices) + $scope.getTotalRoom(invoiceDetail) - invoiceDetail.deposit;
+        return $scope.getTotalUsedService(usedServices) + $scope.getTotalRoom(invoiceDetail) - invoiceDetail.deposit + invoiceDetail.earlyCheckinFee + invoiceDetail.lateCheckoutFee;
     }
 
     $scope.getTotalInvoice = function () {
@@ -172,7 +210,58 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
         $('#modal-payment').modal(action);
     }
 
-    $scope.handlerPayment = function() {
+    $scope.modalUpdateRoom = async function (action, invoiceDetail) {
+        $scope.invoiceDetail = invoiceDetail;
+        if (action == "show") {
+            $scope.invoiceDetailUpdate.invoiceDetailId = $scope.invoiceDetail.id;
+            $scope.invoiceDetailUpdate.roomPrice = $scope.invoiceDetail.roomPrice;
+            $scope.invoiceDetailUpdate.deposit = $scope.invoiceDetail.deposit;
+            $scope.invoiceDetailUpdate.earlyCheckinFee = $scope.invoiceDetail.earlyCheckinFee;
+            $scope.invoiceDetailUpdate.lateCheckoutFee = $scope.invoiceDetail.lateCheckoutFee;
+            $scope.invoiceDetailUpdate.note = "";
+        } else {
+            $scope.invoiceDetailUpdate = {};
+        }
+        $('#modal-update-room').modal(action);
+    }
+
+    $scope.modalHistoryRoom = async function (action, invoiceDetail) {
+        $scope.invoiceDetail = invoiceDetail;
+        if (action == "show") {
+            await $scope.loadInvoiceDetailHistories();
+            await $scope.initTableInvoiceDetailHistory();
+        } else {
+            await $scope.clearTableInvoiceDetailHistory();
+            $scope.invoiceDetailHistories = [];
+        }
+        $('#modal-history-room').modal(action);
+        setTimeout(function () {
+            $('#search-datatable-invoice-detail-history').focus()
+        }, 1000);
+    }
+
+    $scope.handlerUpdateRoom = function () {
+        if ($scope.invoiceDetailUpdate.note === "") {
+            alert("Vui lòng nhập ghi chú!");
+            $('#note').focus()
+            return;
+        }
+        if (!confirm("Bạn muốn cập nhật phòng " + $scope.invoiceDetail.room.code + "?")) {
+            return;
+        }
+        $http.post("http://localhost:8000/api/hotel/update-invoice-detail", $scope.invoiceDetailUpdate).then(function (resp) {
+            alert("Cập nhật thành công!");
+            $window.location.reload();
+        }, function () {
+            alert("Cập nhật thất bại!");
+        });
+    }
+
+    $scope.handlerVNPay = function () {
+        $window.open("http://localhost:8000/payment/invoice/" + $scope.invoice.code, "_blank")
+    }
+
+    $scope.handlerPayment = function () {
         console.log("payment", {
             invoiceCode: $scope.invoice.code,
             promotionCode: $scope.payment.promotion ? $scope.payment.promotion.code : null,
@@ -182,7 +271,7 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
             alert("Vui lòng chọn phương thức thanh toán!")
             return;
         }
-        if (!confirm("Bạn muốn thanh toán hoá đơn " + $scope.invoice.code +  "?")) {
+        if (!confirm("Bạn muốn thanh toán hoá đơn " + $scope.invoice.code + "?")) {
             return;
         }
         $http.post("http://localhost:8000/api/hotel/payment", {
@@ -197,8 +286,8 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
         });
     }
 
-    $scope.confirmPayment = function() {
-        if (!confirm("Bạn muốn xác nhận thanh toán hoá đơn " + $scope.invoice.code +  "?")) {
+    $scope.confirmPayment = function () {
+        if (!confirm("Bạn muốn xác nhận đã thanh toán hoá đơn " + $scope.invoice.code + "?")) {
             return;
         }
         $http.post("http://localhost:8000/api/hotel/confirm-payment", {

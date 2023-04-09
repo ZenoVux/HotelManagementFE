@@ -49,6 +49,7 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
     $scope.customer = {
         gender: false
     };
+    $scope.booking = {};
 
     $scope.init = async function () {
         $scope.loading = true;
@@ -383,6 +384,11 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
         $scope.selectRoom = room;
         if (action == 'show') {
             await $scope.loadRoom();
+            if ($scope.selectRoom.status == 3) {
+                await $scope.loadRoom();
+            } else {
+
+            }
         } else {
             $scope.room = {};
         }
@@ -659,7 +665,7 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
             code: room.code
         }).then(function (resp) {
             alert("Phòng đã sẵn sàng!");
-            $window.location.reload();
+            room.status = 0;
         }, function () {
             alert("Phòng chưa sẵn sàng!");
         });

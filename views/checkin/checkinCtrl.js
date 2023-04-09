@@ -5,7 +5,7 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
     $scope.customers = [];
     $scope.bookingDetail = {};
     $scope.customer = {
-        gender: false
+        gender: true
     };
 
     $scope.init = async function () {
@@ -27,37 +27,102 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
         });
     }
 
+    $scope.loadServiceRoom = async function () {
+        await $http.get("http://localhost:8000/api/services").then(function (resp) {
+            $scope.serviceRooms = resp.data;
+        });
+    }
+
+    $scope.initTableCustomer = function () {
+        $(document).ready(function () {
+            tableCustomer = $('#datatable-customer').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
+                },
+                dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                columnDefs: [
+                    {
+                        targets: 5,
+                        orderable: false
+                    }
+                ]
+            });
+            $('#search-datatable-customer').keyup(function(){
+                tableCustomer.search($(this).val()).draw() ;
+            });
+        });
+    }
+
+    $scope.clearTableCustomer = function () {
+        $(document).ready(function () {
+            tableCustomer.clear();
+            tableCustomer.destroy();
+        });
+    }
+
+    $scope.initTableServiceRoom = function () {
+        $(document).ready(function () {
+            tableServiceRoom = $('#datatable-service-room').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
+                },
+                dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                columnDefs: [
+                    {
+                        targets: 4,
+                        orderable: false
+                    }
+                ]
+            });
+            $('#search-datatable-service-room').keyup(function(){
+                tableServiceRoom.search($(this).val()).draw() ;
+            });
+        });
+    }
+
+    $scope.clearTableServiceRoom = function () {
+        $(document).ready(function () {
+            tableServiceRoom.clear();
+            tableServiceRoom.destroy();
+        });
+    }
+
     $scope.modalPeopleRoom = async function (action) {
         if (action == "show") {
             await $scope.loadCustomers();
-            $(document).ready(function () {
-                tableCustomer = $('#datatable-customer').DataTable({
-                    language: {
-                        url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
-                    },
-                    dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
-                    columnDefs: [
-                        {
-                            targets: 5,
-                            orderable: false
-                        }
-                    ]
-                });
-                $('#search-datatable-customer').keyup(function(){
-                    tableCustomer.search($(this).val()).draw() ;
-                });
-            });
+            await $scope.initTableCustomer();
         } else {
-            $(document).ready(function () {
-                tableCustomer.clear();
-                tableCustomer.destroy();
-            });
+            $scope.clearTableCustomer();
             $scope.customers = [];
             $scope.customer = {
-                gender: false
+                gender: true
             };
         }
-        $('#modal-people-room').modal(action);
+        await $('#modal-people-room').modal(action);
+        $('.nav-tabs a[href="#customer-tab"]').click(function () {
+            $('#search-datatable-customer').focus()
+        });
+        $('.nav-tabs a[href="#add-customer-tab"]').click(function () {
+            $('#peopleId').focus()
+        });
+        $('.nav-tabs a[href="#customer-tab"]').tab('show');
+        setTimeout(function () {
+            $('#search-datatable-customer').focus()
+        }, 1000);
+    }
+
+    $scope.modalServiceRoom = async function (action) {
+        if (action == 'show') {
+            await $scope.loadServiceRoom();
+            await $scope.initTableServiceRoom();
+        } else {
+            await $scope.clearTableServiceRoom();
+            $scope.serviceRooms = [];
+        }
+        $('#modal-service-room').modal(action);
+        setTimeout(function () {
+            $('#search-datatable-service-room').focus()
+        }, 1000);
     }
 
     $scope.handlerAddCustomer = function (_customer) {
@@ -150,38 +215,6 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
         });
     }
 
-    $scope.modalServiceRoom = async function (action) {
-        if (action == 'show') {
-            await $http.get("http://localhost:8000/api/services").then(function (resp) {
-                $scope.serviceRooms = resp.data;
-                $(document).ready(function () {
-                    tableServiceRoom = $('#datatable-service-room').DataTable({
-                        language: {
-                            url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
-                        },
-                        dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
-                        columnDefs: [
-                            {
-                                targets: 4,
-                                orderable: false
-                            }
-                        ]
-                    });
-                    $('#search-datatable-service-room').keyup(function(){
-                        tableServiceRoom.search($(this).val()).draw() ;
-                    });
-                });
-            });
-        } else {
-            $(document).ready(function () {
-                tableServiceRoom.clear();
-                tableServiceRoom.destroy();
-            });
-            $scope.serviceRooms = [];
-        }
-        $('#modal-service-room').modal(action);
-    }
-
     $scope.addServiceRoom = function (service) {
         var usedService = $scope.usedServices.find(item => item.serviceRoom.id == service.id);
         if (usedService) {
@@ -216,18 +249,7 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
         $scope.hostedAts.splice(index, 1);
     }
 
-    $scope.modalListCustomer = async function (action) {
-        if (action == 'show') {
-            await $http.get("http://localhost:8000/api/customers").then(function (resp) {
-                $scope.customers = resp.data;
-            });
-        } else {
-            $scope.customers = [];
-        }
-        $('#modal-list-customer').modal(action);
-    }
-
-    $scope.checkin = function () {
+    $scope.handlerCheckin = function () {
         const numPeople = $scope.hostedAts.length;
         if (numPeople <= 0) {
             alert("Chưa có thông tin người ở!");

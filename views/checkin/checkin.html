@@ -84,19 +84,11 @@
                                         {{item.customer.fullName}}
                                     </th>
                                     <td>{{item.customer.phoneNumber}}</td>
-                                    <td>{{item.customer.gender ? "Nữ" : "Nam"}}</td>
+                                    <td>{{item.customer.gender ? "Nam" : "Nữ"}}</td>
                                     <td>{{item.customer.dateOfBirth | date:'dd/MM/yyyy'}}</td>
                                     <td>{{item.customer.peopleId}}</td>
                                     <td>
                                         <ul class="list-unstyled hstack gap-1 mb-0">
-                                            <!-- <li>
-                                                <button class="btn btn-sm btn-soft-primary"><i
-                                                        class="mdi mdi-eye-outline"></i></button>
-                                            </li> -->
-                                            <!-- <li>
-                                                <button class="btn btn-sm btn-soft-info"><i
-                                                        class="mdi mdi-pencil-outline"></i></button>
-                                            </li> -->
                                             <li>
                                                 <button ng-click="removeHostedAt(item)"
                                                     class="btn btn-sm btn-soft-danger"><i
@@ -116,8 +108,6 @@
                         <div class="flex-shrink-0">
                             <button ng-click="modalServiceRoom('show')" class="btn btn-sm btn-soft-primary"><i
                                     class="mdi mdi-format-list-bulleted"></i></button>
-                            <!-- <button ng-click="loadUsedServices()" class="btn btn-sm btn-light"><i
-                                    class="mdi mdi-refresh"></i></button> -->
                         </div>
                     </div>
                     <div class="table-responsive">
@@ -141,10 +131,6 @@
                                     <td>{{item.serviceRoom.description}}</td>
                                     <td>
                                         <ul class="list-unstyled hstack gap-1 mb-0">
-                                            <!-- <li>
-                                                <button class="btn btn-sm btn-soft-primary"><i
-                                                        class="mdi mdi-eye-outline"></i></button>
-                                            </li> -->
                                             <li>
                                                 <button ng-click="removeServiceRoom(item)"
                                                     class="btn btn-sm btn-soft-danger"><i
@@ -158,8 +144,8 @@
                     </div>
                 </div>
                 <div class="card-body border-top">
-                    <div class="d-flex flex-row-reverse ">
-                        <button ng-click="checkin()" class="btn btn-primary waves-effect waves-light float-end"><i
+                    <div class="float-end">
+                        <button ng-click="handlerCheckin()" class="btn btn-success waves-effect waves-light"><i
                                 class="mdi mdi-login-variant"></i> Nhận phòng</button>
                     </div>
                 </div>
@@ -211,7 +197,7 @@
                                                 {{item.fullName}}
                                             </th>
                                             <td>{{item.phoneNumber}}</td>
-                                            <td>{{item.gender ? "Nữ" : "Nam"}}</td>
+                                            <td>{{item.gender ? "Nam" : "Nữ"}}</td>
                                             <td>{{item.dateOfBirth | date:'dd/MM/yyyy'}}</td>
                                             <td>{{item.peopleId}}</td>
                                             <td>
@@ -279,14 +265,14 @@
                                             <div class="d-flex">
                                                 <div class="form-check  form-check-inline">
                                                     <input ng-model="customer.gender" class="form-check-input" type="radio"
-                                                        id="form-radio-male" ng-value="false">
+                                                        id="form-radio-male" ng-value="true">
                                                     <label class="form-check-label" for="form-radio-male">
                                                         Nam
                                                     </label>
                                                 </div>
                                                 <div class="form-check  form-check-inline">
                                                     <input ng-model="customer.gender" class="form-check-input" type="radio"
-                                                        id="form-radio-female" ng-value="true">
+                                                        id="form-radio-female" ng-value="false">
                                                     <label class="form-check-label" for="form-radio-female">
                                                         Nữ
                                                     </label>

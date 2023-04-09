@@ -587,6 +587,29 @@
                             </tr>
                         </tbody>
                     </table>
+                    <div ng-show="booking">
+                        <h5 class="mb-2">Khách hàng</h5>
+                            <table class="table mb-0 table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th scope="row" style="width: 300px;">Họ và tên</th>
+                                        <td>{{booking.customer.fullName}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">CCCD/CMND</th>
+                                        <td>{{booking.customer.peopleId}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Email</th>
+                                        <td>{{booking.customer.email}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">SĐT</th>
+                                        <td>{{booking.customer.phoneNumber}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button ng-click="modalInfoRoom('hide')" type="button"

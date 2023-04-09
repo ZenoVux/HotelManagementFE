@@ -17,81 +17,51 @@
                     <!-- Form Create room -->
                     <form enctype = "multipart/form-data">
                         <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="formrow-roomNumber-input" class="form-label">Room number</label>
-                                    <select ng-model="form.code" id="formrow-roomNumber-select" class="form-select">
-                                        <option ng-repeat= "item in roomNumber" ng-value = "item">{{item}}</option>
-                                    </select>
-                                </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="formrow-floor-input" class="form-label">Floor</label>
+                                <select ng-model="form.floor.id" id="formrow-floor-select" class="form-select">
+                                    <option ng-repeat= "floor in floors" ng-value = "floor.id">{{floor.name}}</option>
+                                </select>
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <!-- <div class="col-md-3 mb-3">
+                                <label for="formrow-roomNumber-input" class="form-label">Room number</label>
+                                <select ng-model="form.code" id="formrow-roomNumber-select" class="form-select">
+                                    <option ng-repeat= "item in roomNumber" ng-value = "item">{{item}}</option>
+                                </select>
+                            </div> -->
+                            <div class="col-md-3 mb-3">
                                 <label for="formrow-price-input" class="form-label">Price</label>
                                 <div class="input-group">
                                     <input ng-model="form.price" type="text" class="form-control" id="formrow-price-input">
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="formrow-maxAdultAdd-input" class="form-label">Max adults add</label>
-                                <div class="input-group">
-                                    <input ng-model="form.maxAdultAdd" type="text" class="form-control" id="formrow-maxAdultAdd-input"
-                                        placeholder="Enter max adults add">
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="formrow-maxChildAdd-input" class="form-label">Max child add</label>
-                                <div class="input-group">
-                                    <input ng-model="form.maxChildAdd" type="text" class="form-control" id="formrow-maxChildAdd-input"
-                                        placeholder="Enter max child add">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="formrow-area-input" class="form-label">Area</label>
-                                    <input ng-model="form.area" type="text" class="form-control" id="formrow-area-input"
-                                        placeholder="Enter area">
-                                </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="formrow-area-input" class="form-label">Area</label>
+                                <input ng-model="form.area" type="text" class="form-control" id="formrow-area-input"
+                                    placeholder="Enter area">
                             </div>
                             <div class="col-md-3 mb-3">
-                                <label for="formrow-floor-input" class="form-label">Floor</label>
-                                <select ng-model="form.floor" id="formrow-floor-select" class="form-select" ng-change="floorChange()">
-                                    <option ng-repeat= "floor in floors" ng-value = "floor">{{floor.name}}</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3 mb-4">
-                                <label for="formrow-isSmoking-input" class="form-label">Is smoking</label><br>
-                                <div class="form-check">
-                                    <input type="radio" class="form-check-input" name="btnradio" id="btnradio1" ng-model="form.isSmoking"  ng-value="true">
-                                    <label class="form-check-label" for="btnradio1">Có</label>
-                                </div>
-                                <div class="form-check">
-                                    <input type="radio" class="form-check-input" name="btnradio" id="btnradio2" ng-model="form.isSmoking"  ng-value="false">
-                                    <label class="form-check-label" for="btnradio2">Không</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-md-3">
                                 <label for="formrow-roomType-select" class="form-label">Room type</label>
                                 <select ng-model="form.roomType.id" id="formrow-roomType-select" class="form-select">
                                     <option ng-repeat= "room in roomTypes" ng-value = "room.id">{{room.name}}</option>
                                 </select>
                             </div>
-                            <div class="col-md-3">
-                                <div class="mb-3">
-                                    <label for="formrow-status-input">Status</label>
-                                    <select ng-model="form.status" id="formrow-status-input" class="form-select">
-                                        <option ng-value="0">Trống</option>
-                                        <option ng-value="1">Không hoạt động</option>
-                                        <option ng-value="2">Đang ở</option>
-                                        <option ng-value="3">Đang book</option>
-                                    </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <label for="formrow-maxAdultAdd-input" class="form-label">Max adults add</label>
+                                <div class="input-group">
+                                    <input ng-model="form.maxAdultAdd" type="text" class="form-control" id="formrow-maxAdultAdd-input">
                                 </div>
                             </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="formrow-maxChildAdd-input" class="form-label">Max child add</label>
+                                <div class="input-group">
+                                    <input ng-model="form.maxChildAdd" type="text" class="form-control" id="formrow-maxChildAdd-input">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
                             <div class="col-md-3 mb-3 mt-auto d-grid">
                                 <a href="/#!/room-type/create" class="btn btn-outline-primary waves-effect waves-light w-100" data-bs-toggle="modal" data-bs-target="#createRoomType">
                                     <i class="fas fa-plus me-3"></i>Create room type
@@ -224,9 +194,7 @@
                                 </div>
                                 <!-- End model supply -->
                             </div>
-                        </div>
 
-                        <div class="row">  
                             <div class="col-md-3 mb-3 mt-auto">
                                 <a class="btn btn-outline-primary waves-effect waves-light w-100" data-bs-toggle="modal" data-bs-target="#imageRoom">
                                     <i class="bx bxs-image-alt mx-auto me-3 font-size-15"></i>Image room</a>
@@ -255,6 +223,7 @@
                                 </div>
                                 <!-- End model image room -->
                             </div>
+
                             <div class="col-md-3 mb-3 mt-auto d-grid">
                                 <a class="btn btn-outline-primary waves-effect waves-light w-100" data-bs-toggle="modal" data-bs-target="#chooseBed">
                                     <i class="bx bxs-bed mx-auto font-size-15 me-3"></i>Choose bed
@@ -313,7 +282,21 @@
                             </div> 
                         </div>
                         <div class="row">
-                            <div class="mb-3">
+                            <div class="col mb-4">
+                                <label for="formrow-status-input">Status</label>
+                                <div >
+                                    <input type="checkbox" id="formrow-status-input" switch="none" ng-model="form.status"/>
+                                    <label for="formrow-status-input" data-on-label="On" data-off-label="Off"></label>
+                                </div>
+                            </div>
+                            <div class="col mb-4 text-sm-end">
+                                <label for="formrow-isSmoking-input" class="form-label">Is smoking</label>
+                                <div >
+                                    <input type="checkbox" id="formrow-isSmoking-input" switch="none" ng-model="form.isSmoking"/>
+                                    <label for="formrow-isSmoking-input" data-on-label="On" data-off-label="Off"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-9 mb-3">
                                 <label for="formrow-description-input">Description</label>
                                 <textarea ng-model="form.description" id="formrow-description-input" class="form-control" rows="3"
                                     placeholder="Enter Description"></textarea>

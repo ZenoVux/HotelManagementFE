@@ -5,20 +5,17 @@
 
     <!-- Responsive datatable examples -->
     <link href="assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" /> 
-    <div class="row">
+    <div class="row" data-sidebar="dark" data-layout-mode="light">
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
                     <h4 class="mb-4">List Room</h4>
-                    <div class="row mb-2">
-                        <div class="col-sm-4">
-
+                    <div class="d-flex justify-content-end mb-2">
+                        <div>
+                            <a href="/#!/room/create" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2"><i class="mdi mdi-plus me-1"></i>Add New Room</a>
                         </div>
-                        
-                        <div class="col-sm-8">
-                            <div class="text-sm-end">
-                                <a href="/#!/room/create" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2"><i class="mdi mdi-plus me-1"></i> Add New Room</a>
-                            </div>
+                        <div>
+                            <a href="/#!/room-type" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2"><i class="dripicons-view-list me-2"></i>Room Type</a>
                         </div>
                     </div>
                     <!-- table content -->
@@ -166,8 +163,9 @@
                                 </div>
                                 <div class="modal-body">
                                     <label ng-repeat="imageRoom in imageRooms">
-                                        <img width="900px" class="img-responsive img-thumbnail" ng-src="{{url(imageRoom.image.url)}}" alt="error load image">
+                                        <img width="900px" class="img-responsive img-thumbnail" ng-src="{{url(imageRoom.fileName)}}" alt="error load image">
                                     </label>
+                                        
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>

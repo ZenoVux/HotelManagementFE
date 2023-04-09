@@ -1,4 +1,5 @@
 app.controller("customerCtrl", function ($scope, $http) {
+
     $scope.initTable = function () {
         $scope.loading = true;
         $http.get("http://localhost:8000/api/customers").then(function (resp) {
@@ -10,10 +11,13 @@ app.controller("customerCtrl", function ($scope, $http) {
         });
     }
     $scope.initTable();
+
     $scope.viewCustomer = function (customer) {
         $('#customer-modal').modal('show');
         $scope.selectedCustomer = customer;
-        console.log(customer);
+        $scope.frontIdCardUrl = "http://localhost:8000/images/" + $scope.selectedCustomer.frontIdCard;
+        $scope.backIdCardUrl = "http://localhost:8000/images/" + $scope.selectedCustomer.backIdCard;
+
     };
 
 });
@@ -21,7 +25,6 @@ app.controller("customerEditCtrl", function ($scope, $routeParams, $http) {
     $scope.getCustomerById = function () {
         $http.get("http://localhost:8000/api/customers/" + $routeParams.customerId).then(function (resp) {
             $scope.customer = resp.data;
-            console.log($scope.customer);
         });
     }
     $scope.getCustomerById();

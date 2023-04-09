@@ -19,6 +19,7 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
         $scope.loading = true;
         $http.get("http://localhost:8000/api/bookings").then(function (resp) {
             $scope.bookings = resp.data;
+            console.log($scope.bookings);
             $(document).ready(function () {
                 $('#bookingTable').DataTable();
             });
@@ -194,7 +195,7 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
             $scope.alertMessage = 'Đã chọn ' + $scope.rooms.length + ' phòng. Bạn cần chọn thêm cho ' + (numAdults - maxAdults) + ' người lớn nữa!';
         } else if (numChildren > maxChildren) {
             $scope.showAlert = true;
-            $scope.alertMessage = 'Bạn cần chọn thêm cho ' + (numChildren - maxChildren) + ' trẻ em nữa!';
+            $scope.alertMessage = 'Đã chọn ' + $scope.rooms.length + ' phòng. Bạn cần chọn thêm cho ' + (numChildren - maxChildren) + ' trẻ em nữa!';
         }
         else {
             $scope.showAlert = true;
@@ -229,7 +230,10 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
             }
         }).then(function (response) {
             if (response.status == 200) {
+                $('#booking-modal').modal('hide');
                 alert('Thêm phòng thành công!');
+                $('#adđ-room-modal').modal('hide');
+                viewBooking($scope.currentBooking);
             }
         }).catch(function (error) {
             console.error('Error fetching data:', error);
@@ -332,9 +336,12 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
         } else if ($scope.booking.checkinDate < today.setDate(today.getDate() - 1)) {
             alert('Ngày check-in được tính từ ngày hôm nay.');
         } else if ($scope.booking.checkoutDate < $scope.booking.checkinDate) {
-            alert('Ngày check-out phỉa sau ngày check-in.');
+            alert('Ngày check-out phải sau ngày check-in.');
         } else {
             $scope.loading = true;
+            $scope.booking.checkinDate = $filter('date')($scope.booking.checkinDate, 'dd-MM-yyyy');
+            $scope.booking.checkoutDate = $filter('date')($scope.booking.checkoutDate, 'dd-MM-yyyy');
+
             $http.get('http://localhost:8000/api/bookings/info', {
                 params: {
                     checkinDate: $scope.booking.checkinDate,
@@ -343,6 +350,9 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
                 }
             }).then(function (response) {
                 $scope.bookings = response.data;
+                if ($scope.bookings.length == 0) {
+                    alert('Không có phòng hợp lệ.');
+                }
                 $scope.loading = false;
             }).catch(function (error) {
                 console.error('Error fetching data:', error);
@@ -379,7 +389,7 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
             $scope.alertMessage = 'Đã chọn ' + $scope.rooms.length + ' phòng. Bạn cần chọn thêm cho ' + (numAdults - maxAdults) + ' người lớn nữa!';
         } else if (numChildren > maxChildren) {
             $scope.showAlert = true;
-            $scope.alertMessage = 'Bạn cần chọn thêm cho ' + (numChildren - maxChildren) + ' trẻ em nữa!';
+            $scope.alertMessage = 'Đã chọn ' + $scope.rooms.length + ' phòng. Bạn cần chọn thêm cho ' + (numChildren - maxChildren) + ' trẻ em nữa!';
         }
         else {
             $scope.showAlert = true;
@@ -444,6 +454,25 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
 
     }
 
+    $scope.checkCustomer = async function (peopleId) {
+        $scope.loading = true;
+        try {
+            const response = await $http.get('http://localhost:8000/api/customers/search-by-people-id/' + peopleId);
+            if (response.status == 200) {
+                $scope.customer = response.data;
+                $scope.customer.dateOfBirth = $filter('date')($scope.customer.dateOfBirth, 'dd-MM-yyyy');
+                return true;
+            }
+            $scope.loading = false;
+            return false;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            $scope.loading = false;
+            return false;
+        }
+    };
+
+
     $scope.uploadFrontIdCard = function (imageData) {
 
         $scope.loading = true;
@@ -467,6 +496,13 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
             }
         }).then(function (response) {
             if (response.data != '') {
+
+                $scope.checkCustomer(response.data.data[0].id).then(function (result) {
+                    if (result) {
+                        return response;
+                    }
+                });
+
                 $scope.customer.fullName = response.data.data[0].name;
                 $scope.customer.dateOfBirth = response.data.data[0].dob;
                 $scope.customer.gender = response.data.data[0].sex === 'NAM' ? true : false;

@@ -80,7 +80,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="booking in bookings">
+                            <tr ng-repeat="booking in bookings | orderBy:'code'">
                                 <th>{{booking.code}}</th>
                                 <td>{{booking.numOfRoom}}</td>
                                 <td>{{booking.adults}}</td>
@@ -242,7 +242,12 @@
                                     </div>
                                     <div ng-if="currentBooking.status != 0 && currentBooking.status != 3"
                                         class="row mb-2">
-                                        <div class="col-sm-5"></div>
+                                        <div class="col-sm-5">
+                                            <div class="text-sm-start">
+                                                <a class="btn btn-secondary btn-lg" ng-click="" role="button">
+                                                    Lịch sử chỉnh sửa</a>
+                                            </div>
+                                        </div>
                                         <div class="col-sm-6">
                                             <div class="row">
                                                 <div class="col-2">

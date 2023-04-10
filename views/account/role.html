@@ -12,14 +12,12 @@
                     <table id="datatable-accounts" class="table table-bordered dt-responsive nowrap w-100">
                         <thead>
                             <tr>
-                                <th>#</th>
                                 <th>Username</th>
                                 <th ng-repeat="role in roles">{{role.name}}</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr ng-repeat="account in accounts">
-                                <th scope="row">{{account.id}}</th>
                                 <td>{{account.username}}</td>
                                 <td ng-repeat="role in roles">
                                     <input type="checkbox" ng-checked="userRoleOf(account, role)"

@@ -552,7 +552,37 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button ng-click="handlerCreateCustomer()" class="btn btn-success">Thêm mới</button>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">
+                                        <button type="button" class="btn btn-secondary btn-sm"
+                                            ng-click="takePicture()">Camera</button> Chụp ảnh cmnd/cccd
+                                    </label>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="card mb-3">
+                                                <div class="card-header">
+                                                    Mặt trước
+                                                </div>
+                                                <div class="card-body">
+                                                    <img ng-src="{{ frontIdCardDisplay }}"
+                                                        style="width: 100%; height: 100%;">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="card mb-3">
+                                                <div class="card-header">
+                                                    Mặt sau
+                                                </div>
+                                                <div class="card-body">
+                                                    <img ng-src="{{ backIdCardDisplay }}"
+                                                        style="width: 100%; height: 100%;">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button ng-click="handlerCreateCustomer()" class="btn btn-success">Thêm khách hàng</button>
                             </form>
                         </div>
                     </div>
@@ -595,29 +625,26 @@
                             </tr>
                         </tbody>
                     </table>
-                    <div ng-show="booking">
-                        <h5 class="mb-2">Khách hàng</h5>
-                            <table class="table mb-0 table-bordered">
-                                <tbody>
-                                    <tr>
-                                        <th scope="row" style="width: 300px;">Họ và tên</th>
-                                        <td>{{booking.customer.fullName}}</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">CCCD/CMND</th>
-                                        <td>{{booking.customer.peopleId}}</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">Email</th>
-                                        <td>{{booking.customer.email}}</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">SĐT</th>
-                                        <td>{{booking.customer.phoneNumber}}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                    </div>
+                    <table ng-show="selectRoom.status == 2 || selectRoom.status == 4 || selectRoom.status == 5" class="table mb-0 table-bordered">
+                        <tbody>
+                            <tr>
+                                <th scope="row" style="width: 300px;">Mã đặt</th>
+                                <td>{{booking.code}}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">CCCD/CMND</th>
+                                <td>{{booking.customer.peopleId}}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Email</th>
+                                <td>{{booking.customer.email}}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">SĐT</th>
+                                <td>{{booking.customer.phoneNumber}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
                 <div class="modal-footer">
                     <button ng-click="modalInfoRoom('hide')" type="button"

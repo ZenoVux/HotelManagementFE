@@ -56,7 +56,7 @@
                             </tr>
                             <tr>
                                 <th scope="row">Ngày đến/đi</th>
-                                <td>{{invoiceDetail.checkin | date:'hh:mm dd/MM/yyyy'}} - {{invoiceDetail.checkout | date:'hh:mm dd/MM/yyyy'}}</td>
+                                <td>{{invoiceDetail.checkin | date:'HH:mm dd/MM/yyyy'}} - {{invoiceDetail.checkout | date:'HH:mm dd/MM/yyyy'}}</td>
                             </tr>
                             <tr class="d-print-none">
                                 <th scope="row">Trạng thái</th>
@@ -175,7 +175,7 @@
                                 <tr ng-show="invoice.status == 4">
                                     <th>Ngày thanh toán</th>
                                     <td class="border-0 text-end">
-                                        {{invoice.paidDate | date:'hh:mm dd/MM/yyyy'}}
+                                        {{invoice.paidDate | date:'HH:mm dd/MM/yyyy'}}
                                     </td>
                                 </tr>
                                 <tr class="d-print-none">
@@ -197,8 +197,8 @@
                 <div class="card-body border-top d-print-none">
                     <div class="float-end">
                         <a href="javascript:window.print()" class="btn btn-primary waves-effect waves-light"><i class="fa fa-print"></i></a>
-                        <button ng-show="invoice.status == 2" class="btn btn-primary waves-effect waves-light"><i
-                                class="bx bx-money"></i> Tách hoá đơn</button>
+                        <!-- <button ng-show="invoice.status == 2" class="btn btn-primary waves-effect waves-light"><i
+                                class="bx bx-money"></i> Tách hoá đơn</button> -->
                         <button ng-show="invoice.status == 2" ng-click="modalPayment('show')"
                             class="btn btn-success waves-effect waves-light"><i class="bx bx-money"></i> Thanh
                             toán</button>
@@ -330,7 +330,6 @@
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>
-                                    <th scope="col">Ngày nhận</th>
                                     <th scope="col">Ngày trả</th>
                                     <th scope="col">Giá phòng</th>
                                     <th scope="col">Trả trước</th>
@@ -345,7 +344,6 @@
                                     <th scope="row">
                                         {{item.code}}
                                     </th>
-                                    <td>{{item.checkinExpected | date:'dd/MM/yyyy'}}</td>
                                     <td>{{item.checkoutExpected | date:'dd/MM/yyyy'}}</td>
                                     <td>{{item.roomPrice | currency: '' : 0}}₫</td>
                                     <td>{{item.deposit | currency: '' : 0}}₫</td>
@@ -407,13 +405,13 @@
                             </div>
                         </div>
                         <div class="col-4">
-                            <div class="mb-3">
+                            <div ng-show="payment.paymentMethod.code == 'CASH'" class="mb-3">
                                 <label for="paymentMethod" class="form-label">Tiền khách đưa</label>
                                 <input ng-model="payment.money" class="form-control" type="number" id="">
                             </div>
                         </div>
                         <div class="col-4">
-                            <div class="mb-3">
+                            <div ng-show="payment.paymentMethod.code == 'CASH'" class="mb-3">
                                 <label for="paymentMethod" class="form-label">Tiền trả lại</label>
                                 <input ng-value="(payment.money - getTotalPayment() | currency: '' : 0) + '₫'" class="form-control" type="text" id="" readonly>
                             </div>

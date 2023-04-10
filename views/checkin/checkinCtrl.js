@@ -33,7 +33,7 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
     }
 
     $scope.loadServiceRoom = async function () {
-        await $http.get("http://localhost:8000/api/services").then(function (resp) {
+        await $http.get("http://localhost:8000/api/services?status=true").then(function (resp) {
             $scope.serviceRooms = resp.data;
         });
     }
@@ -102,6 +102,11 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
             $scope.customer = {
                 gender: true
             };
+            $scope.frontIdCardBase64 = null;
+            $scope.backIdCardBase64 = null;
+            $scope.frontIdCardDisplay = null;
+            $scope.backIdCardDisplay = null;
+            $scope.isFrontImageCaptured = false;
         }
         await $('#modal-people-room').modal(action);
         $('.nav-tabs a[href="#customer-tab"]').click(function () {
@@ -151,11 +156,6 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
             $("#peopleId").focus();
             return;
         }
-        if ($scope.customers.find(_customer => _customer.peopleId == $scope.customer.peopleId)) {
-            alert("CCCD/CMND đã tồn tại!");
-            $("#peopleId").focus();
-            return;
-        }
         if (!$scope.customer.fullName) {
             alert("Vui lòng nhập họ và tên!");
             $("#fullName").focus();
@@ -186,37 +186,54 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
             $("#address").focus();
             return;
         }
-        if (!confirm("Bạn muốn thêm mới khách hàng?")) {
+        if (!confirm("Bạn muốn thêm khách hàng?")) {
             return;
         }
-        $http.post("http://localhost:8000/api/customers/create-member", $scope.customer).then(function (_resp) {
-            alert("Thêm khách hàng mới thành công!");
-            $('.nav-tabs a[href="#customer-tab"]').tab('show');
-            $scope.customers.push(_resp.data);
-            $scope.customer = {
-                gender: false
-            };
-            $(document).ready(function () {
-                tableCustomer.clear();
-                tableCustomer.destroy();
-                tableCustomer = $('#datatable-customer').DataTable({
-                    language: {
-                        url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
-                    },
-                    dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
-                    columnDefs: [
-                        {
-                            targets: 5,
-                            orderable: false
-                        }
-                    ]
-                });
-                $('#search-datatable-customer').keyup(function(){
-                    tableCustomer.search($(this).val()).draw() ;
-                });
-            });
-        }, function () {
-            alert("Thêm khách hàng mới thất bại!");
+
+        var formData = new FormData();
+
+        var binaryFront = atob($scope.frontIdCardBase64);
+        var arrayFront = [];
+        for (var i = 0; i < binaryFront.length; i++) { arrayFront.push(binaryFront.charCodeAt(i)); }
+        var blobFront = new Blob([new Uint8Array(arrayFront)], { type: 'image/jpeg' });
+
+        var binaryBack = atob($scope.backIdCardBase64);
+        var arrayBack = [];
+        for (var i = 0; i < binaryBack.length; i++) { arrayBack.push(binaryBack.charCodeAt(i)); }
+        var blobBack = new Blob([new Uint8Array(arrayBack)], { type: 'image/jpeg' });
+
+        $scope.customer.dateOfBirth = $scope.customer.dateOfBirth.toLocaleDateString('vi-VN');
+
+        formData.append('frontIdCard', blobFront, 'frontIdCard.jpg');
+        formData.append('backIdCard', blobBack, 'backIdCard.jpg');
+        formData.append('customer', JSON.stringify($scope.customer));
+
+        $http.post('http://localhost:8000/api/hotel/create-customer', formData, {
+            transformRequest: angular.identity,
+            headers: {
+                'Content-Type': undefined
+            }
+        }).then(async function (response) {
+            if (response.status == 200) {
+                alert('Thêm khách hàng thành công!');
+                $scope.customer = {
+                    gender: true
+                };
+                $scope.frontIdCardBase64 = null;
+                $scope.backIdCardBase64 = null;
+                $scope.frontIdCardDisplay = null;
+                $scope.backIdCardDisplay = null;
+                $scope.isFrontImageCaptured = false;
+                await $scope.clearTableCustomer();
+                await $scope.loadCustomers();
+                await $scope.initTableCustomer();
+                $('.nav-tabs a[href="#customer-tab"]').tab('show');
+            } else {
+                alert('Thêm khách hàng thất bại!');
+            }
+            console.log(response);
+        }).catch(function (error) {
+            console.error('Error fetching data:', error);
         });
     }
 
@@ -289,10 +306,8 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
         });
     }
 
-
     $scope.uploadFrontIdCard = function (imageData) {
 
-        $scope.loading = true;
         $scope.frontIdCardBase64 = imageData.split(',')[1];
 
         var url = 'http://localhost:8000/api/bookings/read-front-id-card';
@@ -321,7 +336,7 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
                 });
 
                 $scope.customer.fullName = response.data.data[0].name;
-                $scope.customer.dateOfBirth = response.data.data[0].dob;
+                $scope.customer.dateOfBirth = new Date(response.data.data[0].dob);
                 $scope.customer.gender = response.data.data[0].sex === 'NAM' ? true : false;
                 $scope.customer.peopleId = response.data.data[0].id;
                 $scope.customer.address = response.data.data[0].address;
@@ -329,38 +344,32 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
                 $scope.loading = false;
                 return response;
             } else {
-                $scope.loading = false;
                 return response;
             }
         }).catch(function (error) {
             console.log(error);
-            $scope.loading = false;
             return error;
         });
 
     };
 
     $scope.checkCustomer = async function (peopleId) {
-        $scope.loading = true;
         try {
             const response = await $http.get('http://localhost:8000/api/customers/search-by-people-id/' + peopleId);
             if (response.status == 200) {
                 $scope.customer = response.data;
-                $scope.customer.dateOfBirth = $filter('date')($scope.customer.dateOfBirth, 'dd-MM-yyyy');
+                $scope.customer.dateOfBirth = new Date($scope.customer.dateOfBirth);
                 return true;
             }
-            $scope.loading = false;
             return false;
         } catch (error) {
             console.error('Error fetching data:', error);
-            $scope.loading = false;
             return false;
         }
     };
 
     $scope.uploadBackIdCard = function (imageData) {
 
-        $scope.loading = true;
         $scope.backIdCardBase64 = imageData.split(',')[1];
 
         var url = 'http://localhost:8000/api/bookings/read-back-id-card';
@@ -379,11 +388,9 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
             }
         }).then(function (response) {
             console.log(response);
-            $scope.loading = false;
             return response;
         }).catch(function (error) {
             console.log(error);
-            $scope.loading = false;
             return error;
         });
 
@@ -460,7 +467,7 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
                         const frontResponse = await $scope.uploadFrontIdCard(canvasFront.toDataURL('image/jpeg'));
                         console.log(frontResponse);
 
-                        if (frontResponse != undefined && frontResponse.data != '') {
+                        if (frontResponse != undefined && frontResponse.data.data[0].id != null) {
                             video.play();
                             document.removeEventListener('keydown', onKeyEvent);
                             note.textContent = 'Chụp mặt sau CMND/CCCD. Nhấn SPACE để chụp, ESC để hủy.';
@@ -504,7 +511,7 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
                         canvasBack.getContext('2d').drawImage(video, 0, 0, canvasBack.width, canvasBack.height);
                         video.pause();
                         const backResponse = await $scope.uploadBackIdCard(canvasBack.toDataURL('image/jpeg'));
-                        if (backResponse.data != '') {
+                        if (backResponse.data.data[0].features != null) {
                             $scope.$apply(function () {
                                 $scope.backIdCardDisplay = canvasBack.toDataURL('image/jpeg');
                             });

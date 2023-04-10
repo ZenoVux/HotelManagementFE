@@ -51,6 +51,12 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
     };
     $scope.booking = {};
     $scope.search = {};
+    
+    $scope.frontIdCardBase64 = null;
+    $scope.backIdCardBase64 = null;
+    $scope.frontIdCardDisplay = null;
+    $scope.backIdCardDisplay = null;
+    $scope.isFrontImageCaptured = false;
 
     $scope.init = async function () {
         await $scope.loadHotelRooms();
@@ -111,7 +117,7 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
     }
 
     $scope.loadServices = async function () {
-        await $http.get("http://localhost:8000/api/services").then(function (resp) {
+        await $http.get("http://localhost:8000/api/services?status=true").then(function (resp) {
             $scope.services = resp.data;
         });
     }
@@ -436,6 +442,11 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
             $scope.customer = {
                 gender: false
             };
+            $scope.frontIdCardBase64 = null;
+            $scope.backIdCardBase64 = null;
+            $scope.frontIdCardDisplay = null;
+            $scope.backIdCardDisplay = null;
+            $scope.isFrontImageCaptured = false;
         }
         await $('#modal-hosted-at').modal(action);
         $('.nav-tabs a[href="#hosted-at-tab"]').click(function () {
@@ -589,11 +600,6 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
             $("#peopleId").focus();
             return;
         }
-        if ($scope.customers.find(_customer => _customer.peopleId == $scope.customer.peopleId)) {
-            alert("CCCD/CMND đã tồn tại!");
-            $("#peopleId").focus();
-            return;
-        }
         if (!$scope.customer.fullName) {
             alert("Vui lòng nhập họ và tên!");
             $("#fullName").focus();
@@ -624,18 +630,54 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
             $("#address").focus();
             return;
         }
-        if (!confirm("Bạn muốn thêm mới khách hàng?")) {
+        if (!confirm("Bạn muốn thêm khách hàng?")) {
             return;
         }
-        $http.post("http://localhost:8000/api/customers/create-member", $scope.customer).then(function (_resp) {
-            alert("Thêm khách hàng mới thành công!");
-            $('.nav-tabs a[href="#customer-tab"]').tab('show');
-            $scope.customers.push(_resp.data);
-            $scope.customer = {
-                gender: false
-            };
-        }, function () {
-            alert("Thêm khách hàng mới thất bại!");
+
+        var formData = new FormData();
+
+        var binaryFront = atob($scope.frontIdCardBase64);
+        var arrayFront = [];
+        for (var i = 0; i < binaryFront.length; i++) { arrayFront.push(binaryFront.charCodeAt(i)); }
+        var blobFront = new Blob([new Uint8Array(arrayFront)], { type: 'image/jpeg' });
+
+        var binaryBack = atob($scope.backIdCardBase64);
+        var arrayBack = [];
+        for (var i = 0; i < binaryBack.length; i++) { arrayBack.push(binaryBack.charCodeAt(i)); }
+        var blobBack = new Blob([new Uint8Array(arrayBack)], { type: 'image/jpeg' });
+
+        $scope.customer.dateOfBirth = $scope.customer.dateOfBirth.toLocaleDateString('vi-VN');
+
+        formData.append('frontIdCard', blobFront, 'frontIdCard.jpg');
+        formData.append('backIdCard', blobBack, 'backIdCard.jpg');
+        formData.append('customer', JSON.stringify($scope.customer));
+
+        $http.post('http://localhost:8000/api/hotel/create-customer', formData, {
+            transformRequest: angular.identity,
+            headers: {
+                'Content-Type': undefined
+            }
+        }).then(async function (response) {
+            if (response.status == 200) {
+                alert('Thêm khách hàng thành công!');
+                $scope.customer = {
+                    gender: true
+                };
+                $scope.frontIdCardBase64 = null;
+                $scope.backIdCardBase64 = null;
+                $scope.frontIdCardDisplay = null;
+                $scope.backIdCardDisplay = null;
+                $scope.isFrontImageCaptured = false;
+                await $scope.clearTableCustomer();
+                await $scope.loadCustomers();
+                await $scope.initTableCustomer();
+                $('.nav-tabs a[href="#customer-tab"]').tab('show');
+            } else {
+                alert('Thêm khách hàng thất bại!');
+            }
+            console.log(response);
+        }).catch(function (error) {
+            console.error('Error fetching data:', error);
         });
     }
 
@@ -691,7 +733,7 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
             code: room.code
         }).then(function (resp) {
             alert("Phòng đã sẵn sàng!");
-            room.status = 0;
+            $window.location.reload();
         }, function () {
             alert("Phòng chưa sẵn sàng!");
         });
@@ -718,6 +760,247 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
             alert("Đổi phòng thất bại!");
         });
     }
+
+    $scope.uploadFrontIdCard = function (imageData) {
+
+        $scope.frontIdCardBase64 = imageData.split(',')[1];
+
+        var url = 'http://localhost:8000/api/bookings/read-front-id-card';
+        var formData = new FormData();
+        var binary = atob(imageData.split(',')[1]);
+        var array = [];
+        for (var i = 0; i < binary.length; i++) {
+            array.push(binary.charCodeAt(i));
+        }
+        var blob = new Blob([new Uint8Array(array)], { type: 'image/jpeg' });
+
+        formData.append('frontIdCard', blob);
+
+        return $http.post(url, formData, {
+            transformRequest: angular.identity,
+            headers: {
+                'Content-Type': undefined
+            }
+        }).then(function (response) {
+            if (response.data != '') {
+
+                $scope.checkCustomer(response.data.data[0].id).then(function (result) {
+                    if (result) {
+                        return response;
+                    }
+                });
+
+                $scope.customer.fullName = response.data.data[0].name;
+                $scope.customer.dateOfBirth = new Date(response.data.data[0].dob);
+                $scope.customer.gender = response.data.data[0].sex === 'NAM' ? true : false;
+                $scope.customer.peopleId = response.data.data[0].id;
+                $scope.customer.address = response.data.data[0].address;
+                $scope.customer.placeOfBirth = response.data.data[0].home;
+                $scope.loading = false;
+                return response;
+            } else {
+                return response;
+            }
+        }).catch(function (error) {
+            console.log(error);
+            return error;
+        });
+
+    };
+
+    $scope.checkCustomer = async function (peopleId) {
+        try {
+            const response = await $http.get('http://localhost:8000/api/customers/search-by-people-id/' + peopleId);
+            if (response.status == 200) {
+                $scope.customer = response.data;
+                $scope.customer.dateOfBirth = new Date($scope.customer.dateOfBirth);
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            return false;
+        }
+    };
+
+    $scope.uploadBackIdCard = function (imageData) {
+
+        $scope.backIdCardBase64 = imageData.split(',')[1];
+
+        var url = 'http://localhost:8000/api/bookings/read-back-id-card';
+        var formData = new FormData();
+        var binary = atob(imageData.split(',')[1]);
+        var array = [];
+        for (var i = 0; i < binary.length; i++) {
+            array.push(binary.charCodeAt(i));
+        }
+        var blob = new Blob([new Uint8Array(array)], { type: 'image/jpeg' });
+        formData.append('backIdCard', blob);
+        return $http.post(url, formData, {
+            transformRequest: angular.identity,
+            headers: {
+                'Content-Type': undefined
+            }
+        }).then(function (response) {
+            console.log(response);
+            return response;
+        }).catch(function (error) {
+            console.log(error);
+            return error;
+        });
+
+    };
+
+    $scope.takePicture = function () {
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function (stream) {
+
+                var modal = document.createElement('div');
+                modal.style.zIndex = '10000';
+                modal.style.position = 'fixed';
+                modal.style.top = '0';
+                modal.style.left = '0';
+                modal.style.width = '100%';
+                modal.style.height = '100%';
+                modal.style.background = 'rgba(0, 0, 0, 0.5)';
+                modal.style.display = 'flex';
+                modal.style.justifyContent = 'center';
+                modal.style.alignItems = 'center';
+                modal.style.flexDirection = 'column';
+
+                var video = document.createElement('video');
+                video.srcObject = stream;
+                video.play();
+
+                var noteContainer = document.createElement('div');
+                noteContainer.style.display = 'flex';
+                noteContainer.style.marginTop = '15px';
+                noteContainer.style.justifyContent = 'center';
+                noteContainer.style.alignItems = 'center';
+
+                var note = document.createElement('div');
+
+                note.textContent = 'Chụp mặt trước CMND/CCCD. Nhấn SPACE để chụp, ESC để hủy.';
+
+                note.classList.add('alert', 'alert-secondary');
+                noteContainer.appendChild(note);
+
+                function onKeyEvent(event) {
+                    if (event.code === 'Space') {
+                        event.preventDefault();
+                        captureImage();
+                    }
+                    if (event.code === 'Escape') {
+                        event.preventDefault();
+                        video.srcObject = null;
+                        stream.getTracks().forEach(function (track) {
+                            track.stop();
+                        });
+                        modal.remove();
+                        document.removeEventListener('keydown', onKeyEvent);
+                    }
+                }
+
+                document.addEventListener('keydown', onKeyEvent);
+
+                modal.appendChild(video);
+                modal.appendChild(noteContainer);
+                document.body.appendChild(modal);
+
+                async function captureImage() {
+
+                    if ($scope.isFrontImageCaptured == false) {
+                        const canvasFront = document.createElement('canvas');
+                        canvasFront.width = video.videoWidth;
+                        canvasFront.height = video.videoHeight;
+
+                        canvasFront.getContext('2d').drawImage(video, 0, 0, canvasFront.width, canvasFront.height);
+                        video.pause();
+
+                        const frontResponse = await $scope.uploadFrontIdCard(canvasFront.toDataURL('image/jpeg'));
+                        console.log(frontResponse);
+
+                        if (frontResponse != undefined && frontResponse.data.data[0].id != null) {
+                            video.play();
+                            document.removeEventListener('keydown', onKeyEvent);
+                            note.textContent = 'Chụp mặt sau CMND/CCCD. Nhấn SPACE để chụp, ESC để hủy.';
+                            $scope.$apply(function () {
+                                $scope.frontIdCardDisplay = canvasFront.toDataURL('image/jpeg');
+                            });
+                            $scope.isFrontImageCaptured = true;
+                        } else {
+                            cleanCamera();
+                            alert('Không thể nhận diện được ảnh! Vui lòng chụp lại!');
+                            $scope.isFrontImageCaptured = false;
+                        }
+                    }
+
+                    if ($scope.isFrontImageCaptured == true) {
+                        function onKeyEvent2(event) {
+                            if (event.code === 'Space') {
+                                event.preventDefault();
+                                capImageBack();
+                                cleanCamera2();
+                            }
+                            if (event.code === 'Escape') {
+                                event.preventDefault();
+                                video.srcObject = null;
+                                stream.getTracks().forEach(function (track) {
+                                    track.stop();
+                                });
+                                modal.remove();
+                                document.removeEventListener('keydown', onKeyEvent2);
+                            }
+                        }
+                        document.addEventListener('keydown', onKeyEvent2);
+                    }
+
+
+                    async function capImageBack() {
+                        const canvasBack = document.createElement('canvas');
+                        canvasBack.width = video.videoWidth;
+                        canvasBack.height = video.videoHeight;
+
+                        canvasBack.getContext('2d').drawImage(video, 0, 0, canvasBack.width, canvasBack.height);
+                        video.pause();
+                        const backResponse = await $scope.uploadBackIdCard(canvasBack.toDataURL('image/jpeg'));
+                        if (backResponse.data.data[0].features != null) {
+                            $scope.$apply(function () {
+                                $scope.backIdCardDisplay = canvasBack.toDataURL('image/jpeg');
+                            });
+                            alert('Chụp CCCD/CMND thành công!');
+                        } else {
+                            alert('Không thể nhận diện được ảnh! Vui lòng chụp lại từ đầu!');
+                        }
+                        $scope.isFrontImageCaptured = false;
+                    }
+
+                    function cleanCamera2() {
+                        video.srcObject = null;
+                        stream.getTracks().forEach(function (track) {
+                            track.stop();
+                        });
+                        modal.remove();
+                        document.removeEventListener('keydown', onKeyEvent2);
+                    }
+
+                }
+
+                function cleanCamera() {
+                    video.srcObject = null;
+                    stream.getTracks().forEach(function (track) {
+                        track.stop();
+                    });
+                    modal.remove();
+                    document.removeEventListener('keydown', onKeyEvent);
+                }
+
+            })
+            .catch(function (err) {
+                console.log('An error occurred: ' + err);
+            });
+    };
 
     $scope.init();
 

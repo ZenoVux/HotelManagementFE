@@ -37,7 +37,7 @@ app.controller("invoiceCtrl", function ($scope, $http) {
                 dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
                 columnDefs: [
                     {
-                        targets: 6,
+                        targets: 7,
                         orderable: false
                     }
                 ]
@@ -148,7 +148,7 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
     }
 
     $scope.loadPromotions = async function () {
-        await $http.get("http://localhost:8000/api/promotions/by-amount?amount=" + $scope.invoice.total).then(function (resp) {
+        await $http.get("http://localhost:8000/api/promotions/by-invoice-amount?amount=" + $scope.invoice.total).then(function (resp) {
             $scope.promotions = resp.data;
         });
     }

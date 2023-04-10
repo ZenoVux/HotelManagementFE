@@ -89,7 +89,7 @@ app.controller("accountListCtrl", function ($scope, $window, $http) {
                 $('#datatable-accounts').DataTable({
                     language: {
                         url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
-                    },
+                    }
                 });
             });
         });
@@ -116,7 +116,17 @@ app.controller("accountRoleCtrl", function ($scope, $window, $http) {
                 if (resp.status == 200) {
                     $scope.accounts = resp.data;
                     $(document).ready(function () {
-                        $('#datatable-accounts').DataTable();
+                        $('#datatable-accounts').DataTable({
+                            language: {
+                                url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
+                            },
+                            columnDefs: [
+                                {
+                                    targets: [1, 2],
+                                    orderable: false
+                                }
+                            ]
+                        });
                     });
                 }
             });

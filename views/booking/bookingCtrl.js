@@ -133,6 +133,7 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
     };
 
     $scope.clearDataTable = function () {
+        $scope.showAlert = false;
         $scope.addBookings = [];
     };
 
@@ -151,11 +152,13 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
         } else if ($scope.addRoom.checkoutDate < $scope.addRoom.checkinDate) {
             alert('Ngày check-out phỉa sau ngày check-in.');
         } else {
+            console.log($scope.addRoom.checkinDate);
+            console.log($scope.addRoom.checkoutDate);
             $scope.loading = true;
             $http.get('http://localhost:8000/api/bookings/info', {
                 params: {
-                    checkinDate: $scope.addRoom.checkinDate,
-                    checkoutDate: $scope.addRoom.checkoutDate,
+                    checkinDate: $filter('date')($scope.addRoom.checkinDate, 'dd-MM-yyyy'),
+                    checkoutDate: $filter('date')($scope.addRoom.checkoutDate, 'dd-MM-yyyy'),
                     roomType: $scope.addRoom.roomType
                 }
             }).then(function (response) {
@@ -252,7 +255,7 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
         var confirmationMessage = "Xác nhận huỷ booking " + $scope.currentBooking.code + "";
         if (window.confirm(confirmationMessage)) {
             $scope.currentBooking.note = $scope.currentBooking.note + " ----- Lí do huỷ: "
-                + $scope.booking.reasonCancel + " ----- Người huỷ: Minh";
+                + $scope.booking.reasonCancel;
             $http.put("http://localhost:8000/api/bookings/cancel", $scope.currentBooking).then(function (resp) {
                 $scope.booking.reasonCancel = "";
                 $scope.init();
@@ -320,6 +323,7 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
     $scope.init();
 
     $scope.clearDataTable = function () {
+        $scope.showAlert = false;
         $scope.bookings = [];
     };
 
@@ -327,7 +331,7 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
 
         var today = new Date();
 
-        if ($scope.booking.roomType === undefined) {
+        if ($scope.booking.roomType === undefined || $scope.booking.roomType === null) {
             $scope.booking.roomType = '';
         }
 
@@ -339,13 +343,11 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
             alert('Ngày check-out phải sau ngày check-in.');
         } else {
             $scope.loading = true;
-            $scope.booking.checkinDate = $filter('date')($scope.booking.checkinDate, 'dd-MM-yyyy');
-            $scope.booking.checkoutDate = $filter('date')($scope.booking.checkoutDate, 'dd-MM-yyyy');
 
             $http.get('http://localhost:8000/api/bookings/info', {
                 params: {
-                    checkinDate: $scope.booking.checkinDate,
-                    checkoutDate: $scope.booking.checkoutDate,
+                    checkinDate: $filter('date')($scope.booking.checkinDate, 'dd-MM-yyyy'),
+                    checkoutDate: $filter('date')($scope.booking.checkoutDate, 'dd-MM-yyyy'),
                     roomType: $scope.booking.roomType
                 }
             }).then(function (response) {
@@ -398,6 +400,11 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
     };
 
     $scope.getBookings = function () {
+
+        var r = confirm("Xác nhận đặt phòng?");
+        if (r != true) {
+            return;
+        }
 
         var formData = new FormData();
 
@@ -553,7 +560,6 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
         });
 
     };
-
 
     $scope.takePicture = function () {
 

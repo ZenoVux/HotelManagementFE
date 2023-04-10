@@ -123,6 +123,9 @@
                         <button ng-click="modalUpdateRoom('show')" class="btn btn-primary waves-effect waves-light" title="Chỉnh sửa">
                             <i class="mdi mdi-pencil-outline"></i>
                         </button>
+                        <button ng-click="modalHostedAt('show')" class="btn btn-info waves-effect waves-light" title="Người ở">
+                            <i class="mdi mdi-account-group-outline"></i>
+                        </button>
                         <button ng-click="handlerCheckout()" class="btn btn-success waves-effect waves-light">
                             <i class="mdi mdi-logout-variant"></i> Trả phòng
                         </button>
@@ -189,6 +192,49 @@
                         class="btn btn-primary waves-effect">Cập nhật</button>
                     <button ng-click="modalUpdateRoom('hide')" type="button"
                         class="btn btn-secondary waves-effect">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="modal-hosted-at" class="modal fade" data-bs-backdrop="static" tabindex="-1" aria-hidden="true"
+        data-bs-keyboard="false">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Người ở phòng {{invoiceDetail.room.code}}</h5>
+                    <button ng-click="modalHostedAt('hide')" type="button" class="btn-close"></button>
+                </div>
+                <div class="modal-body">
+                    <input class="form-control" type="search" placeholder="Tìm kiếm"
+                        id="search-datatable-hosted-at">
+                    <div class="table-responsive">
+                        <table id="datatable-hosted-at" class="table align-middle table-nowrap table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Họ tên</th>
+                                    <th scope="col">SĐT</th>
+                                    <th scope="col">Giới tính</th>
+                                    <th scope="col">Ngày sinh</th>
+                                    <th scope="col">CCCD/CMT</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="item in hostedAts">
+                                    <th scope="row">
+                                        {{item.customer.fullName}}
+                                    </th>
+                                    <td>{{item.customer.phoneNumber}}</td>
+                                    <td>{{item.customer.gender ? "Nam" : "Nữ"}}</td>
+                                    <td>{{item.customer.dateOfBirth | date:'dd/MM/yyyy'}}</td>
+                                    <td>{{item.customer.peopleId}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button ng-click="modalHostedAt('hide')" class="btn btn-secondary">Đóng</button>
                 </div>
             </div>
         </div>

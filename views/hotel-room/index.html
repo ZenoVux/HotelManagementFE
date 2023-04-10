@@ -3,11 +3,22 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <span ng-repeat="item in statuses">
-                        <button type="button" class="btn" ng-class="getColor('btn', item.id)">
-                            {{item.name}} <span class="badge rounded-pill bg-dark">{{checkStatusCount(item.id)}}</span>
-                        </button>
+                    <span>
+                        <input ng-click="loadHotelRooms()" type="radio" class="btn-check" name="room-status" id="status" autocomplete="off" checked>
+                        <label class="btn p-3 fs-14 btn-outline-secondary" for="status">Tất cả <span class="badge rounded-pill bg-dark">{{getTotalStatus()}}</span></label>
                     </span>
+                    <span ng-repeat="item in statuses">
+                        <input ng-click="loadHotelRoomsByStatus(item.id)" type="radio" class="btn-check" name="room-status" id="status{{item.id}}" autocomplete="off">
+                        <label class="btn p-3 fs-14" for="status{{item.id}}" ng-class="getColor('btn', item.id)">
+                            {{item.name}} <span class="badge rounded-pill bg-dark">{{checkStatusCount(item.id)}}</span>
+                        </label>
+                    </span>
+                    <div class="float-end">
+                        <div class="input-group">
+                            <input ng-model="search.bookingCode" class="form-control p-3" type="search" placeholder="Mã đặt phòng">
+                            <button ng-click="loadHotelRoomsByBookingCode()" class="btn btn-secondary">Tìm</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -17,11 +28,9 @@
             <span class="sr-only">Loading...</span>
         </div>
     </div>
-    <!-- <div ng-repeat="floor in floors" class="row">
-        <div class="col-12">
-            <div class="card">
-                <h5 class="card-header bg-transparent border-bottom text-uppercase">{{floor.name}}</h5>
-                <div class="card-body"> -->
+    <div ng-show="!loading && hotelRooms.length == 0" class="text-center">
+        <span>Danh sách phòng trống</span>
+    </div>
     <div class="row">
         <div ng-repeat="room in hotelRooms" class="col-xl-2 col-sm-3">
             <div class="card border border-3" ng-class="getColor('border', room.status)">
@@ -54,7 +63,6 @@
                                             class="mdi mdi-cancel"></i> Huỷ phòng</button>
                                     <button ng-show="room.status == 6" ng-click="handlerReadyRoom(room)"
                                         class="dropdown-item"><i class="mdi mdi-broom"></i> Sẵn sàng</button>
-                                    <!-- <div class="dropdown-divider"></div> -->
                                     <button ng-click="modalInfoRoom('show', room)" class="dropdown-item"><i
                                             class="mdi mdi-information-outline"></i> Chi tiết</button>
                                 </div>
@@ -70,10 +78,20 @@
                         </p>
                         <div class="text-center">
                             <h5 class="font-size-16 text-truncate mb-2">{{room.code}}</h5>
-                            <p class="font-size-14 text-truncate">
-                                {{(room.status == 4 || room.status == 5 || room.status == 2) ? room.customer :
-                                getStatus(room.status).name}}
-                            </p>
+                            <div ng-show="room.status == 4 || room.status == 5 || room.status == 2">
+                                <p class="font-size-14 text-truncate mb-0">
+                                    {{room.customer}}
+                                </p>
+                                <p class="font-size-14 text-truncate mb-2">
+                                    {{room.phoneNumber}}
+                                </p>    
+                            </div>
+                            <div ng-show="room.status != 4 && room.status != 5 && room.status != 2">
+                                <p class="font-size-14 text-truncate mb-0">
+                                    {{getStatus(room.status).name}}
+                                </p>
+                                <p class="font-size-14 text-white mb-2">---</p>
+                            </div>
                         </div>
                         <div class="d-flex">
                             <div class="overflow-hidden me-auto">
@@ -92,15 +110,10 @@
 
                     </div>
                 </div>
-
             </div>
         </div>
-        <!-- end col -->
     </div>
-    <!-- </div>
-            </div>
-        </div>
-    </div> -->
+    
     <div id="modal-change-room" class="modal fade" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -286,10 +299,6 @@
                                                             class="btn btn-sm btn-soft-secondary"><i
                                                                 class="mdi mdi-stop"></i></button>
                                                     </li>
-                                                    <!-- <li>
-                                                        <button class="btn btn-sm btn-soft-danger"><i
-                                                                class="mdi mdi-delete-outline"></i></button>
-                                                    </li> -->
                                                 </ul>
                                             </td>
                                         </tr>
@@ -352,7 +361,6 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button ng-click="modalHostedAt('show', selectRoom)" class="btn btn-primary">Modal</button>
                     <button ng-click="modalUsedService('hide')" class="btn btn-secondary">Đóng</button>
                 </div>
             </div>

@@ -3,6 +3,22 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
+                    <button ng-click="handlerLoadAll()" type="button" class="btn btn-danger p-3 me-1">
+                        Tất cả <span class="badge rounded-pill bg-dark">{{getTotalStatus()}}</span>
+                    </button>
+                    <button ng-click="handlerLoadByStatus(item.id)" ng-repeat="item in statuses" type="button" class="btn p-3 me-1" ng-class="getColor('btn', item.id)">
+                        {{item.name}} <span class="badge rounded-pill bg-dark">{{checkStatusCount(item.id)}}</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <input class="form-control" type="search" placeholder="Tìm kiếm"
+                        id="search-datatable-invoices">
                     <table id="datatable-invoices" class="table table-bordered dt-responsive nowrap w-100">
                         <thead>
                             <tr>
@@ -22,7 +38,7 @@
                                 <td>{{item.account.fullName}}</td>
                                 <td>{{item.total | currency: '' : 0}}₫</td>
                                 <td>
-                                    <span class="badge rounded-pill " ng-class="item.status == 1 ? 'bg-secondary' : (item.status == 2 ? 'bg-primary' : (item.status == 3 ? 'bg-warning' : 'bg-success'))">
+                                    <span class="badge rounded-pill" ng-class="getColor('bg', item.status)">
                                         {{item.status == 1 ? 'Đang chờ' : (item.status == 2 ? 'Chưa thanh toán' :  (item.status == 3 ? 'Chờ thanh toán' : (item.status == 4 ? 'Hoàn thành' : 'Đã huỷ')))}}
                                     </span>
                                 </td>
@@ -37,6 +53,6 @@
                     </table>
                 </div>
             </div>
-        </div><!--end col-->
-    </div><!--end row-->
+        </div>
+    </div>
 </app-layout>

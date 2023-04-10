@@ -3,6 +3,7 @@ app.controller("checkoutCtrl", function ($scope, $routeParams, $location, $http,
     $scope.invoiceDetail = null;
     $scope.invoiceDetailUpdate = {};
     $scope.usedServices = [];
+    $scope.hostedAts = [];
 
     $scope.init = async function () {
         await $scope.loadInvoiceDetail();
@@ -22,8 +23,36 @@ app.controller("checkoutCtrl", function ($scope, $routeParams, $location, $http,
     }
 
     $scope.loadUsedServices = async function () {
-        await $http.get("http://localhost:8000/api/used-services/invoice-detail/" + $scope.invoiceDetail.id).then(function (resp) {
+        await $http.get("http://localhost:8000/api/used-services?invoiceDetailId=" + $scope.invoiceDetail.id + "&status=true").then(function (resp) {
             $scope.usedServices = resp.data;
+        });
+    }
+
+    $scope.loadHostedAts = async function () {
+        await $http.get("http://localhost:8000/api/hosted-ats/invoice-detail/" + $scope.invoiceDetail.id).then(function (resp) {
+            $scope.hostedAts = resp.data;
+        });
+    }
+
+    $scope.initTableHostedAt = function () {
+        $(document).ready(async function () {
+            tableHostedAt = $('#datatable-hosted-at').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
+                },
+                dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>'
+            });
+        });
+
+        $('#search-datatable-hosted-at').keyup(function () {
+            tableHostedAt.search($(this).val()).draw();
+        });
+    }
+
+    $scope.clearTableHostedAt = function () {
+        $(document).ready(function () {
+            tableHostedAt.clear();
+            tableHostedAt.destroy();
         });
     }
 
@@ -88,6 +117,20 @@ app.controller("checkoutCtrl", function ($scope, $routeParams, $location, $http,
             $scope.invoiceDetailUpdate = {};
         }
         $('#modal-update-room').modal(action);
+    }
+
+    $scope.modalHostedAt = async function (action) {
+        if (action == 'show') {
+            await $scope.loadHostedAts();
+            await $scope.initTableHostedAt();
+        } else {
+            $scope.clearTableHostedAt();
+            $scope.hostedAts = [];
+        }
+        await $('#modal-hosted-at').modal(action);
+        setTimeout(function () {
+            $('#search-datatable-hosted-at').focus()
+        }, 1000);
     }
 
     $scope.handlerUpdateRoom = function() {

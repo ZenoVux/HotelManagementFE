@@ -50,14 +50,36 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
         gender: false
     };
     $scope.booking = {};
+    $scope.search = {};
 
     $scope.init = async function () {
-        $scope.loading = true;
         await $scope.loadHotelRooms();
     }
 
     $scope.loadHotelRooms = async function () {
+        $scope.hotelRooms = [];
+        $scope.loading = true;
         await $http.get("http://localhost:8000/api/hotel").then(function (resp) {
+            $scope.hotelRooms = resp.data.hotelRooms;
+            $scope.statusCounts = resp.data.statusCounts;
+            $scope.loading = false;
+        });
+    }
+
+    $scope.loadHotelRoomsByStatus = async function (statusFilter) {
+        $scope.hotelRooms = [];
+        $scope.loading = true;
+        await $http.get("http://localhost:8000/api/hotel?statusFilter=" + statusFilter).then(function (resp) {
+            $scope.hotelRooms = resp.data.hotelRooms;
+            $scope.statusCounts = resp.data.statusCounts;
+            $scope.loading = false;
+        });
+    }
+
+    $scope.loadHotelRoomsByBookingCode = async function () {
+        $scope.hotelRooms = [];
+        $scope.loading = true;
+        await $http.get("http://localhost:8000/api/hotel?bookingCode=" + $scope.search.bookingCode).then(function (resp) {
             $scope.hotelRooms = resp.data.hotelRooms;
             $scope.statusCounts = resp.data.statusCounts;
             $scope.loading = false;
@@ -82,6 +104,10 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
             return statusCount.count;
         }
         return 0;
+    }
+
+    $scope.getTotalStatus = function () {
+        return $scope.statusCounts.reduce((total, statusCount) => total + statusCount.count, 0);
     }
 
     $scope.loadServices = async function () {

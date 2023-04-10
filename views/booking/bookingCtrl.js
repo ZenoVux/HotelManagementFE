@@ -152,11 +152,13 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
         } else if ($scope.addRoom.checkoutDate < $scope.addRoom.checkinDate) {
             alert('Ngày check-out phỉa sau ngày check-in.');
         } else {
+            console.log($scope.addRoom.checkinDate);
+            console.log($scope.addRoom.checkoutDate);
             $scope.loading = true;
             $http.get('http://localhost:8000/api/bookings/info', {
                 params: {
-                    checkinDate: $scope.addRoom.checkinDate,
-                    checkoutDate: $scope.addRoom.checkoutDate,
+                    checkinDate: $filter('date')($scope.addRoom.checkinDate, 'dd-MM-yyyy'),
+                    checkoutDate: $filter('date')($scope.addRoom.checkoutDate, 'dd-MM-yyyy'),
                     roomType: $scope.addRoom.roomType
                 }
             }).then(function (response) {
@@ -335,10 +337,10 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
 
         if ($scope.booking.checkinDate == null || $scope.booking.checkoutDate == null) {
             alert('Hãy chọn ngày check-in, check-out!.');
-            // } else if ($scope.booking.checkinDate < today.setDate(today.getDate() - 1)) {
-            //     alert('Ngày check-in được tính từ ngày hôm nay.');
-            // } else if ($scope.booking.checkoutDate < $scope.booking.checkinDate) {
-            //     alert('Ngày check-out phải sau ngày check-in.');
+        } else if ($scope.booking.checkinDate < today.setDate(today.getDate() - 1)) {
+            alert('Ngày check-in được tính từ ngày hôm nay.');
+        } else if ($scope.booking.checkoutDate < $scope.booking.checkinDate) {
+            alert('Ngày check-out phải sau ngày check-in.');
         } else {
             $scope.loading = true;
 
@@ -398,6 +400,11 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
     };
 
     $scope.getBookings = function () {
+
+        var r = confirm("Xác nhận đặt phòng?");
+        if (r != true) {
+            return;
+        }
 
         var formData = new FormData();
 

@@ -139,6 +139,9 @@
                         <button ng-show="invoice.status != 3 && invoice.status != 4" ng-click="modalUpdateRoom('show', invoiceDetail)" class="btn btn-primary waves-effect waves-light" title="Chỉnh sửa">
                             <i class="mdi mdi-pencil-outline"></i>
                         </button>
+                        <button ng-click="modalHostedAt('show', invoiceDetail)" class="btn btn-info waves-effect waves-light" title="Người ở">
+                            <i class="mdi mdi-account-group-outline"></i>
+                        </button>
                         <button ng-click="modalHistoryRoom('show', invoiceDetail)" class="btn btn-secondary waves-effect waves-light" title="Lịch sử">
                             <i class="mdi mdi-history"></i>
                         </button>
@@ -193,9 +196,9 @@
                 </div>
                 <div class="card-body border-top d-print-none">
                     <div class="float-end">
-                        <a href="javascript:window.print()" class="btn btn-primary waves-effect waves-light me-1"><i class="fa fa-print"></i></a>
-                        <!-- <button ng-show="isSplitInvoice()" class="btn btn-primary waves-effect waves-light me-1"><i
-                                class="bx bx-money"></i> Tách hoá đơn</button> -->
+                        <a href="javascript:window.print()" class="btn btn-primary waves-effect waves-light"><i class="fa fa-print"></i></a>
+                        <button ng-show="invoice.status == 2" class="btn btn-primary waves-effect waves-light"><i
+                                class="bx bx-money"></i> Tách hoá đơn</button>
                         <button ng-show="invoice.status == 2" ng-click="modalPayment('show')"
                             class="btn btn-success waves-effect waves-light"><i class="bx bx-money"></i> Thanh
                             toán</button>
@@ -264,6 +267,49 @@
                         class="btn btn-primary waves-effect">Cập nhật</button>
                     <button ng-click="modalUpdateRoom('hide')" type="button"
                         class="btn btn-secondary waves-effect">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="modal-hosted-at" class="modal fade" data-bs-backdrop="static" tabindex="-1" aria-hidden="true"
+        data-bs-keyboard="false">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Người ở phòng {{invoiceDetail.room.code}}</h5>
+                    <button ng-click="modalHostedAt('hide')" type="button" class="btn-close"></button>
+                </div>
+                <div class="modal-body">
+                    <input class="form-control" type="search" placeholder="Tìm kiếm"
+                        id="search-datatable-hosted-at">
+                    <div class="table-responsive">
+                        <table id="datatable-hosted-at" class="table align-middle table-nowrap table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Họ tên</th>
+                                    <th scope="col">SĐT</th>
+                                    <th scope="col">Giới tính</th>
+                                    <th scope="col">Ngày sinh</th>
+                                    <th scope="col">CCCD/CMT</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="item in hostedAts">
+                                    <th scope="row">
+                                        {{item.customer.fullName}}
+                                    </th>
+                                    <td>{{item.customer.phoneNumber}}</td>
+                                    <td>{{item.customer.gender ? "Nam" : "Nữ"}}</td>
+                                    <td>{{item.customer.dateOfBirth | date:'dd/MM/yyyy'}}</td>
+                                    <td>{{item.customer.peopleId}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button ng-click="modalHostedAt('hide')" class="btn btn-secondary">Đóng</button>
                 </div>
             </div>
         </div>

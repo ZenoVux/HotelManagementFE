@@ -289,6 +289,36 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Chụp ảnh cmnd/cccd
+                                        <button type="button" class="btn btn-secondary btn-sm"
+                                            ng-click="takePicture()">Camera</button>
+                                    </label>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="card mb-3">
+                                                <div class="card-header">
+                                                    Mặt trước
+                                                </div>
+                                                <div class="card-body">
+                                                    <img ng-src="{{ frontIdCardDisplay }}"
+                                                        style="width: 100%; height: 100%;">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="card mb-3">
+                                                <div class="card-header">
+                                                    Mặt sau
+                                                </div>
+                                                <div class="card-body">
+                                                    <img ng-src="{{ backIdCardDisplay }}"
+                                                        style="width: 100%; height: 100%;">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <button ng-click="handlerCreateCustomer()" class="btn btn-success">Thêm mới</button>
                             </form>
                         </div>

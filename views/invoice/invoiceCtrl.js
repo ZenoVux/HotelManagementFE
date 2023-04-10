@@ -1,24 +1,92 @@
 app.controller("invoiceCtrl", function ($scope, $http) {
 
-    $scope.invoices = [];
+    $scope.statuses = [
+        {
+            id: 1,
+            name: "Đang chờ"
+        },
+        {
+            id: 2,
+            name: "Chưa thanh toán"
+        },
+        {
+            id: 3,
+            name: "Chờ thanh toán"
+        },
+        {
+            id: 4,
+            name: "Hoàn thành"
+        }
+    ]
 
-    $scope.initTable = function () {
-        $http.get("http://localhost:8000/api/invoices").then(function (resp) {
-            $scope.invoices = resp.data;
-            $(document).ready(function () {
-                $('#datatable-invoices').DataTable({
-                    language: {
-                        url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
-                    },
-                    columnDefs: [
-                        {
-                            targets: 6,
-                            orderable: false
-                        }
-                    ]
-                });
+    $scope.invoices = [];
+    $scope.statusCounts = [];
+
+    $scope.init = async function () {
+        await $scope.loadStatusCount();
+        await $scope.loadInvoice();
+        await $scope.initTableInvoice();
+    }
+
+    $scope.initTableInvoice = function () {
+        $(document).ready(function () {
+            tableInvoice = $('#datatable-invoices').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
+                },
+                dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                columnDefs: [
+                    {
+                        targets: 6,
+                        orderable: false
+                    }
+                ]
+            });
+            $('#search-datatable-invoices').keyup(function () {
+                tableInvoice.search($(this).val()).draw();
             });
         });
+    }
+
+    $scope.clearTableInvoice = function () {
+        $(document).ready(function () {
+            tableInvoice.clear();
+            tableInvoice.destroy();
+        });
+    }
+
+    $scope.loadInvoice = async function () {
+        await $http.get("http://localhost:8000/api/invoices").then(function (resp) {
+            $scope.invoices = resp.data;
+        });
+    }
+
+    $scope.loadInvoiceByStatus = async function (status) {
+        await $http.get("http://localhost:8000/api/invoices?status=" + status).then(function (resp) {
+            $scope.invoices = resp.data;
+        });
+    }
+
+    $scope.loadStatusCount = async function () {
+        await $http.get("http://localhost:8000/api/invoices/status-count").then(function (resp) {
+            $scope.statusCounts = resp.data;
+        });
+    }
+
+    $scope.getColor = function (name, status) {
+        return name + (status == 1 ? '-secondary' : (status == 2 ? '-primary' : (status == 3 ? '-warning' : '-success')));
+    }
+
+    $scope.checkStatusCount = function (status) {
+        const statusCount = $scope.statusCounts.find(item => item.status == status);
+        if (statusCount) {
+            return statusCount.count;
+        }
+        return 0;
+    }
+
+    $scope.getTotalStatus = function () {
+        return $scope.statusCounts.reduce((total, statusCount) => total + statusCount.count, 0);
     }
 
     $scope.modalInvoiceDetail = async function (action, item) {
@@ -33,7 +101,19 @@ app.controller("invoiceCtrl", function ($scope, $http) {
         $('#modal-invoice-detail').modal(action);
     }
 
-    $scope.initTable();
+    $scope.handlerLoadByStatus = async function (status) {
+        await $scope.clearTableInvoice();
+        await $scope.loadInvoiceByStatus(status);
+        await $scope.initTableInvoice();
+    }
+
+    $scope.handlerLoadAll = async function () {
+        await $scope.clearTableInvoice();
+        await $scope.loadInvoice();
+        await $scope.initTableInvoice();
+    }
+
+    $scope.init();
 });
 
 app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $window, $location) {
@@ -80,7 +160,7 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
     }
 
     $scope.loadUsedServices = async function (invoiceDetail) {
-        await $http.get("http://localhost:8000/api/used-services/invoice-detail/" + invoiceDetail.id).then(function (resp) {
+        await $http.get("http://localhost:8000/api/used-services?invoiceDetailId=" +  + invoiceDetail.id + "&status=true").then(function (resp) {
             invoiceDetail.usedServices = resp.data;
         });
     }
@@ -88,6 +168,34 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
     $scope.loadInvoiceDetailHistories = async function () {
         await $http.get("http://localhost:8000/api/invoice-detail-histories?invoiceDetailId=" + $scope.invoiceDetail.id).then(function (resp) {
             $scope.invoiceDetailHistories = resp.data;
+        });
+    }
+
+    $scope.loadHostedAts = async function () {
+        await $http.get("http://localhost:8000/api/hosted-ats/invoice-detail/" + $scope.invoiceDetail.id).then(function (resp) {
+            $scope.hostedAts = resp.data;
+        });
+    }
+
+    $scope.initTableHostedAt = function () {
+        $(document).ready(async function () {
+            tableHostedAt = $('#datatable-hosted-at').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
+                },
+                dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>'
+            });
+        });
+
+        $('#search-datatable-hosted-at').keyup(function () {
+            tableHostedAt.search($(this).val()).draw();
+        });
+    }
+
+    $scope.clearTableHostedAt = function () {
+        $(document).ready(function () {
+            tableHostedAt.clear();
+            tableHostedAt.destroy();
         });
     }
 
@@ -223,6 +331,21 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
             $scope.invoiceDetailUpdate = {};
         }
         $('#modal-update-room').modal(action);
+    }
+
+    $scope.modalHostedAt = async function (action, invoiceDetail) {
+        $scope.invoiceDetail = invoiceDetail;
+        if (action == 'show') {
+            await $scope.loadHostedAts();
+            await $scope.initTableHostedAt();
+        } else {
+            $scope.clearTableHostedAt();
+            $scope.hostedAts = [];
+        }
+        await $('#modal-hosted-at').modal(action);
+        setTimeout(function () {
+            $('#search-datatable-hosted-at').focus()
+        }, 1000);
     }
 
     $scope.modalHistoryRoom = async function (action, invoiceDetail) {

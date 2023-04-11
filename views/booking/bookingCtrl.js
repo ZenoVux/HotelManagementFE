@@ -9,6 +9,7 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
     $scope.booking = {};
     $scope.addRoom = {};
 
+
     $scope.booking.reasonCancel = "";
 
     $scope.closeDropdown = function () {
@@ -106,8 +107,18 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
         }
     };
 
+    $scope.showHistoryCard = function () {
+        $scope.showHistory = true;
+
+    };
+
+    $scope.hideHistoryCard = function () {
+        $scope.showHistory = false;
+    };
+
     $scope.viewBooking = function (booking) {
         $scope.loading = true;
+        $scope.showHistory = false;
         $scope.currentBooking = booking;
         console.log(booking);
         $http.get("http://localhost:8000/api/bookings/" + booking.code).then(function (resp) {
@@ -119,10 +130,25 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
             }
             console.log($scope.bookingInfo);
             $('#booking-modal').modal('show');
+
             $scope.loading = false;
         }).catch(function (error) {
             console.error('Error fetching data:', error);
             $scope.loading = false;
+        });
+
+        $http.get("http://localhost:8000/api/booking-histories/" + booking.code).then(function (resp) {
+            $scope.bookingHistory = resp.data;
+            for (var i = 0; i < $scope.bookingHistory.length; i++) {
+                for (var j = 0; j < $scope.bookingHistory[i].bkdhList.length; j++) {
+                    var bk = $scope.bookingHistory[i].bkdhList[j];
+                    bk.checkinExpected = new Date(bk.checkinExpected);
+                    bk.checkoutExpected = new Date(bk.checkoutExpected);
+                }
+            }
+            console.log($scope.bookingHistory);
+        }).catch(function (error) {
+            console.error('Error fetching data:', error);
         });
     };
 
@@ -209,6 +235,11 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
 
     $scope.addRoomToBooking = function () {
 
+        var r = confirm("Xác nhận thêm phòng vào booking?");
+        if (r != true) {
+            return;
+        }
+
         var formData = new FormData();
 
         const bookingDetailJson = JSON.stringify({
@@ -236,7 +267,10 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
                 $('#booking-modal').modal('hide');
                 alert('Thêm phòng thành công!');
                 $('#adđ-room-modal').modal('hide');
-                viewBooking($scope.currentBooking);
+                $scope.viewBooking($scope.currentBooking);
+                $scope.addRoom.checkinDate = null;
+                $scope.addRoom.checkoutDate = null;
+                $scope.clearDataTable();
             }
         }).catch(function (error) {
             console.error('Error fetching data:', error);
@@ -247,8 +281,24 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
         alert("Edit room");
     };
 
-    $scope.deleteRoom = function (room) {
-        alert("Delete room");
+    $scope.deleteRoom = function (id) {
+
+        var r = confirm("Xác nhận bỏ phòng khỏi booking?");
+        if (r != true) {
+            return;
+        }
+
+        $http.post('http://localhost:8000/api/booking-details/delete-bkd', {
+            id: id
+        }).then(function (response) {
+            if (response.status == 200) {
+                alert('Bỏ phòng thành công!');
+                $scope.viewBooking($scope.currentBooking);
+            }
+        }).catch(function (error) {
+            console.error('Error fetching data:', error);
+        });
+
     };
 
     $scope.cancelBooking = function () {
@@ -628,9 +678,8 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
                         video.pause();
 
                         const frontResponse = await $scope.uploadFrontIdCard(canvasFront.toDataURL('image/jpeg'));
-                        console.log(frontResponse);
 
-                        if (frontResponse != undefined && frontResponse.data != '') {
+                        if (frontResponse != undefined && frontResponse.data.data[0].id != null) {
                             video.play();
                             document.removeEventListener('keydown', onKeyEvent);
                             note.textContent = 'Chụp mặt sau CMND/CCCD. Nhấn SPACE để chụp, ESC để hủy.';
@@ -674,7 +723,7 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
                         canvasBack.getContext('2d').drawImage(video, 0, 0, canvasBack.width, canvasBack.height);
                         video.pause();
                         const backResponse = await $scope.uploadBackIdCard(canvasBack.toDataURL('image/jpeg'));
-                        if (backResponse.data != '') {
+                        if (backResponse.data.data[0].features != null) {
                             $scope.$apply(function () {
                                 $scope.backIdCardDisplay = canvasBack.toDataURL('image/jpeg');
                             });

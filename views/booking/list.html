@@ -118,13 +118,15 @@
         <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="customer-modal-label">{{ bookingInfo.code }}</h4>
+                    <h4 class="modal-title" id="customer-modal-label">{{ bookingInfo.code }} - Nhân viên:
+                        {{ bookingInfo.username }}</h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-12">
-                            <div class="card">
+
+                            <div class="card" ng-hide="showHistory">
                                 <div class="card-body">
 
                                     <div class="table-responsive">
@@ -165,6 +167,12 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
+                                                    <td>Tiền cọc</td>
+                                                    <td>
+                                                        {{currentBooking.deposit | currency: '' : 0}}đ
+                                                    </td>
+                                                </tr>
+                                                <tr>
                                                     <td>Ghi chú</td>
                                                     <td>
                                                         {{currentBooking.note}}
@@ -188,7 +196,8 @@
                                                                     <th>Check-in</th>
                                                                     <th>Check-out</th>
                                                                     <th>Số đêm</th>
-                                                                    <th>Ghi chú</th>
+                                                                    <th style="word-wrap: break-word;">Ghi chú</th>
+                                                                    <th>Ngày đặt</th>
                                                                     <th
                                                                         ng-if="currentBooking.status == 1 || currentBooking.status == 2">
                                                                         <a class="btn btn-outline-success btn-sm"
@@ -207,6 +216,8 @@
                                                                     <td>{{(bk.checkoutExpected - bk.checkinExpected) /
                                                                         (1000*60*60*24)}}</td>
                                                                     <td>{{bk.note}}</td>
+                                                                    <td>{{bk.createdDate | date:'HH:mm dd-MM-yyyy'}}
+                                                                    </td>
                                                                     <td
                                                                         ng-if="currentBooking.status == 1 || currentBooking.status == 2">
                                                                         <a class="btn btn-outline-secondary btn-sm"
@@ -214,7 +225,8 @@
                                                                             <i class="fas fa-pencil-alt"></i>
                                                                         </a>
                                                                         <a class="btn btn-outline-danger btn-sm"
-                                                                            title="Xoá phòng" ng-click="deleteRoom()">
+                                                                            title="Xoá phòng"
+                                                                            ng-click="deleteRoom(bk.id)">
                                                                             <i class="fas fa-minus"></i>
                                                                         </a>
                                                                     </td>
@@ -244,7 +256,8 @@
                                         class="row mb-2">
                                         <div class="col-sm-5">
                                             <div class="text-sm-start">
-                                                <a class="btn btn-secondary btn-lg" ng-click="" role="button">
+                                                <a class="btn btn-secondary btn-lg" ng-click="showHistoryCard()"
+                                                    role="button" ng-if="bookingHistory.length > 0">
                                                     Lịch sử chỉnh sửa</a>
                                             </div>
                                         </div>
@@ -268,10 +281,105 @@
                                         </div>
                                     </div>
                                 </div>
-
                             </div>
-                        </div> <!-- end col -->
-                    </div> <!-- end row -->
+
+                            <div class="card" ng-show="showHistory">
+                                <div class="card-body">
+                                    <div ng-repeat="history in bookingHistory">
+                                        <p>
+                                            <a class="btn btn-primary" data-bs-toggle="collapse"
+                                                href="#collapse{{history.bookingHistory.id}}" role="button"
+                                                aria-expanded="false"
+                                                aria-controls="collapse{{history.bookingHistory.id}}">
+                                                {{ history.bookingHistory.createdDate | date:'HH:mm dd-MM-yyyy' }}
+                                            </a>
+                                        </p>
+                                        <div class="collapse" id="collapse{{history.bookingHistory.id}}">
+                                            <div class="table-responsive">
+                                                <table class="table table-striped table-nowrap mb-0">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>Người đặt</td>
+                                                            <td>
+                                                                {{history.bookingHistory.account.username}}
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Số người lớn</td>
+                                                            <td>{{history.bookingHistory.numAdults}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Số trẻ em</td>
+                                                            <td>
+                                                                {{history.bookingHistory.numChildren}}
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Tiền cọc</td>
+                                                            <td>
+                                                                {{history.bookingHistory.deposit | currency: '' : 0}}đ
+                                                            </td>
+                                                        </tr>
+                                                        <!-- Danh sách phòng -->
+                                                        <tr>
+                                                            <td>Danh sách phòng</td>
+                                                            <td colspan="2">
+                                                                <table class="table table-striped table-nowrap mb-0">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>Phòng</th>
+                                                                            <th>Giá</th>
+                                                                            <th>Check-in</th>
+                                                                            <th>Check-out</th>
+                                                                            <th>Số đêm</th>
+                                                                            <th>Ghi chú
+                                                                            </th>
+                                                                            <th>Ngày đặt</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr ng-repeat="bk in history.bkdhList">
+                                                                            <td>{{bk.room.code}}</td>
+                                                                            <td>{{bk.room.price | currency: '' : 0}}đ
+                                                                            </td>
+                                                                            <td>{{bk.checkinExpected |
+                                                                                date:'dd-MM-yyyy'}}</td>
+                                                                            <td>{{bk.checkoutExpected |
+                                                                                date:'dd-MM-yyyy'}}</td>
+                                                                            <td>{{(bk.checkoutExpected -
+                                                                                bk.checkinExpected) /
+                                                                                (1000*60*60*24)}}</td>
+                                                                            <td>{{bk.note}}</td>
+                                                                            <td>
+                                                                                {{bk.createdDate|date:'HH:mm
+                                                                                dd-MM-yyyy'}}
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="row mb-2">
+                                        <div class="col-sm-5">
+                                            <div class="text-sm-start">
+                                                <a class="btn btn-secondary btn-lg" ng-click="hideHistoryCard()"
+                                                    role="button">
+                                                    Back</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

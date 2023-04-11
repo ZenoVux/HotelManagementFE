@@ -1,4 +1,4 @@
-app.controller("loginCtrl", function ($scope, $http,$routeParams,$location,authService,$timeout) {
+app.controller("loginCtrl", function ($scope, $http,$routeParams,$location,$timeout) {
 	$scope.form = {};
 	$scope.loading=false;
 	$scope.myEmail = {}
@@ -14,17 +14,15 @@ app.controller("loginCtrl", function ($scope, $http,$routeParams,$location,authS
 		  var item = angular.copy($scope.form);
 		  $http.post("http://localhost:8000/auth/login", item).then(resp => {
 			localStorage.setItem('token', resp.data.token);
+			localStorage.setItem('tokenExpirationTime', Date.now() + (86400000)); // Thời gian hết hạn 24h
 			$scope.loading=false;
-			if(authService.hasRole('ADMIN')){
-			  $location.path('/');
-			}else{
-			  $location.path('/bookings');
-			}
+			$location.path('/hotel-room');
 		  }).catch(error => {
 			alert("Login failed !")
+			$scope.loading=false;
 			console.log("Error", error)
 		  });
-		}, 1500); 
+		}, 1200); 
 	  }
 	  
 	$scope.close = function () {

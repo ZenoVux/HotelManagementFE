@@ -7,6 +7,7 @@ app.config(function ($routeProvider,$httpProvider) {
     })
     .when("/statistical", {
       templateUrl: "/views/statistical/statis.html",
+      controller: "statisCtrl",
     })
     .when("/bookings", {
       templateUrl: "/views/booking/list.html",
@@ -60,14 +61,14 @@ app.config(function ($routeProvider,$httpProvider) {
       controller: "checkoutCtrl",
     })
 	//Service
-    .when("/service", {
-      templateUrl: "/views/service/serviceView.html",
-      controller: "serviceCtrl",
-    })
-    .when("/service/type", {
-      templateUrl: "/views/service-type/service-typeView.html",
-      controller: "service-typeCtrl",
-    })
+  .when("/service", {
+    templateUrl: "/views/service/serviceView.html",
+    controller: "serviceCtrl",
+  })
+  .when("/service/type", {
+    templateUrl: "/views/service-type/service-typeView.html",
+    controller: "service-typeCtrl",
+  })
 	//Customer
     .when("/customers", {
       templateUrl: "/views/customers/table.html",
@@ -98,10 +99,6 @@ app.config(function ($routeProvider,$httpProvider) {
     .when("/promotion", {
       templateUrl: "/views/promotion/promotionView.html",
       controller: "promotionCtrl",
-    })
-    .when("/promotion/room", {
-      templateUrl: "/views/promotion/promotionRoom.html",
-      controller: "promotionRoomCtrl",
     })
 	//Supply
     .when("/supply", {

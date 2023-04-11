@@ -85,9 +85,8 @@ app.controller("promotionCtrl", function ($scope, $http) {
 		$scope.form = {}
 		$scope.showbut = true;
 	}
-});
 
-app.controller("promotionRoomCtrl", function ($scope, $http) {
+
 	$scope.loading = false;
 	$scope.roomTypes = [];
 	$scope.rooms = [];
@@ -208,5 +207,6 @@ app.controller("promotionRoomCtrl", function ($scope, $http) {
 
 	$scope.init();
 });
+
 
 

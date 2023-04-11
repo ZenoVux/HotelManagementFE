@@ -82,6 +82,7 @@
     right: 0;
     top: 0;
     z-index: 99999;
+    opacity: 0.5; 
 }
 
 .loader-inner {
@@ -199,3 +200,4 @@
       33.3333% {left: 0; width: 100%;z-index: 10;}
       to {left: 0; width: 100%;}
   }
+  

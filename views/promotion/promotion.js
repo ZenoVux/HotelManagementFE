@@ -2,10 +2,18 @@ app.controller("promotionCtrl", function ($scope, $http) {
 	$scope.showbut = true;
 	$scope.items = [];
 	$scope.form = {};
+	$scope.form1 = {};
 	$scope.initialize = function () {
 
 		$http.get("http://localhost:8000/api/promotions").then(resp => {
 			$scope.items = resp.data;
+			$(document).ready(function () {
+                $('#datatable-promo').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
+                    }
+                });
+            });
 		})
 	}
 	$scope.initialize();
@@ -65,7 +73,7 @@ app.controller("promotionCtrl", function ($scope, $http) {
 		const myModal = new bootstrap.Modal('#exampleModal');
 		myModal.show();
 		$scope.showbut = false;
-		$scope.form = angular.copy(s);
+		$scope.form1 = angular.copy(s);
 	}
 
 	$scope.edit = function (s) {//edit
@@ -89,14 +97,13 @@ app.controller("promotionCtrl", function ($scope, $http) {
 
 	$scope.loading = false;
 	$scope.roomTypes = [];
-	$scope.rooms = [];
 	$scope.promotions = [];
 	$scope.proRooms = [];
 	$scope.init = async function () {
 		$scope.loading = true;
 		await $scope.loadRoomType();
 		await $scope.loadPromotion();
-		await $scope.loadPromotionRoom();
+		await $scope.loadPromotionRoomType();
 	}
 
 	$scope.loadRoomType = async function () {
@@ -104,12 +111,6 @@ app.controller("promotionCtrl", function ($scope, $http) {
 			.then(resp => {
 				if (resp.status == 200) {
 					$scope.roomTypes = resp.data;
-				}
-			});
-		await $http.get("http://localhost:8000/api/rooms")
-			.then(resp => {
-				if (resp.status == 200) {
-					$scope.rooms = resp.data;
 				}
 			});
 	}
@@ -126,15 +127,7 @@ app.controller("promotionCtrl", function ($scope, $http) {
 				}
 			});
 	}
-
-	$scope.filterRoomsByRoomType = function (roomTypeId) {
-		const filteredRooms = $scope.rooms.filter(room => room.roomType.id === roomTypeId);
-		return filteredRooms;
-	}
-
-
-
-	$scope.loadPromotionRoom = function () {
+	$scope.loadPromotionRoomType = function () {
 		$http.get("http://localhost:8000/api/promotion-rooms")
 			.then(resp => {
 				if (resp.status == 200) {
@@ -144,24 +137,24 @@ app.controller("promotionCtrl", function ($scope, $http) {
 			$scope.loading = false;
 	}
 
-	$scope.proRoomOf = function (room, pro) {
-		return $scope.proRooms.find(proRooms => proRooms.room.id == room.id && proRooms.promotion.id == pro.id);
+	$scope.proRoomOf = function (type, pro) {
+		return $scope.proRooms.find(proRooms => proRooms.roomType.id == type.id && proRooms.promotion.id == pro.id);
 	}
 
 	let count = 0;
 
-	$scope.proRoomChanged = (room, pro) => {
-		const proRoom = $scope.proRoomOf(room, pro);
+	$scope.proRoomChanged = (type, pro) => {
+		const proRoom = $scope.proRoomOf(type, pro);
 		if (proRoom) {
 			$scope.revokeProRoom(proRoom);
 		} else {
-			const activePromotion = $scope.proRooms.find(promo => promo.room.id == room.id && promo.promotion.status == true);
+			const activePromotion = $scope.proRooms.find(promo => promo.roomType.id == type.id && promo.promotion.status == true);
 			if (activePromotion) {
-				alert("Phòng này đang được áp dụng khuyến mại bởi mã khác!");
+				alert("Loại phòng này đang được áp dụng khuyến mại bởi mã khác!");
 				return;
 			}
 			$scope.grantProRoom({
-				room: room,
+				roomType: type,
 				promotion: pro
 			});
 		}
@@ -173,7 +166,7 @@ app.controller("promotionCtrl", function ($scope, $http) {
 
 		$scope.timeout = setTimeout(() => {
 			if (count > 1) {
-				alert("Áp dụng nhiều phòng thành công!");
+				alert("Áp dụng nhiều loại phòng thành công!");
 			} else {
 				alert("Áp dụng thành công!");
 			}
@@ -181,12 +174,7 @@ app.controller("promotionCtrl", function ($scope, $http) {
 		}, 1500);
 	};
 
-
-
-
-
 	$scope.grantProRoom = function (proRoom) {
-
 		$http.post("http://localhost:8000/api/promotion-rooms", proRoom).then(resp => {
 			$scope.proRooms.push(resp.data);
 		}, error => {

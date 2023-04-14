@@ -1,10 +1,20 @@
 app.controller("service-typeCtrl", function ($scope,$http) {
   $scope.showbut = true;
+  $scope.loading = false;
   $scope.form={}
   $scope.serTypes = [];
   $scope.initialize = function(){
+	$scope.loading = true;
 		$http.get("http://localhost:8000/api/service-types").then(resp=>{
 			$scope.serTypes = resp.data;
+			$(document).ready(function () {
+                $('#datatable-service-type').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
+                    }
+                });
+            });
+			$scope.loading = false;
 		})
 		
 	}

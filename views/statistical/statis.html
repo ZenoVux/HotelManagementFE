@@ -1,10 +1,29 @@
 <app-layout name="">
+   <div ng-show="loading" class="loader"> 
+      <div class="loader-inner">
+          <div class="loader-line-wrap">
+              <div class="loader-line"></div>
+          </div>
+          <div class="loader-line-wrap">
+              <div class="loader-line"></div>
+          </div>
+          <div class="loader-line-wrap">
+              <div class="loader-line"></div>
+          </div>
+          <div class="loader-line-wrap">
+              <div class="loader-line"></div>
+          </div>
+          <div class="loader-line-wrap">
+              <div class="loader-line"></div>
+          </div>
+      </div>
+  </div>
    <!-- ///// -->
 
    <div class="row">
 
       <div class="col-xl-3 col-sm-6" ng-class="{'active-table': currentTable == 0}">
-         <div class="card mb-3" style="max-width: 540px;">
+         <div class="card mb-3" style="max-width: 540px;height: 250px;">
             <div class="d-flex align-items-center justify-content-center h-100">
                <div class="card-body">
                   <h4 class="card-title mb-4">Hàng ngày</h4>
@@ -16,8 +35,8 @@
                            <span
                               ng-class="{'text-success': (totals['Today']-totals['Yesterday'])/totals['Yesterday'] >= 0, 'text-danger': (totals['Today']-totals['Yesterday'])/totals['Yesterday'] < 0 }"
                               class="me-2" ng-show="totals['Yesterday']">
-                              {{((totals['Today']-totals['Yesterday'])/totals['Yesterday']*100) | number:2}}%
-                              <i class="mdi mdi-arrow-up"></i>
+                              {{((totals['Today']-totals['Yesterday'])/totals['Yesterday']*100)}}%
+                              <i ng-class="{'mdi mdi-arrow-up': (totals['Today']-totals['Yesterday'])/totals['Yesterday'] >= 0, 'bx bx-down-arrow-alt': (totals['Today']-totals['Yesterday'])/totals['Yesterday'] < 0 }"></i>
                            </span>
                            <span class="text-success me-2" ng-hide="totals['Yesterday']">N/A</span>Lợi nhuận với hôm qua
                         </p>
@@ -32,7 +51,7 @@
       </div>
 
       <div class="col-xl-3 col-sm-6" ng-class="{'active-table': currentTable == 0}">
-         <div class="card mb-3" style="max-width: 540px;">
+         <div class="card mb-3" style="max-width: 540px;height: 250px;">
             <div class="d-flex align-items-center justify-content-center h-100">
                <div class="card-body">
                   <h4 class="card-title mb-4">Hàng tuần</h4>
@@ -44,8 +63,8 @@
                            <span
                               ng-class="{'text-success': (totals['This week']-totals['Last week'])/totals['Last week'] >= 0, 'text-danger': (totals['This week']-totals['Last week'])/totals['Last week'] < 0 }"
                               class="me-2" ng-show="totals['Last week']">
-                              {{((totals['This week']-totals['Last week'])/totals['Last week']*100) | number:2}}%
-                              <i class="mdi mdi-arrow-up"></i>
+                              {{((totals['This week']-totals['Last week'])/totals['Last week']*100)}}%
+                              <i ng-class="{'mdi mdi-arrow-up': (totals['This week']-totals['Last week'])/totals['Last week'] >= 0, 'bx bx-down-arrow-alt': (totals['This week']-totals['Last week'])/totals['Last week'] < 0 }"></i>
                            </span>
                            <span class="text-success me-2" ng-hide="totals['Last week']">N/A</span>Lợi nhuận với tuần
                            trước
@@ -60,7 +79,7 @@
       </div>
 
       <div class="col-xl-3 col-sm-6" ng-class="{'active-table': currentTable == 0}">
-         <div class="card mb-3" style="max-width: 540px;">
+         <div class="card mb-3" style="max-width: 540px; height: 250px;">
             <div class="d-flex align-items-center justify-content-center h-100">
                <div class="card-body">
                   <h4 class="card-title mb-4">Hàng tháng</h4>
@@ -72,8 +91,8 @@
                            <span
                               ng-class="{'text-success': (totals['This month']-totals['Last month'])/totals['Last month'] >= 0, 'text-danger': (totals['This month']-totals['Last month'])/totals['Last month'] < 0 }"
                               class="me-2" ng-show="totals['Last month']">
-                              {{((totals['This month']-totals['Last month'])/totals['Last month']*100) | number:2}}%
-                              <i class="mdi mdi-arrow-up"></i>
+                              {{((totals['This month']-totals['Last month'])/totals['Last month']*100)}}%
+                              <i ng-class="{'mdi mdi-arrow-up': (totals['This month']-totals['Last month'])/totals['Last month'] >= 0, 'bx bx-down-arrow-alt': (totals['This month']-totals['Last month'])/totals['Last month'] < 0 }"></i>
                            </span>
                            <span class="text-success me-2" ng-hide="totals['Last month']">N/A</span>Lợi nhuận với tháng
                            trước
@@ -88,7 +107,7 @@
       </div>
 
       <div class="col-xl-3 col-sm-6" ng-class="{'active-table': currentTable == 0}">
-         <div class="card mb-3" style="max-width: 540px;height: 223.9px;">
+         <div class="card mb-3" style="max-width: 540px;height: 250px;">
             <div class="d-flex align-items-center justify-content-center h-100">
                <div class="card-body">
                   <div class="row">
@@ -137,12 +156,11 @@
             </div>
          </div>
       </div>
-
       <div class="col-xl-4 col-sm-6" ng-class="{'active-table': currentTable == 0}">
          <div class="card mb-3">
             <div class="d-flex align-items-center justify-content-center h-100">
                <div class="card-body">
-                  <div class="table-responsive" style="height: 400px;">
+                  <div class="table-responsive" style="height: 380px;">
                      <table class="table align-middle mb-0">
                         <thead>
                            <tr>
@@ -161,7 +179,7 @@
                            </tr>
                         </tbody>
                      </table>
-                     <table class="table align-middle mb-0">
+                     <!-- <table class="table align-middle mb-0">
                         <thead>
                            <tr>
                               <th>Top 4 Phòng</th>
@@ -177,7 +195,7 @@
                               <td>{{ data[1] }}</td>
                            </tr>
                         </tbody>
-                     </table>
+                     </table> -->
                      <table class="table align-middle mb-0">
                         <thead>
                            <tr>
@@ -195,12 +213,34 @@
                            </tr>
                         </tbody>
                      </table>
+                     <!-- <table>
+                        <thead>
+                          <tr>
+                            <th>Loại phòng</th>
+                            <th>Tổng số phòng đã đặt</th>
+                            <th>Tổng doanh thu</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr ng-repeat="room in excels">
+                            <td>{{room[0]}}</td>
+                            <td>{{room[1]}}</td>
+                            <td>{{room[2] | currency: '' : 0}}</td>
+                          </tr>
+                        </tbody>
+                      </table> -->
+                      
+                  </div>
+                  <div class="row">
+                     <div class="col-md-8"></div>
+                     <div class="col-md-4"><button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Xuất Excel
+                    </button>
+                     </div>
                   </div>
                </div>
             </div>
          </div>
       </div>
-      <!-- <div><div id="chart_div" style="width: 900px; height: 500px;"></div></div> -->
    </div>
 
 </app-layout>

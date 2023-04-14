@@ -1,5 +1,5 @@
 app.factory('authInterceptor', function ($q, $location,$window, authService) {
-    var securedUrls = ['/service','/accounts','/room','/invoices','/statistical']; // các url theo yêu cầu quyền truy cập ADMIN
+    var securedUrls = ['/service','/accounts','/room','/invoices','/statistical','/promotion']; // các url theo yêu cầu quyền truy cập ADMIN
     var unsecuredUrls = ['/login','/reset-password']; 
     return {
         request: function (config) {

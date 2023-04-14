@@ -1,30 +1,21 @@
 app.controller("statisCtrl", function ($rootScope, $scope, $http) {
+  $scope.loading = false;
   $scope.customTotal = 0;
   $scope.customTotal1 = 0;
   $scope.loading = false;
   $rootScope.charts1 = [];
   $scope.initialize = function () {
+    $scope.loading = true;
     $scope.getTopRoom();
     $scope.getTotals();
     $scope.getTotals1();
     $scope.getTopRoomType();
     $scope.getTopSer();
-    $scope.getGoogleChart();
   }
 
-  $scope.getGoogleChart = function () {
-    $http.get('http://localhost:8000/api/statistical/google-chart')
-      .then(function (response) {
-        $rootScope.charts1 = response.data;
-      })
-      .catch(function (error) {
-        console.log('Error:', error);
-      });
-  }
   function drawChart() {
     $http.get('http://localhost:8000/api/statistical/google-chart')
       .then(function (response) {
-        console.log(response.data)
         var data = new google.visualization.DataTable();
         data.addColumn('string', 'Tuần này');
         data.addColumn('number', 'Standard');
@@ -61,6 +52,32 @@ app.controller("statisCtrl", function ($rootScope, $scope, $http) {
   google.charts.setOnLoadCallback(drawChart);
 
 
+  $scope.exportToExcel = function() { //xuat excel
+    $http.get('http://localhost:8000/api/statistical/excel')
+      .then(function(response) {
+        var data = response.data;
+        var sheetData = [
+          ['Room Type', 'Total Booked', 'Total Revenue']
+        ];
+        angular.forEach(data, function(row) {
+          sheetData.push([row[0], row[1], row[2]]);
+        });
+        var wb = XLSX.utils.book_new();
+        var ws = XLSX.utils.aoa_to_sheet(sheetData);
+        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+        var wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
+        function s2ab(s) {
+          var buf = new ArrayBuffer(s.length);
+          var view = new Uint8Array(buf);
+          for (var i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xff;
+          return buf;
+        }
+        saveAs(new Blob([s2ab(wbout)], { type: 'application/octet-stream' }), 'statistical_report.xlsx');
+      })
+      .catch(function(error) {
+        console.log('Error:', error);
+      });
+  };
 
   $scope.getTotals = function () { // thong ke money day-week-month
     $http.get('http://localhost:8000/api/invoices/totals')
@@ -106,6 +123,7 @@ app.controller("statisCtrl", function ($rootScope, $scope, $http) {
     $http.get('http://localhost:8000/api/statistical/ser/top')
       .then(function (response) {
         $scope.statisticalData2 = response.data;
+        $scope.loading = false;
       }, function (error) {
         console.log(error);
       });

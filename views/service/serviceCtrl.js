@@ -1,5 +1,6 @@
 app.controller("serviceCtrl", function ($scope, $http) {
 	$scope.showbut = true;
+	$scope.loading = false;
 	$scope.form = {
 		status:false,
 		serviceType: { id: 1 }
@@ -7,15 +8,23 @@ app.controller("serviceCtrl", function ($scope, $http) {
 	$scope.items = [];
 	$scope.serTypes = [];
 	$scope.initialize = function () {
-
+		$scope.loading = true;
 		$http.get("http://localhost:8000/api/services").then(resp => {
 			$scope.items = resp.data;
+			$(document).ready(function () {
+                $('#datatable-services').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
+                    }
+                });
+            });
 		})
 
 		$http.get("http://localhost:8000/api/service-types").then(resp => {
 			$scope.serTypes = resp.data;
+			$scope.loading = false;
 		})
-
+		
 	}
 	$scope.initialize();
 

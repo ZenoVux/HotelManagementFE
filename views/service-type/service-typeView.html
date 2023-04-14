@@ -1,32 +1,44 @@
 <app-layout name="">
 
     <div class="row">
-        <div class="col-md-11">
-            <a type="button" class="btn btn-primary" ng-href="/#!/service">
-                <i class="font-size-16 bx bx-left-arrow-alt"></i>Back
+        <div class="col-md-12">
+            <a type="button" class="btn btn-success" ng-href="/#!/service">
+                <i class="font-size-16 bx bx-left-arrow-alt"></i>Trở lại
             </a>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
-                data-bs-whatever="@mdo">Create
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                data-bs-whatever="@mdo">Thêm
                 <i class="font-size-16 bx bx-plus"></i>
             </button>
         </div>
-        <div class="col-md-1">
-            <div id="datatable_filter" class="dataTables_filter">
-                <label>Search:<input ng-model="searchName" type="search" class="form-control form-control-sm"
-                        aria-controls="datatable"></label>
+    </div>
+    <br>
+    <div ng-show="loading" class="loader"> 
+        <div class="loader-inner">
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
             </div>
         </div>
     </div>
-
     <!-- Modal create service-room-->
     <div class="modal fade" id="exampleModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 ng-if="showbut" class="modal-title fs-5" id="exampleModalLabel">Create Service Type</h1>
-                    <h1 ng-if="!showbut" class="modal-title fs-5" id="exampleModalLabel">Update Service Type</h1>
-                    <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+                    <h1 ng-if="showbut" class="modal-title fs-5" id="exampleModalLabel">Thêm Service Type</h1>
+                    <h1 ng-if="!showbut" class="modal-title fs-5" id="exampleModalLabel">Cập nhật Service Type</h1>
                 </div>
                 <div class="modal-body">
                     <form>
@@ -35,14 +47,14 @@
 
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="formrow-username-input" class="form-label">Name</label>
+                                    <label for="formrow-username-input" class="form-label">Tên</label>
                                     <input ng-model="form.name" type="text" class="form-control"
                                         id="formrow-username-input" placeholder="Enter Your  ServiceType Name">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="formrow-password-input" class="form-label">Description</label>
+                                    <label for="formrow-password-input" class="form-label">Mô tả</label>
                                     <textarea ng-model="form.description" type="textarea" class="form-control"
                                         id="formrow-password-input" placeholder="Enter Your Description"></textarea>
                                 </div>
@@ -52,9 +64,9 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" ng-click="close()" class="btn btn-secondary">Close</button>
-                    <button ng-if="showbut" ng-click="create()" class="btn btn-primary w-md">Submit</button>
-                    <button ng-if="!showbut" ng-click="update()" class="btn btn-warning w-md">Save changes</button>
+                    <button type="button" ng-click="close()" class="btn btn-secondary">Đóng</button>
+                    <button ng-if="showbut" ng-click="create()" class="btn btn-success w-md">Thêm</button>
+                    <button ng-if="!showbut" ng-click="update()" class="btn btn-warning w-md">Cập nhật</button>
                 </div>
             </div>
         </div>
@@ -70,25 +82,23 @@
             <div class="card">
                 <div class="card-body">
                     <div class="table-responsive">
-                        <h4 class="card-title">List of service types</h4>
+                        <h4 class="card-title">Danh sách service types</h4>
 
                         <div class="table-responsive">
-                            <table class="table align-middle mb-0">
+                            <table id="datatable-service-type" class="table table-bordered dt-responsive nowrap w-100">
 
                                 <thead>
                                     <tr>
-                                        <th>Id</th>
-                                        <th>Name</th>
-                                        <th>Description</th>
-                                        <th>Edit</th>
+                                        <th>Tên</th>
+                                        <th>Mô tả</th>
+                                        <th>#</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr ng-repeat="s in serTypes | filter:searchName">
-                                        <td>{{s.id}}</td>
                                         <td>{{s.name}}</td>
                                         <td>{{s.description}}</td>
-                                       
+
                                         <td>
                                             <a ng-click="view(s)" class="btn btn-outline-secondary btn-sm edit"
                                                 title="Edit">
@@ -106,7 +116,7 @@
             </div>
         </div><!--end col-->
     </div><!--end row-->
- 
+
 
 
 </app-layout>

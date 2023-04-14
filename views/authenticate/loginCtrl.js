@@ -1,4 +1,4 @@
-app.controller("loginCtrl", function ($scope, $http,$routeParams,$location,$timeout) {
+app.controller("loginCtrl", function ($scope, $http,$routeParams,$location,$timeout,authService) {
 	$scope.form = {};
 	$scope.loading=false;
 	$scope.myEmail = {}
@@ -16,7 +16,11 @@ app.controller("loginCtrl", function ($scope, $http,$routeParams,$location,$time
 			localStorage.setItem('token', resp.data.token);
 			localStorage.setItem('tokenExpirationTime', Date.now() + (86400000)); // Thời gian hết hạn 24h
 			$scope.loading=false;
-			$location.path('/hotel-room');
+			if(authService.hasRole('ADMIN')){
+				$location.path('/statistical');
+			  }else{
+				$location.path('/hotel-room');
+			  }
 		  }).catch(error => {
 			alert("Login failed !")
 			$scope.loading=false;

@@ -60,8 +60,10 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
 
     $scope.clearTableCustomer = function () {
         $(document).ready(function () {
-            tableCustomer.clear();
-            tableCustomer.destroy();
+            if (tableCustomer != null) {
+                tableCustomer.clear();
+                tableCustomer.destroy();
+            }
         });
     }
 
@@ -97,7 +99,7 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
             await $scope.loadCustomers();
             await $scope.initTableCustomer();
         } else {
-            $scope.clearTableCustomer();
+            await $scope.clearTableCustomer();
             $scope.customers = [];
             $scope.customer = {
                 gender: true

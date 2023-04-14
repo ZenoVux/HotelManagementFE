@@ -2,41 +2,50 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
+                <h5 class="card-header bg-transparent border-bottom text-uppercase">
+                    TÀI KHOẢN
+                </h5>
                 <div class="card-body">
-                    <h4 class="card-title">List Account</h4>
-                    <div class="d-flex justify-content-end mb-2">
-                        <div>
-                            <a href="/#!/accounts/create" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2"><i class="mdi mdi-plus me-1"></i>Add New Account</a>
-                        </div>
-                        <div> 
-                            <a href="/#!/accounts/role" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2"><i class="dripicons-view-list me-2"></i>Role account</a>
-                        </div>
+                    <div class="mb-3">
+                        <a href="/#!/accounts/create" class="btn btn-primary w-md waves-effect waves-light me-1">
+                            <i class="mdi mdi-plus"></i> Tạo tài khoản
+                        </a>
+                        <a href="/#!/accounts/role" class="btn btn-primary w-md waves-effect waves-light">
+                            <i class="mdi mdi-format-list-bulleted"></i> Phân quyền
+                        </a>
                     </div>
+                    <input class="form-control mb-3" type="search" placeholder="Tìm kiếm"
+                        id="search-datatable-accounts">
                     <table id="datatable-accounts" class="table table-bordered dt-responsive nowrap w-100">
 
                         <thead>
                             <tr>
-                                <th>#</th>
-                                <th>Username</th>
-                                <th>Full Name</th>
+                                <th>STT</th>
+                                <th>Tên đăng nhập</th>
+                                <th>Họ và tên</th>
                                 <th>Email</th>
-                                <th>Status</th>
-                                <th>Action</th>
+                                <th>Trạng thái</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr ng-repeat="item in accounts">
-                                <th scope="row">{{item.id}}</th>
+                                <td>
+                                    <b>{{$index + 1}}</b>
+                                </td>
                                 <td>{{item.username}}</td>
                                 <td>{{item.fullName}}</td>
                                 <td>{{item.email}}</td>
-                                <td><span class="badge rounded-pill " ng-class="item.status ? 'bg-success' : 'bg-primary'">{{item.status ? 'Hoạt động' : 'Ngừng hoạt động'}}</span></td>
+                                <td><span class="badge rounded-pill " ng-class="item.status ? 'bg-success' : 'bg-danger'">{{item.status ? 'Hoạt động' : 'Ngừng hoạt động'}}</span></td>
                                 <td>
-                                    <a ng-click="view(item)" class="btn btn-outline-secondary btn-sm edit" title="View">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="/#!/accounts/update/{{item.id}}" class="btn btn-outline-secondary btn-sm edit" title="Edit">
+                                    <a href="/#!/accounts/update/{{item.username}}" class="btn btn-outline-secondary btn-sm edit" title="Chỉnh sửa">
                                         <i class="fas fa-pencil-alt"></i>
+                                    </a>
+                                    <a ng-show="item.status" ng-click="handlerDeactivateAccount(item)" class="btn btn-outline-danger btn-sm edit" title="Ngừng hoạt động">
+                                        <i class="mdi mdi-cancel"></i>
+                                    </a>
+                                    <a ng-show="!item.status" ng-click="handlerActivateAccount(item)" class="btn btn-outline-success btn-sm edit" title="Hoạt động">
+                                        <i class="mdi mdi-check"></i>
                                     </a>
                                 </td>
                             </tr>
@@ -44,100 +53,6 @@
                     </table>
                 </div>
             </div>
-        </div><!--end col-->
-    </div><!--end row-->
-    <!-- Transaction Modal -->
-    <div id="myModal" class="modal fade transaction-detailModal" tabindex="-1" role="dialog" aria-labelledby="transaction-detailModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="transaction-detailModalLabel">Account Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- <p class="mb-2">Id: <span class="text-primary">{{account.id}}</span></p>
-                    <p class="mb-2"> <span class="text-primary">{{account.fullName}}</span></p>
-                    <p class="mb-2"> <span class="text-primary">{{account.username}}</span></p>
-                    <p class="mb-2">Email: <span class="text-primary">{{account.email}}</span></p>
-                    <p class="mb-2">Address: <span class="text-primary">{{account.address}}</span></p>
-                    <p class="mb-2">Status: <span class="text-primary">{{account.status}}</span></p> -->
-                    <div class="table-responsive">
-                        <table class="table align-middle table-nowrap">
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <h6 class="m-0 text-right">Id:</h6>
-                                    </td>
-                                    <td>
-                                        {{account.id}}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <h6 class="m-0 text-right">Full Name:</h6>
-                                    </td>
-                                    <td>
-                                        {{account.fullName}}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <h6 class="m-0 text-right">Username:</h6>
-                                    </td>
-                                    <td>
-                                        {{account.username}}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <h6 class="m-0 text-right">Email:</h6>
-                                    </td>
-                                    <td>
-                                        {{account.email}}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <h6 class="m-0 text-right">Address:</h6>
-                                    </td>
-                                    <td>
-                                        {{account.address}}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <h6 class="m-0 text-right">Status:</h6>
-                                    </td>
-                                    <td>
-                                        <span class="badge rounded-pill " ng-class="account.status ? 'bg-success' : 'bg-primary'">{{account.status ? 'Hoạt động' : 'Ngừng hoạt động'}}</span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
         </div>
     </div>
-    <!-- end modal -->
-    
-    <!-- Required datatable js -->
-    <script src="assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
-    <script src="assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-    <!-- Buttons examples -->
-    <script src="assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-    <script src="assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
-    <script src="assets/libs/jszip/jszip.min.js"></script>
-    <script src="assets/libs/pdfmake/build/pdfmake.min.js"></script>
-    <script src="assets/libs/pdfmake/build/vfs_fonts.js"></script>
-    <script src="assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
-    <script src="assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
-    <script src="assets/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
-    
-    <!-- Responsive examples -->
-    <script src="assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-    <script src="assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
 </app-layout>

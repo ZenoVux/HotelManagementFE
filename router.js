@@ -25,7 +25,7 @@ app.config(function ($routeProvider,$httpProvider) {
       templateUrl: "/views/account/create.html",
       controller: "accountCreateCtrl",
     })
-    .when("/accounts/update/:id", {
+    .when("/accounts/update/:username", {
       templateUrl: "/views/account/update.html",
       controller: "accountUpdateCtrl",
     })

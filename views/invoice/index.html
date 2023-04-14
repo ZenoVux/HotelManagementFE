@@ -16,25 +16,30 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
+                <h5 class="card-header bg-transparent border-bottom text-uppercase">
+                    HÓA ĐƠN
+                </h5>
                 <div class="card-body">
-                    <input class="form-control" type="search" placeholder="Tìm kiếm"
+                    <input class="form-control mb-3" type="search" placeholder="Tìm kiếm"
                         id="search-datatable-invoices">
                     <table id="datatable-invoices" class="table table-bordered dt-responsive nowrap w-100">
                         <thead>
                             <tr>
-                                <th>#</th>
+                                <th>STT</th>
                                 <th>Mã đặt</th>
                                 <th>Khách hàng</th>
                                 <th>Nhân viên</th>
                                 <th>Tổng tiền</th>
                                 <th>Trạng thái</th>
                                 <th>Ngày tạo</th>
-                                <th style="width: 100px;">Hành động</th>
+                                <th style="width: 100px;"></th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr ng-repeat="item in invoices">
-                                <th scope="row">{{item.code}}</th>
+                                <td>
+                                    <b>{{$index + 1}}</b>
+                                </td>
                                 <td>{{item.booking.code}}</td>
                                 <td>{{item.booking.customer.fullName}}</td>
                                 <td>{{item.account.fullName}}</td>

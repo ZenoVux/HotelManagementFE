@@ -40,7 +40,28 @@ app.controller("invoiceCtrl", function ($scope, $http) {
                         targets: 7,
                         orderable: false
                     }
-                ]
+                ],
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        exportOptions: {
+                            columns: [ 0, 1, 2, 3, 4, 5, 6 ]
+                        }
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        exportOptions: {
+                            columns: [ 0, 1, 2, 3, 4, 5, 6 ]
+                        }
+                    },
+                    {
+                        extend: 'print',
+                        exportOptions: {
+                            columns: [ 0, 1, 2, 3, 4, 5, 6 ]
+                        }
+                    }
+                ],
+                dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-end"B>>t<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>'
             });
             $('#search-datatable-invoices').keyup(function () {
                 tableInvoice.search($(this).val()).draw();
@@ -350,6 +371,7 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
 
     $scope.modalHistoryRoom = async function (action, invoiceDetail) {
         $scope.invoiceDetail = invoiceDetail;
+        $('#modal-history-room').modal(action);
         if (action == "show") {
             await $scope.loadInvoiceDetailHistories();
             await $scope.initTableInvoiceDetailHistory();
@@ -357,7 +379,6 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
             await $scope.clearTableInvoiceDetailHistory();
             $scope.invoiceDetailHistories = [];
         }
-        $('#modal-history-room').modal(action);
         setTimeout(function () {
             $('#search-datatable-invoice-detail-history').focus()
         }, 1000);

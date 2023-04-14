@@ -1,23 +1,30 @@
-<app-layout name="">
-    <!-- DataTables -->
-    <link href="assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-    <link href="assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-
-    <!-- Responsive datatable examples -->
-    <link href="assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" /> 
+<app-layout>
     <div class="row">
         <div class="col-12">
             <div class="card">
+                <h5 class="card-header bg-transparent border-bottom text-uppercase">
+                    PHÂN QUYỀN
+                </h5>
                 <div class="card-body">
-                    <table id="datatable-accounts" class="table table-bordered dt-responsive nowrap w-100">
+                    <div class="mb-3">
+                        <a href="/#!/accounts" class="btn btn-primary w-md waves-effect waves-light">
+                            <i class="mdi mdi-format-list-bulleted"></i> Tài khoản
+                        </a>
+                    </div>
+                    <input class="form-control" type="search" placeholder="Tìm kiếm" id="search-datatable-user-role">
+                    <table id="datatable-user-role" class="table table-bordered dt-responsive nowrap w-100">
                         <thead>
                             <tr>
-                                <th>Username</th>
+                                <th>STT</th>
+                                <th>Tên đăng nhập</th>
                                 <th ng-repeat="role in roles">{{role.name}}</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr ng-repeat="account in accounts">
+                                <td>
+                                    <b>{{$index + 1}}</b>
+                                </td>
                                 <td>{{account.username}}</td>
                                 <td ng-repeat="role in roles">
                                     <input type="checkbox" ng-checked="userRoleOf(account, role)"
@@ -28,6 +35,6 @@
                     </table>
                 </div>
             </div>
-        </div><!--end col-->
-    </div><!--end row-->
+        </div>
+    </div>
 </app-layout>

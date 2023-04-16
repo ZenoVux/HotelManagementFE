@@ -33,7 +33,12 @@ app.config(function ($routeProvider, $httpProvider) {
       templateUrl: "/views/account/role.html",
       controller: "accountRoleCtrl",
     })
+    //hotel-room
     .when("/hotel-room", {
+      templateUrl: "/views/hotel-room/index.html",
+      controller: "hotelRoomCtrl",
+    })
+    .when("/hotel-room/:bookingCode", {
       templateUrl: "/views/hotel-room/index.html",
       controller: "hotelRoomCtrl",
     })

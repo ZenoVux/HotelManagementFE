@@ -1,4 +1,4 @@
-app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
+app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http, $window) {
     $scope.statuses = [
         {
             id: 0,
@@ -68,6 +68,9 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
         await $http.get("http://localhost:8000/api/hotel").then(function (resp) {
             $scope.hotelRooms = resp.data.hotelRooms;
             $scope.statusCounts = resp.data.statusCounts;
+            if ($routeParams.bookingCode) {
+                $scope.search.bookingCode = $routeParams.bookingCode;
+            }
             $scope.isLoading = false;
         });
     }

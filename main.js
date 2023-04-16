@@ -3,6 +3,7 @@ app.component("appLayout", {
   templateUrl: "layout.html",
   transclude: true,
   controller: function ($scope, $window, $location, authService) {
+
     $scope.isAdmin = authService.hasRole('ADMIN');
     $scope.isLogin = false
     $scope.nameUser = "Welcome!"

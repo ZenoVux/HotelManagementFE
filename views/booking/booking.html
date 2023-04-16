@@ -1,19 +1,36 @@
 <app-layout name="">
 
+    <div ng-show="loading" class="loader">
+        <div class="loader-inner">
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- header -->
     <div class="row">
         <div class="col-md-4">
-            <h1>Create Booking</h1>
+            <h1>Tạo booking</h1>
         </div>
         <div class="col-md-4 text-center">
-            <div id="loading-spinner" ng-show="loading">
-                <i class="fa fa-spinner fa-spin" style="font-size: 30px"></i>
-            </div>
         </div>
         <div class="col-sm-4">
             <div class="text-sm-end">
                 <a class="btn btn-success btn-lg" ng-href="/#!/bookings" role="button">
-                    <i class="fas fa-arrow-left"></i> Back</a>
+                    Danh sách booking</a>
             </div>
         </div>
     </div>
@@ -30,11 +47,11 @@
                             <div class="row justify-content-between mt-3">
                                 <div class="col-auto">
                                     <button type="button" class="btn btn-secondary" ng-click="prevSection()"
-                                        ng-disabled="currentSection == 0">Previous</button>
+                                        ng-disabled="currentSection == 0">Trước</button>
                                 </div>
                                 <div class="col-auto">
                                     <button type="button" class="btn btn-secondary" ng-click="nextSection()"
-                                        ng-disabled="currentSection == 2">Next</button>
+                                        ng-disabled="currentSection == 2">Tiếp</button>
                                 </div>
                             </div>
                             <br>
@@ -158,6 +175,7 @@
                                     <p></p>
                                     <!-- table -->
                                     <table class="table table-bordered mb-0">
+
                                         <thead style="text-align: center;">
                                             <tr>
                                                 <th style="width: 20%;">
@@ -239,9 +257,9 @@
                                                                 <div class="col-sm-3 form-check"
                                                                     ng-repeat="room in info.listRooms">
                                                                     <input class="form-check-input" type="checkbox"
-                                                                        id="{{room.code}}" ng-model="room.selected"
+                                                                        id="{{room.id}}" ng-model="room.selected"
                                                                         ng-change="updateSelectedRooms(info)">
-                                                                    <label class="form-check-label" for="{{room.code}}">
+                                                                    <label class="form-check-label" for="{{room.id}}">
                                                                         {{ room.code }}
                                                                     </label>
                                                                 </div>

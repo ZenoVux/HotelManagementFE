@@ -39,8 +39,8 @@
     border: 1px solid #6c757d;
 }
 
-.booking {
-    background-color: #0d6efd;
+.confirmed {
+    background-color: #198754;
     color: white;
 }
 
@@ -82,7 +82,8 @@
     right: 0;
     top: 0;
     z-index: 99999;
-    opacity: 0.5; 
+    opacity: 0.5;
+    z-index: 9999;
 }
 
 .loader-inner {
@@ -97,9 +98,8 @@
 }
 
 .loader-line-wrap {
-    animation: 
-		spin 2000ms cubic-bezier(.175, .885, .32, 1.275) infinite
-	;
+    animation:
+        spin 2000ms cubic-bezier(.175, .885, .32, 1.275) infinite;
     box-sizing: border-box;
     height: 50px;
     left: 0;
@@ -109,6 +109,7 @@
     transform-origin: 50% 100%;
     width: 100px;
 }
+
 .loader-line {
     border: 4px solid transparent;
     border-radius: 100%;
@@ -121,11 +122,26 @@
     top: 0;
     width: 100px;
 }
-.loader-line-wrap:nth-child(1) { animation-delay: -50ms; }
-.loader-line-wrap:nth-child(2) { animation-delay: -100ms; }
-.loader-line-wrap:nth-child(3) { animation-delay: -150ms; }
-.loader-line-wrap:nth-child(4) { animation-delay: -200ms; }
-.loader-line-wrap:nth-child(5) { animation-delay: -250ms; }
+
+.loader-line-wrap:nth-child(1) {
+    animation-delay: -50ms;
+}
+
+.loader-line-wrap:nth-child(2) {
+    animation-delay: -100ms;
+}
+
+.loader-line-wrap:nth-child(3) {
+    animation-delay: -150ms;
+}
+
+.loader-line-wrap:nth-child(4) {
+    animation-delay: -200ms;
+}
+
+.loader-line-wrap:nth-child(5) {
+    animation-delay: -250ms;
+}
 
 .loader-line-wrap:nth-child(1) .loader-line {
     border-color: hsl(0, 80%, 60%);
@@ -133,24 +149,28 @@
     width: 90px;
     top: 7px;
 }
+
 .loader-line-wrap:nth-child(2) .loader-line {
     border-color: hsl(60, 80%, 60%);
     height: 76px;
     width: 76px;
     top: 14px;
 }
+
 .loader-line-wrap:nth-child(3) .loader-line {
     border-color: hsl(120, 80%, 60%);
     height: 62px;
     width: 62px;
     top: 21px;
 }
+
 .loader-line-wrap:nth-child(4) .loader-line {
     border-color: hsl(180, 80%, 60%);
     height: 48px;
     width: 48px;
     top: 28px;
 }
+
 .loader-line-wrap:nth-child(5) .loader-line {
     border-color: hsl(240, 80%, 60%);
     height: 34px;
@@ -159,12 +179,15 @@
 }
 
 @keyframes spin {
-    0%, 15% {
-		transform: rotate(0);
-	}
-	100% {
-		transform: rotate(360deg);
-	}
+
+    0%,
+    15% {
+        transform: rotate(0);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 .load-bar {
@@ -174,29 +197,47 @@
     height: 6px;
     background-color: #fdba2c;
 }
+
 .bar {
-	content: "";
-	display: inline;
-	position: absolute;
-	width: 0;
-	height: 100%;
-	left: 50%;
-	text-align: center;
+    content: "";
+    display: inline;
+    position: absolute;
+    width: 0;
+    height: 100%;
+    left: 50%;
+    text-align: center;
 }
+
 .bar:nth-child(1) {
-	background-color: #da4733;
-	animation: loading 3s linear infinite;
+    background-color: #da4733;
+    animation: loading 3s linear infinite;
 }
+
 .bar:nth-child(2) {
-	background-color: #3b78e7;
-	animation: loading 3s linear 1s infinite;
+    background-color: #3b78e7;
+    animation: loading 3s linear 1s infinite;
 }
+
 .bar:nth-child(3) {
-	background-color: #fdba2c;
-	animation: loading 3s linear 2s infinite;
+    background-color: #fdba2c;
+    animation: loading 3s linear 2s infinite;
 }
+
 @keyframes loading {
-  from {left: 50%; width: 0;z-index:100;}
-  33.3333% {left: 0; width: 100%;z-index: 10;}
-  to {left: 0; width: 100%;}
+    from {
+        left: 50%;
+        width: 0;
+        z-index: 100;
+    }
+
+    33.3333% {
+        left: 0;
+        width: 100%;
+        z-index: 10;
+    }
+
+    to {
+        left: 0;
+        width: 100%;
+    }
 }

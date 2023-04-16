@@ -1,4 +1,4 @@
-app.controller("statisCtrl", function ($rootScope, $scope, $http) {
+app.controller("statisCtrl", function ($rootScope, $scope, $http, _) {
   $scope.loading = false;
   $scope.customTotal = 0;
   $scope.customTotal1 = 0;
@@ -16,23 +16,39 @@ app.controller("statisCtrl", function ($rootScope, $scope, $http) {
   function drawChart() {
     $http.get('http://localhost:8000/api/statistical/google-chart')
       .then(function (response) {
+
+        var data = response.data
+        var transposedData = _.zip.apply(_, data);
+        var days = ['Week', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        var googleChart = [];
+        for (var i = 0; i < transposedData.length; i++) {
+          var row = [];
+          row.push(days[i]);
+          for (var j = 0; j < transposedData[i].length; j++) {
+            row.push(transposedData[i][j]);
+          }
+          googleChart.push(row);
+        }
+        // console.log(googleChart);
         var data = new google.visualization.DataTable();
         data.addColumn('string', 'Tuần này');
-        data.addColumn('number', 'Standard');
-        data.addColumn('number', 'Superior');
-        data.addColumn('number', 'Deluxe');
-        data.addColumn('number', 'Suite');
+        for (var i = 1; i < googleChart[0].length; i++) {
+          data.addColumn('number', googleChart[0][i]);
+        }
 
-        var labels = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-        for (var i = 0; i < response.data.length; i++) {
-          var row = response.data[i];
-          data.addRow([labels[i], row[1], row[2], row[3], row[4]]);
+        for (var i = 1; i < googleChart.length; i++) {
+          var row = googleChart[i];
+          var rowData = [row[0]];
+          for (var j = 1; j < row.length; j++) {
+            rowData.push(row[j]);
+          }
+          data.addRow(rowData);
         }
         var options = {
           chart: {
             title: 'Sơ đồ tăng trưởng của loại phòng',
           },
-          height: 400,
+          height: 415,
           axes: {
             x: {
               0: { side: 'top' }
@@ -52,14 +68,15 @@ app.controller("statisCtrl", function ($rootScope, $scope, $http) {
   google.charts.setOnLoadCallback(drawChart);
 
 
-  $scope.exportToExcel = function() { //xuat excel
+
+  $scope.exportToExcel = function () { //xuat excel
     $http.get('http://localhost:8000/api/statistical/excel')
-      .then(function(response) {
+      .then(function (response) {
         var data = response.data;
         var sheetData = [
           ['Room Type', 'Total Booked', 'Total Revenue']
         ];
-        angular.forEach(data, function(row) {
+        angular.forEach(data, function (row) {
           sheetData.push([row[0], row[1], row[2]]);
         });
         var wb = XLSX.utils.book_new();
@@ -74,7 +91,7 @@ app.controller("statisCtrl", function ($rootScope, $scope, $http) {
         }
         saveAs(new Blob([s2ab(wbout)], { type: 'application/octet-stream' }), 'statistical_report.xlsx');
       })
-      .catch(function(error) {
+      .catch(function (error) {
         console.log('Error:', error);
       });
   };
@@ -165,3 +182,14 @@ app.controller("statisCtrl", function ($rootScope, $scope, $http) {
 
   $scope.initialize()
 });
+
+app.run(
+  function (_) {
+  }
+);
+app.factory("_", function ($window) {
+  var _ = $window._;
+  delete ($window._);
+  return (_);
+}
+);

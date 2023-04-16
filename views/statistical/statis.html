@@ -35,7 +35,7 @@
                            <span
                               ng-class="{'text-success': (totals['Today']-totals['Yesterday'])/totals['Yesterday'] >= 0, 'text-danger': (totals['Today']-totals['Yesterday'])/totals['Yesterday'] < 0 }"
                               class="me-2" ng-show="totals['Yesterday']">
-                              {{((totals['Today']-totals['Yesterday'])/totals['Yesterday']*100)}}%
+                              {{((totals['Today']-totals['Yesterday'])/totals['Yesterday']*100)| number: 0 }}%
                               <i ng-class="{'mdi mdi-arrow-up': (totals['Today']-totals['Yesterday'])/totals['Yesterday'] >= 0, 'bx bx-down-arrow-alt': (totals['Today']-totals['Yesterday'])/totals['Yesterday'] < 0 }"></i>
                            </span>
                            <span class="text-success me-2" ng-hide="totals['Yesterday']">N/A</span>Lợi nhuận với hôm qua
@@ -63,7 +63,7 @@
                            <span
                               ng-class="{'text-success': (totals['This week']-totals['Last week'])/totals['Last week'] >= 0, 'text-danger': (totals['This week']-totals['Last week'])/totals['Last week'] < 0 }"
                               class="me-2" ng-show="totals['Last week']">
-                              {{((totals['This week']-totals['Last week'])/totals['Last week']*100)}}%
+                              {{((totals['This week']-totals['Last week'])/totals['Last week']*100)| number: 0 }}%
                               <i ng-class="{'mdi mdi-arrow-up': (totals['This week']-totals['Last week'])/totals['Last week'] >= 0, 'bx bx-down-arrow-alt': (totals['This week']-totals['Last week'])/totals['Last week'] < 0 }"></i>
                            </span>
                            <span class="text-success me-2" ng-hide="totals['Last week']">N/A</span>Lợi nhuận với tuần
@@ -91,7 +91,7 @@
                            <span
                               ng-class="{'text-success': (totals['This month']-totals['Last month'])/totals['Last month'] >= 0, 'text-danger': (totals['This month']-totals['Last month'])/totals['Last month'] < 0 }"
                               class="me-2" ng-show="totals['Last month']">
-                              {{((totals['This month']-totals['Last month'])/totals['Last month']*100)}}%
+                              {{((totals['This month']-totals['Last month'])/totals['Last month']*100)| number: 0 }}%
                               <i ng-class="{'mdi mdi-arrow-up': (totals['This month']-totals['Last month'])/totals['Last month'] >= 0, 'bx bx-down-arrow-alt': (totals['This month']-totals['Last month'])/totals['Last month'] < 0 }"></i>
                            </span>
                            <span class="text-success me-2" ng-hide="totals['Last month']">N/A</span>Lợi nhuận với tháng
@@ -233,7 +233,7 @@
                   </div>
                   <div class="row">
                      <div class="col-md-8"></div>
-                     <div class="col-md-4"><button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Xuất Excel
+                     <div class="col-md-4"><button type="button" class="btn btn-success" ng-click="exportToExcel()">Xuất Excel
                     </button>
                      </div>
                   </div>

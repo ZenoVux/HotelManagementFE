@@ -72,8 +72,8 @@ app.controller("accountCreateCtrl", function ($scope, $location, $http) {
             $scope.account = resp.data;
             alert("Tạo mới tài khoản thành công!");
             $location.path("/accounts");
-        }, function (params) {
-            
+        }, function (resp) {
+            alert(resp.data.error);
         });
     };
 });
@@ -165,10 +165,10 @@ app.controller("accountUpdateCtrl", function ($scope, $routeParams, $http, $loca
             return;
         }
         $http.put("http://localhost:8000/api/accounts", $scope.account).then(function (resp) {
-            if (resp.status == 200) {
-                $scope.account = resp.data;
-                alert("Update success");
-            }
+            alert("Cập nhật tài khoản thành công!");
+            $scope.account = resp.data;
+        }, function (resp) {
+            alert(resp.data.error);
         });
     };
 
@@ -177,48 +177,58 @@ app.controller("accountUpdateCtrl", function ($scope, $routeParams, $http, $loca
 
 app.controller("accountListCtrl", function ($scope, $window, $http) {
 
+    $scope.isLoading = false;
     $scope.accounts = [];
 
-    $scope.initTable = function () {
-        $http.get("http://localhost:8000/api/accounts").then(function (resp) {
-            $scope.accounts = resp.data;
-            $(document).ready(function () {
-                tableAccounts = $('#datatable-accounts').DataTable({
-                    language: {
-                        url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
+    $scope.init = async function () {
+        $scope.isLoading = true;
+        await $scope.loadAccount();
+        await $scope.initTableAccount();
+    }
+
+    $scope.initTableAccount = function () {
+        $(document).ready(function () {
+            tableAccounts = $('#datatable-accounts').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
+                },
+                columnDefs: [
+                    {
+                        targets: 5,
+                        orderable: false
+                    }
+                ],
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        exportOptions: {
+                            columns: [ 0, 1, 2 ]
+                        }
                     },
-                    columnDefs: [
-                        {
-                            targets: 5,
-                            orderable: false
+                    {
+                        extend: 'pdfHtml5',
+                        exportOptions: {
+                            columns: [ 0, 1, 2 ]
                         }
-                    ],
-                    buttons: [
-                        {
-                            extend: 'excelHtml5',
-                            exportOptions: {
-                                columns: [ 0, 1, 2 ]
-                            }
-                        },
-                        {
-                            extend: 'pdfHtml5',
-                            exportOptions: {
-                                columns: [ 0, 1, 2 ]
-                            }
-                        },
-                        {
-                            extend: 'print',
-                            exportOptions: {
-                                columns: [ 0, 1, 2 ]
-                            }
+                    },
+                    {
+                        extend: 'print',
+                        exportOptions: {
+                            columns: [ 0, 1, 2 ]
                         }
-                    ],
-                    dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-end"B>>t<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>'
-                });
-                $('#search-datatable-accounts').keyup(function () {
-                    tableAccounts.search($(this).val()).draw();
-                });
+                    }
+                ],
+                dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-end"B>>t<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>'
             });
+            $('#search-datatable-accounts').keyup(function () {
+                tableAccounts.search($(this).val()).draw();
+            });
+        });
+    }
+    $scope.loadAccount = async function () {
+        await $http.get("http://localhost:8000/api/accounts").then(function (resp) {
+            $scope.accounts = resp.data;
+            $scope.isLoading = false;
         });
     }
 
@@ -229,8 +239,8 @@ app.controller("accountListCtrl", function ($scope, $window, $http) {
         $http.post("http://localhost:8000/api/accounts/activate/" + account.username).then(function (resp) {
             alert("Kích hoạt tài khoản thành công!");
             account.status = true;
-        }, function () {
-            alert("Kích hoạt tài khoản thất bại!");
+        }, function (resp) {
+            alert(resp.data.error);
         });
     }
 
@@ -241,12 +251,12 @@ app.controller("accountListCtrl", function ($scope, $window, $http) {
         $http.post("http://localhost:8000/api/accounts/deactivate/" + account.username).then(function (resp) {
             alert("Huỷ kích hoạt tài khoản thành công!");
             account.status = false;
-        }, function () {
-            alert("Huỷ kích hoạt tài khoản thất bại!");
+        }, function (resp) {
+            alert(resp.data.error);
         });
     }
 
-    $scope.initTable();
+    $scope.init();
 });
 
 app.controller("accountRoleCtrl", function ($scope, $window, $http) {
@@ -256,34 +266,38 @@ app.controller("accountRoleCtrl", function ($scope, $window, $http) {
     $scope.userRoles = [];
 
     $scope.init = async function () {
+        $scope.isLoading = true;
         await $scope.loadRole();
         await $scope.loadUserRole();
         await $scope.loadAccount();
+        $scope.initTableUserRole();
+    }
+
+    $scope.initTableUserRole = function () {
+        $(document).ready(function () {
+            tableUserRole = $('#datatable-user-role').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
+                },
+                columnDefs: [
+                    {
+                        targets: [2, 3],
+                        orderable: false
+                    }
+                ],
+                dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>'
+            });
+            $('#search-datatable-user-role').keyup(function () {
+                tableUserRole.search($(this).val()).draw();
+            });
+        });
     }
 
     $scope.loadAccount = async function () {
         await $http.get("http://localhost:8000/api/accounts")
             .then(resp => {
-                if (resp.status == 200) {
-                    $scope.accounts = resp.data;
-                    $(document).ready(function () {
-                        tableUserRole = $('#datatable-user-role').DataTable({
-                            language: {
-                                url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
-                            },
-                            columnDefs: [
-                                {
-                                    targets: [2, 3],
-                                    orderable: false
-                                }
-                            ],
-                            dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>'
-                        });
-                        $('#search-datatable-user-role').keyup(function () {
-                            tableUserRole.search($(this).val()).draw();
-                        });
-                    });
-                }
+                $scope.accounts = resp.data;
+                $scope.isLoading = false;
             });
     }
 

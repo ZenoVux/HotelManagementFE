@@ -81,7 +81,7 @@
                                     <td class="text-end">{{item.servicePrice | currency: '' : 0}}₫</td>
                                     <td class="text-end">{{getTotalService(item) | currency: '' : 0}}₫</td>
                                 </tr>
-                                <tr ng-show="value.usedServices.length == 0">
+                                <tr ng-show="usedServices.length == 0">
                                     <td colspan="6" class="text-center">Dịch vụ trống</td>
                                 </tr>
                                 <tr>
@@ -234,6 +234,26 @@
                 <div class="modal-footer">
                     <button ng-click="modalHostedAt('hide')" class="btn btn-secondary">Đóng</button>
                 </div>
+            </div>
+        </div>
+    </div>
+    
+    <div ng-show="isLoading" class="loader"> 
+        <div class="loader-inner">
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
             </div>
         </div>
     </div>

@@ -3,10 +3,10 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <button ng-click="handlerLoadAll()" type="button" class="btn btn-danger p-3 me-1">
+                    <button ng-click="search.status = ''" type="button" class="btn btn-danger p-3 me-1">
                         Tất cả <span class="badge rounded-pill bg-dark">{{getTotalStatus()}}</span>
                     </button>
-                    <button ng-click="handlerLoadByStatus(item.id)" ng-repeat="item in statuses" type="button" class="btn p-3 me-1" ng-class="getColor('btn', item.id)">
+                    <button ng-click="search.status = item.id" ng-repeat="item in statuses" type="button" class="btn p-3 me-1" ng-class="getColor('btn', item.id)">
                         {{item.name}} <span class="badge rounded-pill bg-dark">{{checkStatusCount(item.id)}}</span>
                     </button>
                 </div>
@@ -36,20 +36,20 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="item in invoices">
+                            <tr ng-repeat="item in invoices | filter : { status: search.status }">
                                 <td>
                                     <b>{{$index + 1}}</b>
                                 </td>
-                                <td>{{item.booking.code}}</td>
-                                <td>{{item.booking.customer.fullName}}</td>
-                                <td>{{item.account.fullName}}</td>
+                                <td>{{item.bookingCode}}</td>
+                                <td>{{item.customer}}</td>
+                                <td>{{item.staff}}</td>
                                 <td>{{item.total | currency: '' : 0}}₫</td>
                                 <td>
                                     <span class="badge rounded-pill" ng-class="getColor('bg', item.status)">
                                         {{item.status == 1 ? 'Đang chờ' : (item.status == 2 ? 'Chưa thanh toán' :  (item.status == 3 ? 'Chờ thanh toán' : (item.status == 4 ? 'Hoàn thành' : 'Đã huỷ')))}}
                                     </span>
                                 </td>
-                                <td>{{item.createdDate | date:'dd/MM/yyyy'}}</td>
+                                <td>{{item.createdDate | date:'HH:mm dd/MM/yyyy'}}</td>
                                 <td>
                                     <a href="/#!/invoices/{{item.code}}" class="btn btn-outline-secondary btn-sm edit" title="Chi tiết">
                                         <i class="fas fa-eye"></i>
@@ -59,6 +59,26 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
+        </div>
+    </div>
+    
+    <div ng-show="isLoading" class="loader"> 
+        <div class="loader-inner">
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
             </div>
         </div>
     </div>

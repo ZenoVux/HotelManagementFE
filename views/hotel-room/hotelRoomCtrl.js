@@ -29,7 +29,7 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
             name: "Không hoạt động"
         }
     ]
-    $scope.loading = false;
+    $scope.isLoading = false;
     $scope.statusCounts = [];
     $scope.hotelRooms = [];
     $scope.services = [];
@@ -51,7 +51,7 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
     };
     $scope.booking = {};
     $scope.search = {};
-    
+
     $scope.frontIdCardBase64 = null;
     $scope.backIdCardBase64 = null;
     $scope.frontIdCardDisplay = null;
@@ -64,37 +64,11 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
 
     $scope.loadHotelRooms = async function () {
         $scope.hotelRooms = [];
-        $scope.loading = true;
+        $scope.isLoading = true;
         await $http.get("http://localhost:8000/api/hotel").then(function (resp) {
             $scope.hotelRooms = resp.data.hotelRooms;
             $scope.statusCounts = resp.data.statusCounts;
-            $scope.loading = false;
-        });
-    }
-
-    $scope.loadHotelRoomsByStatus = async function (statusFilter) {
-        $scope.hotelRooms = [];
-        $scope.loading = true;
-        await $http.get("http://localhost:8000/api/hotel?statusFilter=" + statusFilter).then(function (resp) {
-            $scope.hotelRooms = resp.data.hotelRooms;
-            $scope.statusCounts = resp.data.statusCounts;
-            $scope.loading = false;
-        });
-    }
-
-    $scope.loadHotelRoomsByBookingCode = async function () {
-        $scope.hotelRooms = [];
-        $scope.loading = true;
-        await $http.get("http://localhost:8000/api/hotel?bookingCode=" + $scope.search.bookingCode).then(function (resp) {
-            $scope.hotelRooms = resp.data.hotelRooms;
-            $scope.statusCounts = resp.data.statusCounts;
-            $scope.loading = false;
-        });
-    }
-
-    $scope.loadStatusCount = async function () {
-        await $http.get("http://localhost:8000/api/rooms/status-count").then(function (resp) {
-            $scope.statusCounts = resp.data;
+            $scope.isLoading = false;
         });
     }
 
@@ -160,6 +134,12 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
         });
     }
 
+    $scope.loadBooking = async function () {
+        await $http.get("http://localhost:8000/api/hotel/booking/" + $scope.selectRoom.bookingCode).then(resp => {
+            $scope.booking = resp.data;
+        });
+    }
+
     $scope.getStatus = function (_status) {
         return $scope.statuses.find(item => item.id == _status);;
     }
@@ -173,7 +153,7 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
         startedTime.setHours(0, 0, 0, 0);
         const endedTime = new Date(usedService.endedTime);
         endedTime.setHours(0, 0, 0, 0);
-        const days = (endedTime.getTime() - startedTime.getTime())  / (1000 * 3600 * 24);
+        const days = (endedTime.getTime() - startedTime.getTime()) / (1000 * 3600 * 24);
         return usedService.servicePrice * days;
     }
 
@@ -245,10 +225,10 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
                     }
                 ]
             });
-        });
 
-        $('#search-datatable-hosted-at').keyup(function () {
-            tableHostedAt.search($(this).val()).draw();
+            $('#search-datatable-hosted-at').keyup(function () {
+                tableHostedAt.search($(this).val()).draw();
+            });
         });
     }
 
@@ -357,21 +337,10 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
                 await $scope.loadUsedServices();
                 await $scope.initTableUsedService();
                 $('.nav-tabs a[href="#used-service-tab"]').tab('show');
-            }, function () {
-                alert("Thêm dịch vụ thất bại!");
+            }, function (resp) {
+                alert(resp.data.error);
             });
         }
-    }
-
-    $scope.updateServiceRoom = function (usedService) {
-        if (!confirm("Bạn muốn cập nhật dịch vụ này?")) {
-            return;
-        }
-        $http.put("http://localhost:8000/api/used-services", usedService).then(function (resp) {
-            alert("Cập nhật dịch vụ thành công!");
-        }, function () {
-            alert("Cập nhật dịch vụ thất bại!");
-        });
     }
 
     $scope.removeServiceRoom = function (usedService) {
@@ -391,8 +360,8 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
             await $scope.clearTableUsedService();
             await $scope.loadUsedServices();
             await $scope.initTableUsedService();
-        }, function () {
-            alert("Ngừng sử dụng dịch vụ thất bại!");
+        }, function (resp) {
+            alert(resp.data.error);
         });
     }
 
@@ -416,10 +385,8 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
         $scope.selectRoom = room;
         if (action == 'show') {
             await $scope.loadRoom();
-            if ($scope.selectRoom.status == 3) {
-                await $scope.loadRoom();
-            } else {
-
+            if ($scope.selectRoom.bookingCode !== '') {
+                await $scope.loadBooking();
             }
         } else {
             $scope.room = {};
@@ -534,7 +501,7 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
             await $scope.loadInvoiceDetail();
             await $scope.loadChangeRooms();
             await $scope.initTableChangeRoom();
-            
+
         } else {
             await $scope.clearTableChangeRoom();
             $scope.invoiceDetail = {};
@@ -574,8 +541,8 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
                 await $scope.loadHostedAts();
                 await $scope.initTableHostedAt();
                 $('.nav-tabs a[href="#hosted-at-tab"]').tab('show');
-            }, function () {
-                alert("Thêm khách hàng thất bại!");
+            }, function (resp) {
+                alert(resp.data.error);
             });
         }
     }
@@ -589,8 +556,8 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
             await $scope.clearTableHostedAt();
             await $scope.loadHostedAts();
             await $scope.initTableHostedAt();
-        }, function () {
-            alert("Loại bỏ khách hàng thất bại!");
+        }, function (resp) {
+            alert(resp.data.error);
         });
     }
 
@@ -676,8 +643,17 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
                 alert('Thêm khách hàng thất bại!');
             }
             console.log(response);
-        }).catch(function (error) {
-            console.error('Error fetching data:', error);
+        }, function (resp) {
+            alert(resp.data.error);
+        });
+    }
+
+    $scope.handlerCheckExtendCheckout = async function () {
+        const newCheckout = new Date($scope.extendCheckoutRoom.extendDate);
+        await $http.get("http://localhost:8000/api/hotel/check-extend-checkout-date?code=" + $scope.selectRoom.code + "&checkoutDate=" + newCheckout.toLocaleDateString('vi-VN')).then(function (resp) {
+            alert("Ngày trả phòng hợp lệ!");
+        }, function (resp) {
+            alert(resp.data.error);
         });
     }
 
@@ -697,12 +673,20 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
         }
         await $http.post("http://localhost:8000/api/hotel/extend-checkout-date", $scope.extendCheckoutRoom).then(function (resp) {
             alert("Gia hạn ngày trả phòng thành công!");
-            $window.location.reload();
-        }, function () {
-            alert("Gia hạn ngày trả phòng thất bại!");
+            $scope.statusCounts.forEach(statusCount => {
+                if ($scope.selectRoom.status == 5 && statusCount.status == 2) {
+                    statusCount.count++
+                }
+                if ($scope.selectRoom.status == 5 && statusCount.status == 5) {
+                    statusCount.count--;
+                }
+            });
+            $scope.selectRoom.status = 2;
+            $scope.selectRoom.checkoutExpected = newCheckout;
+            $scope.modalExtendDate('hide');
+        }, function (resp) {
+            alert(resp.data.error);
         });
-        extendDateForm.$setPristine();
-        extendDateForm.$setUntouched();
     }
 
     $scope.handlerCancelRoom = function () {
@@ -720,22 +704,44 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
             alert("Huỷ phòng thành công!");
             $scope.cancelRoom.note = "";
             $window.location.reload();
-        }, function () {
-            alert("Huỷ phòng thất bại!");
+        }, function (resp) {
+            alert(resp.data.error);
         });
     }
 
-    $scope.handlerReadyRoom = function (room) {
+    $scope.handlerReadyRoom = async function (room) {
         if (!confirm("Bạn muốn chuyển phòng " + room.code + " về trạng thái sẵn sàng?")) {
             return;
         }
         $http.post("http://localhost:8000/api/hotel/ready", {
             code: room.code
-        }).then(function (resp) {
-            alert("Phòng đã sẵn sàng!");
-            $window.location.reload();
-        }, function () {
-            alert("Phòng chưa sẵn sàng!");
+        }).then(async function () {
+            await $http.get("http://localhost:8000/api/hotel/" + room.code).then(async function (resp) {
+                await $scope.statusCounts.forEach(statusCount => {
+                    if (statusCount.status == resp.data.status) {
+                        statusCount.count++
+                    }
+                    if (statusCount.status == room.status) {
+                        statusCount.count--;
+                    }
+                });
+                await $scope.hotelRooms.forEach(hotelRoom => {
+                    if (hotelRoom.code == resp.data.code) {
+                        hotelRoom.bookingCode = resp.data.bookingCode;
+                        hotelRoom.bookingDetailId = resp.data.bookingDetailId;
+                        hotelRoom.invoiceDetailId = resp.data.invoiceDetailId;
+                        hotelRoom.checkinExpected = resp.data.checkinExpected;
+                        hotelRoom.checkoutExpected = resp.data.checkoutDate;
+                        hotelRoom.customer = resp.data.customer;
+                        hotelRoom.phoneNumber = resp.data.phoneNumber;
+                        hotelRoom.status = resp.data.status;
+                        return;
+                    }
+                });
+                alert("Phòng đã sẵn sàng!");
+            });
+        }, function (resp) {
+            alert(resp.data.error);
         });
     }
 
@@ -753,11 +759,40 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
         }
         $scope.changeRoom.fromRoomCode = $scope.selectRoom.code;
         console.log("changeRoom", $scope.changeRoom);
+
         $http.post("http://localhost:8000/api/hotel/change", $scope.changeRoom).then(function (resp) {
             alert("Đổi phòng thành công!");
-            $window.location.reload();
-        }, function () {
-            alert("Đổi phòng thất bại!");
+            $scope.statusCounts.forEach(statusCount => {
+                if (statusCount.status == 6) {
+                    statusCount.count++
+                    return;
+                }
+            });
+            $scope.hotelRooms.forEach(hotelRoom => {
+                if (hotelRoom.code == $scope.changeRoom.toRoomCode) {
+                    hotelRoom.bookingCode = $scope.selectRoom.bookingCode;
+                    hotelRoom.bookingDetailId = $scope.selectRoom.bookingDetailId;
+                    hotelRoom.invoiceDetailId = $scope.selectRoom.invoiceDetailId;
+                    hotelRoom.checkinExpected = $scope.selectRoom.checkinExpected;
+                    hotelRoom.checkoutExpected = $scope.changeRoom.checkoutDate;
+                    hotelRoom.customer = $scope.selectRoom.customer;
+                    hotelRoom.phoneNumber = $scope.selectRoom.phoneNumber;
+                    hotelRoom.status = 2;
+                    return;
+                }
+            });
+            
+            $scope.selectRoom.bookingCode = "";
+            $scope.selectRoom.bookingDetailId = null;
+            $scope.selectRoom.invoiceDetailId = null;
+            $scope.selectRoom.checkinExpected = null;
+            $scope.selectRoom.checkoutExpected = null;
+            $scope.selectRoom.customer = null;
+            $scope.selectRoom.phoneNumber = null;
+            $scope.selectRoom.status = 6;
+            $scope.modalChangeRoom('hide');
+        }, function (resp) {
+            alert(resp.data.error);
         });
     }
 
@@ -796,7 +831,7 @@ app.controller("hotelRoomCtrl", function ($scope, $location, $http, $window) {
                 $scope.customer.peopleId = response.data.data[0].id;
                 $scope.customer.address = response.data.data[0].address;
                 $scope.customer.placeOfBirth = response.data.data[0].home;
-                $scope.loading = false;
+                $scope.isLoading = false;
                 return response;
             } else {
                 return response;

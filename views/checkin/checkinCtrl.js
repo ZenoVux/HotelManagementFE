@@ -1,4 +1,6 @@
 app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) {
+    
+    $scope.isLoading = false;
     $scope.hostedAts = [];
     $scope.serviceRooms = [];
     $scope.usedServices = [];
@@ -18,8 +20,10 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
     }
 
     $scope.loadBookingDetail = async function () {
+        $scope.isLoading = true;
         await $http.get("http://localhost:8000/api/booking-details/waiting-checkin/" + $routeParams.roomCode).then(function (resp) {
             $scope.bookingDetail = resp.data;
+            $scope.isLoading = false;
         }, function () {
             alert("Có lỗi xảy ra vui lòng thử lại!");
             $location.path("/hotel-room");
@@ -191,6 +195,7 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
         if (!confirm("Bạn muốn thêm khách hàng?")) {
             return;
         }
+        $scope.isLoading = true;
 
         var formData = new FormData();
 
@@ -215,27 +220,24 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
             headers: {
                 'Content-Type': undefined
             }
-        }).then(async function (response) {
-            if (response.status == 200) {
-                alert('Thêm khách hàng thành công!');
-                $scope.customer = {
-                    gender: true
-                };
-                $scope.frontIdCardBase64 = null;
-                $scope.backIdCardBase64 = null;
-                $scope.frontIdCardDisplay = null;
-                $scope.backIdCardDisplay = null;
-                $scope.isFrontImageCaptured = false;
-                await $scope.clearTableCustomer();
-                await $scope.loadCustomers();
-                await $scope.initTableCustomer();
-                $('.nav-tabs a[href="#customer-tab"]').tab('show');
-            } else {
-                alert('Thêm khách hàng thất bại!');
-            }
-            console.log(response);
-        }).catch(function (error) {
-            console.error('Error fetching data:', error);
+        }).then(async function (resp) {
+            alert('Thêm khách hàng thành công!');
+            $scope.isLoading = false;
+            $scope.customer = {
+                gender: true
+            };
+            $scope.frontIdCardBase64 = null;
+            $scope.backIdCardBase64 = null;
+            $scope.frontIdCardDisplay = null;
+            $scope.backIdCardDisplay = null;
+            $scope.isFrontImageCaptured = false;
+            await $scope.clearTableCustomer();
+            await $scope.loadCustomers();
+            await $scope.initTableCustomer();
+            $('.nav-tabs a[href="#customer-tab"]').tab('show');
+            console.log(resp);
+        }, function () {
+            alert('Thêm khách hàng thất bại!');
         });
     }
 
@@ -282,6 +284,7 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
         if (!confirm("Bạn muốn nhận phòng " + $routeParams.roomCode +  "?")) {
             return;
         }
+        $scope.isLoading = true;
         console.log("checkin", {
             code: $routeParams.roomCode,
             hostedAts: $scope.hostedAts,
@@ -304,6 +307,10 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
             services: services
         }).then(function (resp) {
             alert("Nhận phòng thành công!");
+            $scope.isLoading = false;
+            $location.path("/hotel-room");
+        }, function (resp) {
+            alert(resp.data.error);
             $location.path("/hotel-room");
         });
     }

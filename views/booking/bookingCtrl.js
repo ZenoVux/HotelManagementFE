@@ -1,16 +1,17 @@
 app.controller("listBookingCtrl", function ($scope, $http, $filter) {
 
     $scope.loading = false;
-    $scope.showBookingTable = true;
+    $scope.showBookingTable = false;
     $scope.showCustomerTable = false;
-    $scope.showConfirmedTable = false;
+    $scope.showConfirmedTable = true;
     $scope.showPendingTable = false;
-    $scope.currentTable = 0;
+    $scope.showListRoomEditBkd = false;
+    $scope.currentTable = 2;
     $scope.booking = {};
     $scope.addRoom = {};
-
-
-    $scope.booking.reasonCancel = "";
+    $scope.bookingDetail = {};
+    $scope.rooms = [];
+    $scope.listRoomEditBkd = [];
 
     $scope.closeDropdown = function () {
         $('.dropdown-menu').removeClass('show');
@@ -20,15 +21,38 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
         $scope.loading = true;
         $http.get("http://localhost:8000/api/bookings").then(function (resp) {
             $scope.bookings = resp.data;
-            console.log($scope.bookings);
             $(document).ready(function () {
-                $('#bookingTable').DataTable();
+                bookingTable = $('#bookingTable').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
+                    },
+                    dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>'
+                });
+                $('#search-datatable-booking').keyup(function () {
+                    bookingTable.search($(this).val()).draw();
+                });
             });
             $(document).ready(function () {
-                $('#confirmedTable').DataTable();
+                confirmedTable = $('#confirmedTable').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
+                    },
+                    dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>'
+                });
+                $('#search-datatable-confirmBooking').keyup(function () {
+                    confirmedTable.search($(this).val()).draw();
+                });
             });
             $(document).ready(function () {
-                $('#pendingTable').DataTable();
+                pendingTable = $('#pendingTable').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
+                    },
+                    dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>'
+                });
+                $('#search-datatable-pendingBooking').keyup(function () {
+                    pendingTable.search($(this).val()).draw();
+                });
             });
             $scope.loading = false;
         }).catch(function (error) {
@@ -44,8 +68,17 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
 
         $http.get("http://localhost:8000/api/customers/in-use").then(function (resp) {
             $scope.customersInUse = resp.data;
+            $scope.customersInUse.reverse();
             $(document).ready(function () {
-                $('#customerTable').DataTable();
+                customerTable = $('#customerTable').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
+                    },
+                    dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>'
+                });
+                $('#search-datatable-customer').keyup(function () {
+                    customerTable.search($(this).val()).draw();
+                });
             });
         }).catch(function (error) {
             console.error('Error fetching data:', error);
@@ -53,6 +86,22 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
 
     }
     $scope.init();
+
+    $scope.closeModal = function () {
+        $scope.showHistory = false;
+        $scope.showAddRoom = false;
+        $scope.showEditBkd = false;
+    }
+
+    $scope.viewCustomer = function (customer) {
+        $('#customer-modal').modal('show');
+        $scope.selectedCustomer = customer;
+        $http.get("http://localhost:8000/api/invoices/count-by-customer/" + $scope.selectedCustomer.peopleId).then(function (resp) {
+            $scope.numInvoicesOfCus = resp.data;
+        });
+        $scope.frontIdCardUrl = "http://localhost:8000/images/" + $scope.selectedCustomer.frontIdCard;
+        $scope.backIdCardUrl = "http://localhost:8000/images/" + $scope.selectedCustomer.backIdCard;
+    };
 
     $scope.setFalseAllTable = function () {
         $scope.showBookingTable = false;
@@ -109,18 +158,20 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
 
     $scope.showHistoryCard = function () {
         $scope.showHistory = true;
-
     };
 
     $scope.hideHistoryCard = function () {
         $scope.showHistory = false;
     };
 
+    $scope.hideAddRoom = function () {
+        $scope.showAddRoom = false;
+    };
+
     $scope.viewBooking = function (booking) {
         $scope.loading = true;
         $scope.showHistory = false;
         $scope.currentBooking = booking;
-        console.log(booking);
         $http.get("http://localhost:8000/api/bookings/" + booking.code).then(function (resp) {
             $scope.bookingInfo = resp.data;
             for (var i = 0; i < $scope.bookingInfo.bkList.length; i++) {
@@ -128,7 +179,6 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
                 bk.checkinExpected = new Date(bk.checkinExpected);
                 bk.checkoutExpected = new Date(bk.checkoutExpected);
             }
-            console.log($scope.bookingInfo);
             $('#booking-modal').modal('show');
 
             $scope.loading = false;
@@ -146,7 +196,6 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
                     bk.checkoutExpected = new Date(bk.checkoutExpected);
                 }
             }
-            console.log($scope.bookingHistory);
         }).catch(function (error) {
             console.error('Error fetching data:', error);
         });
@@ -155,7 +204,7 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
     $scope.addRoom = function () {
         $scope.addRoom.adults = 2;
         $scope.addRoom.children = 0;
-        $('#adđ-room-modal').modal('show');
+        $scope.showAddRoom = true;
     };
 
     $scope.clearDataTable = function () {
@@ -175,11 +224,9 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
             alert('Hãy chọn ngày check-in, check-out!.');
         } else if ($scope.addRoom.checkinDate < today.setDate(today.getDate() - 1)) {
             alert('Ngày check-in được tính từ ngày hôm nay.');
-        } else if ($scope.addRoom.checkoutDate < $scope.addRoom.checkinDate) {
+        } else if ($scope.addRoom.checkoutDate <= $scope.addRoom.checkinDate) {
             alert('Ngày check-out phỉa sau ngày check-in.');
         } else {
-            console.log($scope.addRoom.checkinDate);
-            console.log($scope.addRoom.checkoutDate);
             $scope.loading = true;
             $http.get('http://localhost:8000/api/bookings/info', {
                 params: {
@@ -199,11 +246,17 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
 
     $scope.updateSelectedRooms = function (info) {
 
-        $scope.rooms = [];
         var numAdults = $scope.addRoom.adults;
         var numChildren = $scope.addRoom.children;
         var maxAdults = 0;
         var maxChildren = 0;
+        var selectedCount = 0;
+        angular.forEach(info.listRooms, function (room) {
+            if (room.selected) {
+                selectedCount++;
+            }
+        });
+        info.roomCount = selectedCount;
         for (var i = 0; i < $scope.addBookings.length; i++) {
             var info = $scope.addBookings[i];
             for (var j = 0; j < info.listRooms.length; j++) {
@@ -235,18 +288,26 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
 
     $scope.addRoomToBooking = function () {
 
-        var r = confirm("Xác nhận thêm phòng vào booking?");
-        if (r != true) {
+        if ($scope.rooms.length == 0) {
+            alert("Vui lòng chọn phòng!");
             return;
         }
+
+        var note = prompt("Nhập ghi chú và xác nhận thêm phòng vào " + $scope.currentBooking.code);
+        if (note == '' || note == null || note == 'undefined') {
+            return;
+        }
+
+        $scope.loading = true;
 
         var formData = new FormData();
 
         const bookingDetailJson = JSON.stringify({
             bookingCode: $scope.currentBooking.code,
+            bookingDetailCode: "",
             checkinExpected: $filter('date')($scope.addRoom.checkinDate, 'dd-MM-yyyy'),
             checkoutExpected: $filter('date')($scope.addRoom.checkoutDate, 'dd-MM-yyyy'),
-            note: $scope.addRoom.note,
+            note: note,
             numAdults: $scope.addRoom.adults,
             numChilds: $scope.addRoom.children,
             rooms: $scope.rooms.map(room => {
@@ -264,56 +325,188 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
             }
         }).then(function (response) {
             if (response.status == 200) {
-                $('#booking-modal').modal('hide');
                 alert('Thêm phòng thành công!');
-                $('#adđ-room-modal').modal('hide');
+                $scope.showAddRoom = false;
                 $scope.viewBooking($scope.currentBooking);
                 $scope.addRoom.checkinDate = null;
                 $scope.addRoom.checkoutDate = null;
                 $scope.clearDataTable();
+                $scope.loading = false;
             }
         }).catch(function (error) {
-            console.error('Error fetching data:', error);
+            if (error.data && error.data.error) {
+                alert(error.data.error);
+                $scope.loading = false;
+            } else {
+                console.error('Error fetching data:', error);
+            }
         });
     }
 
-    $scope.editRoom = function (room) {
-        alert("Edit room");
+    $scope.openEditBkd = function (id) {
+        $scope.loading = true;
+        $http.get('http://localhost:8000/api/booking-details/get-info/' + id).then(function (response) {
+            $scope.bookingDetail = response.data;
+            $scope.bookingDetail.checkin_expected = new Date($scope.bookingDetail.checkin_expected);
+            $scope.bookingDetail.checkout_expected = new Date($scope.bookingDetail.checkout_expected);
+            $scope.loading = false;
+        }).catch(function (error) {
+            console.error('Error fetching data:', error);
+            $scope.loading = false;
+        });
+        $scope.showEditBkd = true;
+    };
+
+    $scope.hideEditBkd = function () {
+        $scope.showEditBkd = false;
+    };
+
+    $scope.changeDay = function () {
+        $scope.listRoomEditBkd = [];
+        $scope.showListRoomEditBkd = false;
+    }
+
+    $scope.checkRoomEditBkd = function () {
+
+        $scope.loading = true;
+        $http.get('http://localhost:8000/api/booking-details/get-room-by-type', {
+            params: {
+                bookingCode: $scope.bookingInfo.code,
+                roomCode: $scope.bookingDetail.roomCode,
+                checkin: $filter('date')($scope.bookingDetail.checkin_expected, 'dd-MM-yyyy'),
+                checkout: $filter('date')($scope.bookingDetail.checkout_expected, 'dd-MM-yyyy'),
+                roomType: $scope.bookingDetail.type,
+            }
+        }).then(function (response) {
+            $scope.listRoomEditBkd = response.data;
+            if ($scope.listRoomEditBkd.length == 0) {
+                alert('Không có phòng trống trong khoảng thời gian này!');
+            } else {
+                $scope.showListRoomEditBkd = true;
+            }
+
+            $scope.loading = false;
+        }).catch(function (error) {
+            console.error('Error fetching data:', error);
+            $scope.loading = false;
+        });
+
+    };
+
+    $scope.editBkd = function () {
+        var today = new Date();
+        if ($scope.bookingDetail.checkin_expected == null || $scope.bookingDetail.checkout_expected == null) {
+            alert('Hãy chọn ngày check-in, check-out!.');
+        } else if ($scope.bookingDetail.checkin_expected < today.setDate(today.getDate() - 1)) {
+            alert('Ngày check-in được tính từ ngày hôm nay.');
+        } else if ($scope.bookingDetail.checkout_expected <= $scope.bookingDetail.checkin_expected) {
+            alert('Ngày check-out phỉa sau ngày check-in.');
+        } else {
+
+            var note = prompt("Nhập lí do và xác chỉnh sửa thông tin booking " + $scope.currentBooking.code);
+            if (note == '' || note == null || note == 'undefined') {
+                return;
+            }
+            $scope.loading = true;
+            var formData = new FormData();
+            var rooms = [
+                $scope.bookingDetail.roomSelected
+            ];
+
+            const bookingDetailJson = JSON.stringify({
+                bookingCode: $scope.currentBooking.code,
+                bookingDetailCode: $scope.bookingDetail.bkdCode,
+                checkinExpected: $filter('date')($scope.bookingDetail.checkin_expected, 'dd-MM-yyyy'),
+                checkoutExpected: $filter('date')($scope.bookingDetail.checkout_expected, 'dd-MM-yyyy'),
+                note: $scope.bookingDetail.note + ' - Cập nhật: ' + note + ", " + $scope.bookingDetail.moreNote,
+                numAdults: 0,
+                numChilds: 0,
+                rooms: rooms.map(room => {
+                    const { selected, $$hashKey, ...cleanedRoom } = room;
+                    return cleanedRoom;
+                }),
+            });
+
+            formData.append('bookingDetailReq', bookingDetailJson);
+
+            $http.post('http://localhost:8000/api/booking-details/edit-bkd', formData, {
+                transformRequest: angular.identity,
+                headers: {
+                    'Content-Type': undefined
+                }
+            }).then(function (response) {
+                if (response.status == 200) {
+                    alert('Chỉnh sửa thành công!');
+                    $scope.showEditBkd = false;
+                    $scope.viewBooking($scope.currentBooking);
+                    $scope.bookingDetail.checkin_expected = null;
+                    $scope.bookingDetail.checkout_expected = null;
+                    $scope.showListRoomEditBkd = false;
+                    $scope.loading = false;
+                }
+            }).catch(function (error) {
+                if (error.data && error.data.error) {
+                    alert(error.data.error);
+                    $scope.loading = false;
+                } else {
+                    alert('Chỉnh sửa thất bại!');
+                    console.error('Error fetching data:', error);
+                    $scope.loading = false;
+                }
+            });
+
+        }
+
     };
 
     $scope.deleteRoom = function (id) {
 
-        var r = confirm("Xác nhận bỏ phòng khỏi booking?");
-        if (r != true) {
+        var reason = prompt("Nhập lý do và xác nhận bỏ phòng");
+        if (reason == '' || reason == null || reason == 'undefined') {
             return;
         }
 
+        $scope.loading = true;
+
         $http.post('http://localhost:8000/api/booking-details/delete-bkd', {
-            id: id
+            id: id,
+            reason: reason
         }).then(function (response) {
             if (response.status == 200) {
                 alert('Bỏ phòng thành công!');
                 $scope.viewBooking($scope.currentBooking);
             }
         }).catch(function (error) {
-            console.error('Error fetching data:', error);
+            if (error.data && error.data.error) {
+                alert(error.data.error);
+                $scope.loading = false;
+            } else {
+                alert('Chỉnh sửa thất bại!');
+                console.error('Error fetching data:', error);
+                $scope.loading = false;
+            }
         });
 
     };
 
     $scope.cancelBooking = function () {
-        var confirmationMessage = "Xác nhận huỷ booking " + $scope.currentBooking.code + "";
-        if (window.confirm(confirmationMessage)) {
-            $scope.currentBooking.note = $scope.currentBooking.note + " ----- Lí do huỷ: "
-                + $scope.booking.reasonCancel;
-            $http.put("http://localhost:8000/api/bookings/cancel", $scope.currentBooking).then(function (resp) {
-                $scope.booking.reasonCancel = "";
-                $scope.init();
-                $('#booking-modal').modal('hide');
-            }).catch(function (error) {
-                console.error('Error fetching data:', error);
-            });
+        var reason = prompt("Nhập lý do và xác nhận huỷ booking " + $scope.currentBooking.code);
+        if (reason == '' || reason == null || reason == 'undefined') {
+            return;
         }
+        $scope.currentBooking.note = $scope.currentBooking.note + " ----- Lí do huỷ: "
+            + reason;
+        $scope.loading = true;
+        $http.put("http://localhost:8000/api/bookings/cancel", $scope.currentBooking).then(function (resp) {
+            $http.get("http://localhost:8000/api/bookings").then(function (resp) {
+                $scope.bookings = resp.data;
+            });
+            $('#booking-modal').modal('hide');
+            alert('Huỷ booking thành công!');
+            $scope.loading = false;
+        }).catch(function (error) {
+            console.error('Error fetching data:', error);
+        });
     };
 
 });
@@ -389,7 +582,7 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
             alert('Hãy chọn ngày check-in, check-out!.');
         } else if ($scope.booking.checkinDate < today.setDate(today.getDate() - 1)) {
             alert('Ngày check-in được tính từ ngày hôm nay.');
-        } else if ($scope.booking.checkoutDate < $scope.booking.checkinDate) {
+        } else if ($scope.booking.checkoutDate <= $scope.booking.checkinDate) {
             alert('Ngày check-out phải sau ngày check-in.');
         } else {
             $scope.loading = true;
@@ -421,6 +614,13 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
         var numChildren = $scope.booking.children;
         var maxAdults = 0;
         var maxChildren = 0;
+        var selectedCount = 0;
+        angular.forEach(info.listRooms, function (room) {
+            if (room.selected) {
+                selectedCount++;
+            }
+        });
+        info.roomCount = selectedCount;
         for (var i = 0; i < $scope.bookings.length; i++) {
             var info = $scope.bookings[i];
             for (var j = 0; j < info.listRooms.length; j++) {
@@ -456,6 +656,8 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
             return;
         }
 
+        $scope.loading = true;
+
         var formData = new FormData();
 
         var binaryFront = atob($scope.frontIdCardBase64);
@@ -486,8 +688,6 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
             note: $scope.booking.note
         });
 
-        console.log(bookingReqJson);
-
         formData.append('frontIdCard', blobFront, 'frontIdCard.jpg');
         formData.append('backIdCard', blobBack, 'backIdCard.jpg');
         formData.append('bookingReq', bookingReqJson);
@@ -500,13 +700,31 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
         }).then(function (response) {
             if (response.status == 200) {
                 alert('Đặt phòng thành công!');
-                $location.path("/bookings");
+                var checkinDate = $filter('date')($scope.booking.checkinDate, 'dd-MM-yyyy');
+                var today = $filter('date')(new Date(), 'dd-MM-yyyy');
+                if (checkinDate == today) {
+                    $http.get('http://localhost:8000/api/bookings/get-by-id/' + response.data.id).then(function (response) {
+                        if (response.status == 200) {
+                            $location.path("/hotel-room/" + response.data.code);
+                        }
+                    }).catch(function (error) {
+                        console.error('Error fetching data:', error);
+                    });
+                } else {
+                    $location.path("/bookings");
+                }
+                $scope.loading = false;
             } else {
                 alert('Đặt phòng thất bại!');
+                $scope.loading = false;
             }
-            console.log(response);
         }).catch(function (error) {
-            console.error('Error fetching data:', error);
+            if (error.data && error.data.error) {
+                alert(error.data.error);
+                $scope.loading = false;
+            } else {
+                console.error('Error fetching data:', error);
+            }
         });
 
     }
@@ -528,7 +746,6 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
             return false;
         }
     };
-
 
     $scope.uploadFrontIdCard = function (imageData) {
 
@@ -573,7 +790,6 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
                 return response;
             }
         }).catch(function (error) {
-            console.log(error);
             $scope.loading = false;
             return error;
         });
@@ -600,11 +816,9 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
                 'Content-Type': undefined
             }
         }).then(function (response) {
-            console.log(response);
             $scope.loading = false;
             return response;
         }).catch(function (error) {
-            console.log(error);
             $scope.loading = false;
             return error;
         });

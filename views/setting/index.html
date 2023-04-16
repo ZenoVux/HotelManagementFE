@@ -1,143 +1,11 @@
 <app-layout>
     <div class="row">
-        <!-- <div class="col-6">
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="card-title mb-4">Phụ thu</h4>
-                    <form>
-                        <div class="row">
-                            <div class="col-3">
-                                <div class="mb-3">
-                                    <label for="formrow-inputCity" class="form-label">Từ</label>
-                                    <input ng-model="surcharge.timeStart" class="form-control" type="time">
-                                </div>
-                            </div>
-                            <div class="col-3">
-                                <div class="mb-3">
-                                    <label for="formrow-inputState" class="form-label">Đến</label>
-                                    <input ng-model="surcharge.timeEnd" class="form-control" type="time">
-                                </div>
-                            </div>
-                            <div class="col-3">
-                                <div class="mb-3">
-                                    <label for="formrow-inputZip" class="form-label">Phần trăm</label>
-                                    <input ng-model="surcharge.percent" type="number" min="0" max="100" class="form-control">
-                                </div>
-                            </div>
-                            <div class="col-3">
-                                <div class="mb-3">
-                                    <label for="formrow-inputZip" class="form-label">Loại</label>
-                                    <select class="form-select">
-                                        <option ng-value="false">Nhận phòng</option>
-                                        <option ng-value="true">Trả phòng</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <button ng-click="update()" class="btn btn-success">Thêm mới</button>
-                    </form>
-                </div>
-                <div class="card-body border-top">
-                    <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" data-bs-toggle="tab" href="#check-in" role="tab">
-                                <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
-                                <span class="d-none d-sm-block">NHẬN PHÒNG</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#check-out" role="tab">
-                                <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
-                                <span class="d-none d-sm-block">TRẢ PHÒNG</span>
-                            </a>
-                        </li>
-                    </ul>
-                    <div class="tab-content py-3">
-                        <div class="tab-pane active" id="check-in" role="tabpanel">
-                            <div class="table-responsive">
-                                <table class="table align-middle table-nowrap">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Từ</th>
-                                            <th scope="col">Đến</th>
-                                            <th scope="col">Phần trăm</th>
-                                            <th scope="col" style="width: 100px;">Hành động</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr ng-repeat="item in earlyCheckinSurcharges">
-                                            <td>{{item.timeStart | date:'HH:mm'}}</td>
-                                            <td>{{item.timeEnd | date:'HH:mm'}}</td>
-                                            <td>
-                                                <input ng-model="item.percent" style="width: 70px;" type="number"
-                                                    class="form-control form-control-sm" min="0" max="100">
-                                            </td>
-                                            </td>
-                                            <td>
-                                                <ul class="list-unstyled hstack gap-1 mb-0">
-                                                    <li>
-                                                        <button class="btn btn-sm btn-soft-info">
-                                                            <i class="mdi mdi-pencil-outline"></i>
-                                                        </button>
-                                                    </li>
-                                                    <li>
-                                                        <button ng-click="removeHostedAt(item)"
-                                                            class="btn btn-sm btn-soft-danger"><i
-                                                                class="mdi mdi-delete-outline"></i></button>
-                                                    </li>
-                                                </ul>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="tab-pane" id="check-out" role="tabpanel">
-                            <div class="table-responsive">
-                                <table class="table align-middle table-nowrap">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Từ</th>
-                                            <th scope="col">Đến</th>
-                                            <th scope="col">Phần trăm</th>
-                                            <th scope="col" style="width: 100px;">Hành động</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr ng-repeat="item in lateCheckoutSurcharges">
-                                            <td>{{item.timeStart | date:'HH:mm'}}</td>
-                                            <td>{{item.timeEnd | date:'HH:mm'}}</td>
-                                            <td>
-                                                <input ng-model="item.percent" style="width: 70px;" type="number"
-                                                    class="form-control form-control-sm" min="0" max="100">
-                                            </td>
-                                            <td>
-                                                <ul class="list-unstyled hstack gap-1 mb-0">
-                                                    <li>
-                                                        <button class="btn btn-sm btn-soft-info">
-                                                            <i class="mdi mdi-pencil-outline"></i>
-                                                        </button>
-                                                    </li>
-                                                    <li>
-                                                        <button ng-click="removeHostedAt(item)"
-                                                            class="btn btn-sm btn-soft-danger"><i
-                                                                class="mdi mdi-delete-outline"></i></button>
-                                                    </li>
-                                                </ul>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div> -->
         <div class="col-6">
             <div class="card">
+                <h5 class="card-header bg-transparent border-bottom text-uppercase">
+                    CẤU HÌNH GIỜ
+                </h5>
                 <div class="card-body">
-                    <h4 class="card-title mb-4">Cấu hình giờ</h4>
                     <div class="mb-3">
                         <label for="formrow-checkin-input" class="form-label">Giờ nhận phòng</label>
                         <input ng-model="setting.checkinTime" class="form-control" type="time">
@@ -148,6 +16,67 @@
                     </div>
                     <button ng-click="handlerUpdateSetting()" class="btn btn-primary">Cập nhật</button>
                 </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card">
+                <h5 class="card-header bg-transparent border-bottom text-uppercase">
+                    PHƯƠNG THỨC THANH TOÁN
+                </h5>
+                <div class="card-body">
+                    <input class="form-control mb-3" type="search" placeholder="Tìm kiếm"
+                        id="search-datatable-payment-method">
+                    <table id="datatable-payment-method" class="table table-bordered dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Tên phương thức</th>
+                                <th>Trạng thái</th>
+                                <th>Mô tả</th>
+                                <th style="width: 100px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="item in paymentMethods">
+                                <td>
+                                    <b>{{$index + 1}}</b>
+                                </td>
+                                <td>{{item.name}}</td>
+                                <td>
+                                    <span class="badge rounded-pill" ng-class="item.status ? 'bg-success ' : 'badge-soft-danger'">
+                                        {{item.status ? 'Đang hoạt động' : 'Ngừng hoạt động'}}
+                                    </span>
+                                </td>
+                                <td>{{item.description}}</td>
+                                <td>
+                                    <button ng-click="" class="btn btn-outline-secondary btn-sm edit" title="Chỉnh sửa">
+                                        <i class="fas fa-pencil-alt"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div ng-show="isLoading" class="loader"> 
+        <div class="loader-inner">
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
             </div>
         </div>
     </div>

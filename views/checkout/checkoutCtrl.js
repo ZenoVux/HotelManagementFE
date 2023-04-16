@@ -1,11 +1,13 @@
 app.controller("checkoutCtrl", function ($scope, $routeParams, $location, $http, $window) {
 
+    $scope.isLoading = false;
     $scope.invoiceDetail = null;
     $scope.invoiceDetailUpdate = {};
     $scope.usedServices = [];
     $scope.hostedAts = [];
 
     $scope.init = async function () {
+        $scope.isLoading = true;
         await $scope.loadInvoiceDetail();
         if ($scope.invoiceDetail) {
             await $scope.loadUsedServices();
@@ -25,6 +27,7 @@ app.controller("checkoutCtrl", function ($scope, $routeParams, $location, $http,
     $scope.loadUsedServices = async function () {
         await $http.get("http://localhost:8000/api/used-services?invoiceDetailId=" + $scope.invoiceDetail.id + "&status=true").then(function (resp) {
             $scope.usedServices = resp.data;
+            $scope.isLoading = false;
         });
     }
 
@@ -142,11 +145,14 @@ app.controller("checkoutCtrl", function ($scope, $routeParams, $location, $http,
         if (!confirm("Bạn muốn cập nhật phòng " + $scope.invoiceDetail.room.code +  "?")) {
             return;
         }
+        $scope.isLoading = true;
         $http.post("http://localhost:8000/api/hotel/update-invoice-detail", $scope.invoiceDetailUpdate).then(function (resp) {
             alert("Cập nhật thành công!");
+            $scope.isLoading = false;
             $window.location.reload();
-        }, function () {
-            alert("Cập nhật thất bại!");
+        }, function (resp) {
+            $scope.isLoading = false;
+            alert(resp.data.error);
         });
     }
 
@@ -154,13 +160,16 @@ app.controller("checkoutCtrl", function ($scope, $routeParams, $location, $http,
         if (!confirm("Bạn muốn trả phòng " + $routeParams.roomCode +  "?")) {
             return;
         }
+        $scope.isLoading = true;
         $http.post("http://localhost:8000/api/hotel/checkout", {
             code: $routeParams.roomCode
         }).then(function (resp) {
+            $scope.isLoading = false;
             alert("Trả phòng thành công!");
             $location.path("/invoices/" + $scope.invoiceDetail.invoice.code);
-        }, function () {
-            alert("Trả phòng thất bại!");
+        }, function (resp) {
+            $scope.isLoading = false;
+            alert(resp.data.error);
         });
     }
 

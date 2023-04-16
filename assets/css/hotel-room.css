@@ -35,3 +35,14 @@
 .text-purple {
     color: purple !important;
 }
+
+.btn-hotel {
+    background-color: #2A3042;
+    color: white;
+}
+
+.btn-hotel:hover {
+    background-color: #1e2330;
+    color: white;
+    border: 1px solid #2A3042;
+}

@@ -19,16 +19,18 @@ app.controller("invoiceCtrl", function ($scope, $http) {
         }
     ]
 
+    $scope.search = {};
     $scope.invoices = [];
     $scope.statusCounts = [];
 
     $scope.init = async function () {
+        $scope.isLoading = true;
         await $scope.loadStatusCount();
         await $scope.loadInvoice();
         await $scope.initTableInvoice();
     }
 
-    $scope.initTableInvoice = function () {
+    $scope.initTableInvoice = async function () {
         $(document).ready(function () {
             tableInvoice = $('#datatable-invoices').DataTable({
                 language: {
@@ -79,6 +81,7 @@ app.controller("invoiceCtrl", function ($scope, $http) {
     $scope.loadInvoice = async function () {
         await $http.get("http://localhost:8000/api/invoices").then(function (resp) {
             $scope.invoices = resp.data;
+            $scope.isLoading = false;
         });
     }
 
@@ -139,6 +142,7 @@ app.controller("invoiceCtrl", function ($scope, $http) {
 
 app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $window, $location) {
 
+    $scope.isLoading = false;
     $scope.invoice = {};
     $scope.payment = {};
     $scope.invoiceDetail = {};
@@ -149,6 +153,7 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
     $scope.promotions = [];
 
     $scope.init = async function () {
+        $scope.isLoading = true;
         await $scope.loadInvoice();
         await $scope.loadInvoiceDetails();
     }
@@ -177,6 +182,7 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
     $scope.loadInvoiceDetails = async function () {
         await $http.get("http://localhost:8000/api/invoice-details/invoice-code/" + $routeParams.code).then(function (resp) {
             $scope.invoiceDetails = resp.data;
+            $scope.isLoading = false;
         });
     }
 

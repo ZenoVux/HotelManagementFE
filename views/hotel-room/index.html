@@ -4,35 +4,27 @@
             <div class="card">
                 <div class="card-body">
                     <span>
-                        <input ng-click="loadHotelRooms()" type="radio" class="btn-check" name="room-status" id="status" autocomplete="off" checked>
-                        <label class="btn p-3 fs-14 btn-outline-secondary" for="status">Tất cả <span class="badge rounded-pill bg-dark">{{getTotalStatus()}}</span></label>
+                        <input ng-click="search.status = ''" type="radio" class="btn-check" name="room-status" id="status">
+                        <label class="btn p-3 fs-14 btn-hotel" for="status">Tất cả <span class="badge rounded-pill bg-dark">{{getTotalStatus()}}</span></label>
                     </span>
                     <span ng-repeat="item in statuses">
-                        <input ng-click="loadHotelRoomsByStatus(item.id)" type="radio" class="btn-check" name="room-status" id="status{{item.id}}" autocomplete="off">
+                        <input ng-click="search.status = item.id" type="radio" class="btn-check" name="room-status" id="status{{item.id}}">
                         <label class="btn p-3 fs-14" for="status{{item.id}}" ng-class="getColor('btn', item.id)">
                             {{item.name}} <span class="badge rounded-pill bg-dark">{{checkStatusCount(item.id)}}</span>
                         </label>
                     </span>
                     <div class="float-end">
-                        <div class="input-group">
-                            <input ng-model="search.bookingCode" class="form-control p-3" type="search" placeholder="Mã đặt phòng">
-                            <button ng-click="loadHotelRoomsByBookingCode()" class="btn btn-secondary">Tìm</button>
-                        </div>
+                        <input ng-model="search.bookingCode" class="form-control p-3" type="search" placeholder="Mã đặt phòng">
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div ng-show="loading" class="text-center">
-        <div class="spinner-border text-secondary" role="status">
-            <span class="sr-only">Loading...</span>
-        </div>
-    </div>
-    <div ng-show="!loading && hotelRooms.length == 0" class="text-center">
+    <div ng-show="!isLoading && hotelRooms.length == 0" class="text-center">
         <span>Danh sách phòng trống</span>
     </div>
     <div class="row">
-        <div ng-repeat="room in hotelRooms" class="col-xl-2 col-sm-3">
+        <div ng-repeat="room in hotelRooms | filter : { status: search.status , bookingCode: search.bookingCode }" class="col-xl-2 col-sm-3">
             <div class="card border border-3" ng-class="getColor('border', room.status)">
                 <div class="card-body p-2">
                     <div class="">
@@ -145,7 +137,7 @@
                     <div class="mb-3">
                         <label for="changeRoomCheckoutDate" class="form-label">Ngày trả</label>
                         <div class="input-group">
-                            <input ng-model="changeRoom.checkoutDate" type="date" class="form-control"
+                            <input ng-blur="handlerFindChangeRoom()" ng-model="changeRoom.checkoutDate" type="date" class="form-control"
                                 id="changeRoomCheckoutDate">
                             <button ng-click="handlerFindChangeRoom()" class="btn btn-secondary">Tìm</button>
                         </div>
@@ -219,8 +211,11 @@
                         <div class="col-md-12">
                             <div class="mb-3">
                                 <label for="extendCheckoutRoomDate" class="form-label">Ngày trả</label>
-                                <input ng-model="extendCheckoutRoom.extendDate" type="date" class="form-control"
-                                    id="extendCheckoutRoomDate">
+                                <div class="input-group">
+                                    <input ng-blur="handlerCheckExtendCheckout()" ng-model="extendCheckoutRoom.extendDate" type="date" class="form-control"
+                                        id="extendCheckoutRoomDate">
+                                    <button ng-click="handlerCheckExtendCheckout()" class="btn btn-secondary">Kiểm tra</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -278,7 +273,7 @@
                                             <th scope="col">Từ ngày</th>
                                             <th scope="col">Đến ngày</th>
                                             <th scope="col">Thành tiền</th>
-                                            <th scope="col" style="width: 100px;">Hành động</th>
+                                            <th scope="col"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -333,7 +328,7 @@
                                             <th scope="col">Tên dịch vụ</th>
                                             <th scope="col">Loại</th>
                                             <th scope="col">Giá</th>
-                                            <th scope="col" style="width: 100px;">Hành động</th>
+                                            <th scope="col"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -408,7 +403,7 @@
                                             <th scope="col">Giới tính</th>
                                             <th scope="col">Ngày sinh</th>
                                             <th scope="col">CCCD/CMT</th>
-                                            <th scope="col" style="width: 100px;">Hành động</th>
+                                            <th scope="col"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -446,7 +441,7 @@
                                             <th scope="col">Giới tính</th>
                                             <th scope="col">Ngày sinh</th>
                                             <th scope="col">CCCD/CMT</th>
-                                            <th scope="col" style="width: 100px;">Hành động</th>
+                                            <th scope="col"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -601,7 +596,7 @@
                     <button ng-click="modalInfoRoom('hide')" type="button" class="btn-close"></button>
                 </div>
                 <div class="modal-body">
-                    <table class="table mb-0 table-bordered">
+                    <table class="table mb-2 table-bordered">
                         <tbody>
                             <tr>
                                 <th scope="row" style="width: 300px;">Loại phòng</th>
@@ -696,6 +691,26 @@
                     <button ng-click="handlerCancelRoom()" class="btn btn-primary">Xác nhận</button>
                     <button ng-click="modalCancelRoom('hide')" class="btn btn-secondary">Đóng</button>
                 </div>
+            </div>
+        </div>
+    </div>
+    
+    <div ng-show="isLoading" class="loader"> 
+        <div class="loader-inner">
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
             </div>
         </div>
     </div>

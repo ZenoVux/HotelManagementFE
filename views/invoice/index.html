@@ -3,10 +3,10 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <button ng-click="search.status = ''" type="button" class="btn btn-danger p-3 me-1">
+                    <button ng-click="handlerLoadAll();" type="button" class="btn btn-danger p-3 me-1">
                         Tất cả <span class="badge rounded-pill bg-dark">{{getTotalStatus()}}</span>
                     </button>
-                    <button ng-click="search.status = item.id" ng-repeat="item in statuses" type="button" class="btn p-3 me-1" ng-class="getColor('btn', item.id)">
+                    <button ng-click="handlerLoadByStatus(item.id)" ng-repeat="item in statuses" type="button" class="btn p-3 me-1" ng-class="getColor('btn', item.id)">
                         {{item.name}} <span class="badge rounded-pill bg-dark">{{checkStatusCount(item.id)}}</span>
                     </button>
                 </div>
@@ -36,7 +36,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="item in invoices | filter : { status: search.status }">
+                            <tr ng-repeat="item in invoices | orderBy:'-createdDate'">
                                 <td>
                                     <b>{{$index + 1}}</b>
                                 </td>
@@ -45,7 +45,7 @@
                                 <td>{{item.staff}}</td>
                                 <td>{{item.total | currency: '' : 0}}₫</td>
                                 <td>
-                                    <span class="badge rounded-pill" ng-class="getColor('bg', item.status)">
+                                    <span class="badge badge-pill" ng-class="getColor('bg', item.status)">
                                         {{item.status == 1 ? 'Đang chờ' : (item.status == 2 ? 'Chưa thanh toán' :  (item.status == 3 ? 'Chờ thanh toán' : (item.status == 4 ? 'Hoàn thành' : 'Đã huỷ')))}}
                                     </span>
                                 </td>

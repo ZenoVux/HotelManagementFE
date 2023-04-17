@@ -41,6 +41,10 @@ app.controller("invoiceCtrl", function ($scope, $http) {
                     {
                         targets: 7,
                         orderable: false
+                    },
+                    { 
+                        type: "num", 
+                        targets: 0 
                     }
                 ],
                 buttons: [
@@ -88,6 +92,7 @@ app.controller("invoiceCtrl", function ($scope, $http) {
     $scope.loadInvoiceByStatus = async function (status) {
         await $http.get("http://localhost:8000/api/invoices?status=" + status).then(function (resp) {
             $scope.invoices = resp.data;
+            $scope.isLoading = false;
         });
     }
 
@@ -126,12 +131,16 @@ app.controller("invoiceCtrl", function ($scope, $http) {
     }
 
     $scope.handlerLoadByStatus = async function (status) {
+        $scope.isLoading = true;
+        await $scope.loadStatusCount();
         await $scope.clearTableInvoice();
         await $scope.loadInvoiceByStatus(status);
         await $scope.initTableInvoice();
     }
 
     $scope.handlerLoadAll = async function () {
+        $scope.isLoading = true;
+        await $scope.loadStatusCount();
         await $scope.clearTableInvoice();
         await $scope.loadInvoice();
         await $scope.initTableInvoice();

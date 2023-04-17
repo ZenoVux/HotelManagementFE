@@ -716,6 +716,7 @@ app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http
         if (!confirm("Bạn muốn chuyển phòng " + room.code + " về trạng thái sẵn sàng?")) {
             return;
         }
+        $scope.isLoading = true;
         $http.post("http://localhost:8000/api/hotel/ready", {
             code: room.code
         }).then(async function () {
@@ -734,13 +735,14 @@ app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http
                         hotelRoom.bookingDetailId = resp.data.bookingDetailId;
                         hotelRoom.invoiceDetailId = resp.data.invoiceDetailId;
                         hotelRoom.checkinExpected = resp.data.checkinExpected;
-                        hotelRoom.checkoutExpected = resp.data.checkoutDate;
+                        hotelRoom.checkoutExpected = resp.data.checkoutExpected;
                         hotelRoom.customer = resp.data.customer;
                         hotelRoom.phoneNumber = resp.data.phoneNumber;
                         hotelRoom.status = resp.data.status;
                         return;
                     }
                 });
+                $scope.isLoading = false;
                 alert("Phòng đã sẵn sàng!");
             });
         }, function (resp) {
@@ -763,8 +765,8 @@ app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http
         $scope.changeRoom.fromRoomCode = $scope.selectRoom.code;
         console.log("changeRoom", $scope.changeRoom);
 
+        $scope.isLoading = true;
         $http.post("http://localhost:8000/api/hotel/change", $scope.changeRoom).then(function (resp) {
-            alert("Đổi phòng thành công!");
             $scope.statusCounts.forEach(statusCount => {
                 if (statusCount.status == 6) {
                     statusCount.count++
@@ -794,6 +796,8 @@ app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http
             $scope.selectRoom.phoneNumber = null;
             $scope.selectRoom.status = 6;
             $scope.modalChangeRoom('hide');
+            alert("Đổi phòng thành công!");
+            $scope.isLoading = false;
         }, function (resp) {
             alert(resp.data.error);
         });

@@ -1,22 +1,53 @@
-app.controller("roomTypeListCtrl", function ($scope, $http) {
+app.controller("roomTypeListCtrl", function ($scope, $http, $location) {
     $scope.roomTypes = [];
     $scope.form = {};
+    $scope.roomType = {};
     // Load data room
     $scope.initialize = function(){
         $http.get("http://localhost:8000/api/room-types").then(resp =>{
             $scope.roomTypes = resp.data;
             $(document).ready(function () {
-                $('#datatable-room-types').DataTable();
+                // khởi tạo table id 'datatable-room-type'
+                tableInvoiceDetailHistory = $('#datatable-room-type').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
+                    },
+                    dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>'
+                });
+                // gắn ô tìm kiếm id 'search-datatable-room-type' cho table
+                $('#search-datatable-room-type').keyup(function () {
+                    tableInvoiceDetailHistory.search($(this).val()).draw();
+                });
             });
         }).catch(error =>{
             alert("Error load data room type")
             console.log("Error", error);
         })
     }
-    //Pagination
-    $scope.pager = {
 
+    $scope.edit = function(roomType){
+        $scope.form = roomType;
     }
+    
+    $scope.view = function(item) {
+        $scope.roomType = item;
+    }
+    
+    //Update room-type
+    $scope.update = function(){
+        var roomType = angular.copy($scope.form);
+        $http.put("http://localhost:8000/api/room-types", roomType).then(resp=>{
+            alert("Cập nhập thành công");
+        }).catch(error=>{
+            alert("Cập nhập không thành công")
+            console.log("Error", error);
+        })
+    }
+
+    $scope.reset = function () {
+        $scope.form = {
+        };
+    };
     $scope.initialize();
 });
 
@@ -50,6 +81,7 @@ app.controller("roomTypeUpdateFormCtrl", function ($scope, $routeParams, $http) 
     
     //Load room detail
     $scope.edit = function(){
+
         $http.get("http://localhost:8000/api/room-types/" + $routeParams.id).then(resp =>{
             $scope.form = resp.data;
         }).catch(error=>{
@@ -59,7 +91,7 @@ app.controller("roomTypeUpdateFormCtrl", function ($scope, $routeParams, $http) 
 
     }
     
-    //Update room
+    //Update room-type
     $scope.update = function(){
         var roomType = angular.copy($scope.form);
         $http.put("http://localhost:8000/api/room-types", roomType).then(resp=>{
@@ -73,7 +105,6 @@ app.controller("roomTypeUpdateFormCtrl", function ($scope, $routeParams, $http) 
     //Reset form
     $scope.reset = function () {
         $scope.form = {
-            
         };
     };
     $scope.edit();

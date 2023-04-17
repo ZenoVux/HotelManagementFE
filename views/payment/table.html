@@ -3,7 +3,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="mb-4">List Payment</h4>
+                    <h4 class="mb-4">Danh sách kiểu thanh toán</h4>
                     <!--Search room-->
                     <div class="row mb-2">
                         <div class="col-sm-4">
@@ -16,8 +16,8 @@
                         <div class="col-sm-8">
                             <div class="text-sm-end">
                                 <a href="/#!/payment/create"
-                                    class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2"><i
-                                        class="mdi mdi-plus me-1"></i> Add New Payment</a>
+                                    class="btn btn-secondary w-md"><i
+                                        class="mdi mdi-plus me-1"></i> Thêm kiểu thanh toán</a>
                             </div>
                         </div>
                     </div>
@@ -25,16 +25,16 @@
                     <table class="table table-hover table-reponsive align-middle mb-0">
                         <thead>
                             <tr>
-                                <th>#</th>
+                                <th>STT</th>
                                 <th>Name</th>
                                 <th>Status</th>
                                 <th>Description</th>
-                                <th>Action</th>
+                                <th>#</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr ng-repeat="payment in payments | filter:searchName">
-                                <td>{{payment.id}}</td>
+                                <td>{{$index + 1}}</td>
                                 <td>{{payment.name}}</td>
                                 <td>
                                     <span class="badge rounded-pill font-size-11 "
@@ -45,8 +45,8 @@
                                 <td>{{payment.description}}</td>
 
                                 <td class="align-middle">
-                                    <button ng-click="edit(payment)" class="btn">
-                                        <a class="text-success" href="/#!/payment/update/{{payment.id}}" title="Edit">
+                                    <button ng-click="edit(payment)" class="btn btn-outline-secondary btn-sm edit">
+                                        <a class="text-secondary" href="/#!/payment/update/{{payment.id}}" title="Edit">
                                             <i class="fas fa-pencil-alt"></i>
                                         </a>
                                     </button>

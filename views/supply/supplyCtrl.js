@@ -5,6 +5,19 @@ app.controller("supplyCtrl", function ($scope, $http) {
 
         $http.get("http://localhost:8000/api/supplies").then(resp => {
             $scope.items = resp.data;
+            $(document).ready(function () {
+                // khởi tạo table id 'datatable-invoice-detail-history'
+                tableInvoiceDetailHistory = $('#data-table-supply').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
+                    },
+                    dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>'
+                });
+                // gắn ô tìm kiếm id 'search-datatable-invoice-detail-history' cho table
+                $('#search-datatable-supply').keyup(function () {
+                    tableInvoiceDetailHistory.search($(this).val()).draw();
+                });
+            });
         })
 
     }
@@ -75,6 +88,19 @@ app.controller("supply-typeCtrl", function ($scope, $http) {
     $scope.initialize = function () {
         $http.get("http://localhost:8000/api/supply-types").then(resp => {
             $scope.supTypes = resp.data;
+            $(document).ready(function () {
+                // khởi tạo table id 'datatable-invoice-detail-history'
+                tableInvoiceDetailHistory = $('#data-table-supplyType').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
+                    },
+                    dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>'
+                });
+                // gắn ô tìm kiếm id 'search-datatable-invoice-detail-history' cho table
+                $('#search-datatable-supplyType').keyup(function () {
+                    tableInvoiceDetailHistory.search($(this).val()).draw();
+                });
+            });
         })
 
     }
@@ -120,7 +146,6 @@ app.controller("supplyUpdate-typeCtrl", function ($scope, $routeParams, $http) {
     }
     $scope.edit();
 });
-
 
 
 

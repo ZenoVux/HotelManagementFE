@@ -25,19 +25,23 @@ app.controller("customerCtrl", function ($scope, $http) {
     $scope.initTable();
 
     $scope.viewCustomer = function (customer) {
-        $('#customer-modal').modal('show');
         $scope.selectedCustomer = customer;
         $http.get("http://localhost:8000/api/invoices/count-by-customer/" + $scope.selectedCustomer.peopleId).then(function (resp) {
             $scope.numInvoicesOfCus = resp.data;
         });
         $scope.frontIdCardUrl = "http://localhost:8000/images/" + $scope.selectedCustomer.frontIdCard;
         $scope.backIdCardUrl = "http://localhost:8000/images/" + $scope.selectedCustomer.backIdCard;
+        $('#customer-modal').modal('show');
     };
 
     //Edit Customer
     $scope.editCustomer = function (customer) {
         $scope.customer = customer;
         $scope.customer.dateOfBirth = new Date($scope.customer.dateOfBirth);
+        $http.get("http://localhost:8000/api/invoices/count-by-customer/" + customer.peopleId).then(function (resp) {
+            $scope.numInvoicesOfCus = resp.data;
+        });
+        console.log(customer.peopleId);
         $('#edit-customer-modal').modal('show');
         $scope.frontIdCardUrl = "http://localhost:8000/images/" + $scope.customer.frontIdCard;
         $scope.backIdCardUrl = "http://localhost:8000/images/" + $scope.customer.backIdCard;

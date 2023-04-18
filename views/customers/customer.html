@@ -20,26 +20,30 @@
         </div>
     </div>
 
-    <div class="row mb-2">
-        <div class="col-sm-8"></div>
-        <div class="col-sm-4">
-            <div class="text-sm-end">
-                <a class="btn btn-success btn-lg" ng-click="viewCustomerType()" role="button">
-                    Hạng</a>
-            </div>
-        </div>
-    </div>
 
     <div class="container-fluid">
 
         <div class="row">
             <div class="col-12">
                 <div class="card">
+                    <h5 class="card-header bg-transparent border-bottom text-uppercase">
+                        KHÁCH HÀNG
+                    </h5>
                     <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-sm-8">
 
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="text-sm-end">
+                                    <a class="btn btn-primary w-md waves-effect waves-light"
+                                        ng-click="viewCustomerType()" role="button">
+                                        <i class="mdi mdi-crown-outline"></i> Hạng</a>
+                                </div>
+                            </div>
+                        </div>
+                        <input class="form-control" type="search" placeholder="Tìm kiếm" id="search-datatable-customer">
                         <table id="customer-table" class="table table-hover table-reponsive">
-                            <input class="form-control" type="search" placeholder="Tìm kiếm"
-                                id="search-datatable-customer">
                             <thead>
                                 <tr>
                                     <th>#</th>

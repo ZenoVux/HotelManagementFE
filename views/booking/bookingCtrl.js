@@ -513,6 +513,7 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
 
 app.controller("createBookingCtrl", function ($scope, $http, $location, $filter) {
 
+    $scope.bookings = [];
     $scope.booking = {};
     $scope.booking.adults = 2;
     $scope.booking.children = 0;
@@ -595,6 +596,25 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
                 }
             }).then(function (response) {
                 $scope.bookings = response.data;
+                for (var i = 0; i < $scope.bookings.length; i++) {
+                    if ($scope.bookings[i].promotion != null) {
+                        var percent = $scope.bookings[i].promotion.percent;
+                        var minPrice = $scope.bookings[i].minPrice;
+                        var maxPrice = $scope.bookings[i].maxPrice;
+                        var maxDiscount = $scope.bookings[i].promotion.maxDiscount;
+
+                        $scope.bookings[i].newMinPrice = minPrice * (100 - percent) / 100;
+                        if ((percent / 100 * minPrice) > maxDiscount) {
+                            $scope.bookings[i].newMinPrice = minPrice - maxDiscount;
+                        }
+
+                        $scope.bookings[i].newMaxPrice = maxPrice * (100 - percent) / 100;
+                        if ((percent / 100 * maxPrice) > maxDiscount) {
+                            $scope.bookings[i].newMaxPrice = minPrice - maxDiscount;
+                        }
+                    }
+                }
+
                 if ($scope.bookings.length == 0) {
                     alert('Không có phòng hợp lệ.');
                 }

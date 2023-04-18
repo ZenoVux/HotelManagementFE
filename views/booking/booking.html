@@ -231,13 +231,36 @@
                                                         </li>
                                                     </ul>
                                                 </td>
-                                                <td>
+                                                <td ng-if="info.promotion == null">
                                                     <strong>{{ info.minPrice === info.maxPrice ?
                                                         (info.maxPrice | currency: '' : 0) :
                                                         (info.minPrice | currency: '' : 0) + ' - ' +
                                                         (info.maxPrice
                                                         |
                                                         currency: '' : 0) }}đ</strong>
+                                                </td>
+                                                <td ng-if="info.promotion != null">
+                                                    <strong style="text-decoration: line-through;">{{ info.minPrice
+                                                        === info.maxPrice ?
+                                                        (info.maxPrice | currency: '' : 0) :
+                                                        (info.minPrice | currency: '' : 0) + ' - ' +
+                                                        (info.maxPrice
+                                                        |
+                                                        currency: '' : 0) }}đ</strong>
+                                                    <br>
+                                                    <strong style="color: red">{{ info.newMinPrice
+                                                        === info.newMaxPrice ?
+                                                        (info.newMaxPrice | currency: '' : 0) :
+                                                        (info.newMinPrice | currency: '' : 0) + ' - ' +
+                                                        (info.newMaxPrice
+                                                        |
+                                                        currency: '' : 0) }}đ</strong>
+                                                    <br>
+                                                    <span style="color: red">({{info.promotion.name}}-{{
+                                                        info.promotion.percent }}%</span>
+                                                    <br>
+                                                    <span style="color: red">Tối đa: {{info.promotion.maxDiscount |
+                                                        currency: '' : 0}}đ)</span>
                                                 </td>
                                                 <td style="text-align: center;">
                                                     <span>{{ info.quantity }}</span>

@@ -11,20 +11,20 @@
                 <div class="card-body">
                     <h4 class="mb-4">Danh sách phòng</h4>
                     <div class="row">
-                        <div class="col-md-2">
-                            <input type="search" class="form-control" placeholder="Tìm kiếm" id="search-datatable-rooms">
-                        </div>
-                        <div class="col-md-10 d-flex justify-content-end mb-2">
+                        <div class="text-sm-end d-flex justify-content-end mb-2">
                             <div>
-                                <a href="/#!/room/create" class="btn btn-success waves-effect waves-light mb-2 me-2"><i class="mdi mdi-plus me-1"></i>Thêm phòng</a>
+                                <a href="/#!/room/create" class="btn btn-primary waves-effect waves-light mb-2 me-2"><i class="mdi mdi-plus me-1"></i>Thêm phòng</a>
                             </div>
                             <div>
-                                <a href="/#!/room-type" class="btn btn-success waves-effect waves-light mb-2 me-2"><i class="dripicons-view-list me-2"></i>Loại phòng</a>
+                                <a href="/#!/room-type" class="btn btn-primary waves-effect waves-light mb-2 me-2"><i class="dripicons-view-list me-2"></i>Loại phòng</a>
                             </div>
                             <div>
-                                <a href="/#!/supply" class="btn btn-success waves-effect waves-light mb-2 me-2"><i class="dripicons-view-list me-2"></i>Vật tư</a>
+                                <a href="/#!/supply" class="btn btn-primary waves-effect waves-light mb-2 me-2"><i class="dripicons-view-list me-2"></i>Vật tư</a>
                             </div>
                         </div>
+                    </div>
+                    <div>
+                        <input type="search" class="form-control" placeholder="Tìm kiếm" id="search-datatable-rooms">
                     </div>
 
                     <!-- table content -->
@@ -69,7 +69,7 @@
                                             <div class="dropdown-divider"></div>
                                             <button class="dropdown-item btn waves-light" title="View" data-bs-toggle="modal" data-bs-target="#listImageRoom" ng-click="loadImageRoom(room.code)">Ảnh phòng</button>
                                             <div class="dropdown-divider"></div>
-                                            <button class="dropdown-item btn waves-light" title="View" data-bs-toggle="modal" data-bs-target="#viewOtherRoom">Xem thêm</button>
+                                            <button class="dropdown-item btn waves-light" title="View" data-bs-toggle="modal" data-bs-target="#viewOtherRoom" ng-click="roomDetail(room)">Xem thêm</button>
                                         </div>
                                         
                                         <!-- Model view other room -->
@@ -86,22 +86,21 @@
                                                                 <thead class="table-light">
                                                                     <tr>
                                                                         <th>Diện tích</th>
-                                                                        <th>Số người lớn tối đa thêm</th>
-                                                                        <th>Số trẻ em tối đa thêm</th>
+                                                                        <th>Số người lớn được thêm</th>
+                                                                        <th>Số trẻ em được thêm</th>
                                                                         <th>Hút thuốc</th>
                                                                         <th>Mô tả</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
                                                                     <tr>
-                                                                        <td>{{room.area}} M<sup>2</sup></td>
-                                                                        <td>{{room.maxAdultsAdd}}</td>
-                                                                        <td>{{room.maxChildsAdd}}</td>
+                                                                        <td>{{room1.area}} M<sup>2</sup></td>
+                                                                        <td>{{room1.maxAdultsAdd}}</td>
+                                                                        <td>{{room1.maxChildsAdd}}</td>
                                                                         <td>
-                                                                            <span>{{room.isSmoking ? 'Có' : 'Không'}}</span>
+                                                                            <span>{{room1.isSmoking ? 'Có' : 'Không'}}</span>
                                                                         </td>
-                                                                        <td>{{room.description}}</td>
-                                                                        <td>{{room.code}}</td>
+                                                                        <td>{{room1.description}}</td>
                                                                     </tr>
                                                                 </tbody>
                                                             </table>
@@ -132,7 +131,7 @@
                         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="listSupplyRoomLabel">Supply room</h5>
+                                    <h5 class="modal-title" id="listSupplyRoomLabel">Vật tư phòng</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
@@ -201,8 +200,6 @@
                                             <thead class="table-light">
                                                 <tr>
                                                     <th>Tên</th>
-                                                    <th>Số người lớn tối đa</th>
-                                                    <th>Số trẻ em tối đa</th>
                                                     <th>Số lượng</th>
                                                     <th>Mô tả</th>
                                                 </tr>
@@ -210,8 +207,6 @@
                                             <tbody>
                                                 <tr ng-repeat="bedRoom in bedRooms">
                                                     <td>{{bedRoom.bedType.name}}</td>
-                                                    <td>{{bedRoom.bedType.maxAdult}}</td>
-                                                    <td>{{bedRoom.bedType.maxChild}}</td>
                                                     <td>{{bedRoom.quantityBed}}</td>
                                                     <td>{{bedRoom.bedType.description}}</td>
                                                 </tr>

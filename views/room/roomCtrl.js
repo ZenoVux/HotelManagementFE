@@ -1,6 +1,7 @@
 app.controller("roomListCtrl", function ($scope, $http) {
     $scope.form = {};
     $scope.rooms = [];
+    $scope.room1 = [];
     $scope.supplyRooms = [];
     $scope.bedRooms = [];
     $scope.imageRooms = [];
@@ -45,40 +46,50 @@ app.controller("roomListCtrl", function ($scope, $http) {
         })
     }
 
-        // Load data image room
-        $scope.loadImageRoom = function (codeRoom) {
-            $http.get("http://localhost:8000/api/room-images/" + codeRoom).then(resp => {
-                $scope.imageRooms = resp.data;
-            }).catch(error => {
-                console.log("Error", error);
-            })
-        }
+    // Load data image room
+    $scope.loadImageRoom = function (codeRoom) {
+        $http.get("http://localhost:8000/api/room-images/" + codeRoom).then(resp => {
+            $scope.imageRooms = resp.data;
+        }).catch(error => {
+            console.log("Error", error);
+        })
+    }
 
-        $scope.url = function(imageName){
-            return `http://localhost:8000/images/${imageName}`;
-        }
+    $scope.url = function(imageName){
+        return `http://localhost:8000/images/${imageName}`;
+    }
+
+    $scope.roomDetail = function(room){
+        $scope.room1 = room;
+    }
 
     $scope.initialize();
 });
 
 app.controller("roomCreateFormCtrl", function ($scope, $http, $location) {
     $scope.form = {
-        number: null,
-        price: 3000000,
-        maxAdultAdd: 0,
-        maxChildAdd: 0,
-        area: 60,
-        isSmoking: true,
-        description: "No",
-        floor: {
-            id: 1
-        },
-        roomType: {
-            id: 5
-        },
+        // number: null,
+        // price: 3000000,
+        // maxAdultAdd: 0,
+        // maxChildAdd: 0,
+        // area: 60,
+        // isSmoking: true,
+        // description: "No",
+        // floor: {
+        //     id: 1
+        // },
+        // roomType: {
+        //     id: 5
+        // },
+        // status: true
+    };
+
+    $scope.formFloor = {
+        code:"",
         status: true
     };
 
+    $scope.rooms = [];
     $scope.floors = [];
 
     $scope.supplys = {};
@@ -100,6 +111,13 @@ app.controller("roomCreateFormCtrl", function ($scope, $http, $location) {
         //Load data floors
         $http.get("http://localhost:8000/api/floors").then(resp => {
             $scope.floors = resp.data;
+        }).catch(error => {
+            console.log("Error", error);
+        })
+
+        // Load data rooms
+        $http.get("http://localhost:8000/api/rooms").then(resp => {
+            $scope.rooms = resp.data;
         }).catch(error => {
             console.log("Error", error);
         })
@@ -126,6 +144,41 @@ app.controller("roomCreateFormCtrl", function ($scope, $http, $location) {
         })
     }
 
+    $scope.setCodeRoom = function(floor_id){
+        $http.get("http://localhost:8000/api/rooms/set-code-room/" + floor_id).then(resp => {
+            $scope.form.code = resp.data;
+        }).catch(error => {
+            console.log("Error", error);
+        })
+    }
+
+    $scope.setCodeFloor = function () {
+        var array = [];
+        var max = 0;
+        $scope.floors.forEach(item =>{
+            max = item.code.slice(1);
+            array.push(max);
+        })
+        max = Math.max.apply(null, array) + 1;
+        $scope.formFloor.code = "T" + max.toString();
+    }
+    $scope.statusFloorChange = function (floor1) {
+        floor1.status = !floor1.status;
+        if(!floor1.status){
+            $scope.rooms.forEach(item =>{
+                if (floor1.id == item.floor.id && item.status != 1 && floor1.status == false) {
+                    console.log(2);
+                    alert("Tầng này vẫn có phòng đang hoạt động");
+                    floor1.status = true;
+                }
+            })
+        }
+        $http.put("http://localhost:8000/api/floors", floor1).then(resp => {
+            alert("Đổi trạng thái tầng thành công");
+        }).catch(error => {
+            console.log("Error", error);
+        })
+    }
     $scope.supplySearch = function (supply) {
         return $scope.supplySelected.find(item => item.id == supply.id);
     }
@@ -135,10 +188,13 @@ app.controller("roomCreateFormCtrl", function ($scope, $http, $location) {
         if (supply2) {
             const index = $scope.supplySelected.findIndex(item => item.id == supply.id);
             $scope.supplySelected.splice(index, 1);
-            if (supply.checked == true) {
+            if (supply.checked) {
                 $scope.supplySelected.push(supply);
+            }else {
+                supply.count = 0;
             }
         } else {
+            supply.count = 1;
             await $scope.supplySelected.push(supply);
         }
     }
@@ -254,10 +310,6 @@ app.controller("roomCreateFormCtrl", function ($scope, $http, $location) {
             })
         })
     }
-
-    $scope.test = function (params) {
-        console.log(params);
-    }
     
     $scope.deleteImageStorage = function(imageName){
         $http.delete("http://localhost:8000/api/storage/" + imageName).then(resp => {
@@ -339,7 +391,25 @@ app.controller("roomCreateFormCtrl", function ($scope, $http, $location) {
         $scope.chooseImageRooms = [];
         document.getElementById('formrow-image-input').value = null;
     };
+
+    $scope.createFloor = function () {
+        var floor = angular.copy($scope.formFloor);
+        $http.post("http://localhost:8000/api/floors", floor).then(resp => {
+            $scope.floors.push(resp.data);
+            alert("Thêm tầng thành công");
+            $('#viewFloor').modal('show')
+        }).catch(error => {
+            alert("Thêm tầng thất bại")
+            console.log("Error", error);
+        })
+    }
     
+    $scope.resetFormFloor = function(){
+        $scope.formFloor = {
+            status: true
+        }
+    }
+
     $scope.initialize();
 });
 
@@ -470,10 +540,13 @@ app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $loc
         if (supply2) {
             const index = $scope.supplySelected.findIndex(item => item.id == supply.id);
             $scope.supplySelected.splice(index, 1);
-            if (supply.checked == true) {
+            if (supply.checked) {
                 $scope.supplySelected.push(supply);
+            }else {
+                supply.count = 0;
             }
         } else {
+            supply.count = 1;
             await $scope.supplySelected.push(supply);
         }
     }

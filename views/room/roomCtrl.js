@@ -1,6 +1,7 @@
 app.controller("roomListCtrl", function ($scope, $http) {
     $scope.form = {};
     $scope.rooms = [];
+    $scope.room1 = [];
     $scope.supplyRooms = [];
     $scope.bedRooms = [];
     $scope.imageRooms = [];
@@ -10,7 +11,17 @@ app.controller("roomListCtrl", function ($scope, $http) {
         $http.get("http://localhost:8000/api/rooms").then(resp => {
             $scope.rooms = resp.data;
             $(document).ready(function () {
-                $('#datatable-rooms').DataTable();
+                // khởi tạo table id 'datatable-rooms'
+                tableInvoiceDetailHistory = $('#datatable-rooms').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
+                    },
+                    dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>'
+                });
+                // gắn ô tìm kiếm id 'search-datatable-rooms' cho table
+                $('#search-datatable-rooms').keyup(function () {
+                    tableInvoiceDetailHistory.search($(this).val()).draw();
+                });
             });
         }).catch(error => {
             console.log("Error", error);
@@ -35,20 +46,21 @@ app.controller("roomListCtrl", function ($scope, $http) {
         })
     }
 
-        // Load data image room
-        $scope.loadImageRoom = function (codeRoom) {
-            $http.get("http://localhost:8000/api/room-images/" + codeRoom).then(resp => {
-                $scope.imageRooms = resp.data;
-            }).catch(error => {
-                console.log("Error", error);
-            })
-        }
+    // Load data image room
+    $scope.loadImageRoom = function (codeRoom) {
+        $http.get("http://localhost:8000/api/room-images/" + codeRoom).then(resp => {
+            $scope.imageRooms = resp.data;
+        }).catch(error => {
+            console.log("Error", error);
+        })
+    }
 
-        $scope.url = function(imageName){
-            return `http://localhost:8000/images/${imageName}`;
-        }
-    //Pagination
-    $scope.pager = {
+    $scope.url = function(imageName){
+        return `http://localhost:8000/images/${imageName}`;
+    }
+
+    $scope.roomDetail = function(room){
+        $scope.room1 = room;
     }
 
     $scope.initialize();
@@ -56,22 +68,28 @@ app.controller("roomListCtrl", function ($scope, $http) {
 
 app.controller("roomCreateFormCtrl", function ($scope, $http, $location) {
     $scope.form = {
-        number: null,
-        price: 3000000,
-        maxAdultAdd: 0,
-        maxChildAdd: 0,
-        area: 60,
-        isSmoking: true,
-        description: "No",
-        floor: {
-            id: 1
-        },
-        roomType: {
-            id: 5
-        },
+        // number: null,
+        // price: 3000000,
+        // maxAdultAdd: 0,
+        // maxChildAdd: 0,
+        // area: 60,
+        // isSmoking: true,
+        // description: "No",
+        // floor: {
+        //     id: 1
+        // },
+        // roomType: {
+        //     id: 5
+        // },
+        // status: true
+    };
+
+    $scope.formFloor = {
+        code:"",
         status: true
     };
 
+    $scope.rooms = [];
     $scope.floors = [];
 
     $scope.supplys = {};
@@ -81,9 +99,6 @@ app.controller("roomCreateFormCtrl", function ($scope, $http, $location) {
     $scope.bedTypeSelected = [];
 
     $scope.chooseImageRooms = [];
-
-    $scope.formRoomType = {};
-    $scope.roomTypes = [];
 
     // Load data room
     $scope.initialize = function () {
@@ -96,6 +111,13 @@ app.controller("roomCreateFormCtrl", function ($scope, $http, $location) {
         //Load data floors
         $http.get("http://localhost:8000/api/floors").then(resp => {
             $scope.floors = resp.data;
+        }).catch(error => {
+            console.log("Error", error);
+        })
+
+        // Load data rooms
+        $http.get("http://localhost:8000/api/rooms").then(resp => {
+            $scope.rooms = resp.data;
         }).catch(error => {
             console.log("Error", error);
         })
@@ -122,6 +144,41 @@ app.controller("roomCreateFormCtrl", function ($scope, $http, $location) {
         })
     }
 
+    $scope.setCodeRoom = function(floor_id){
+        $http.get("http://localhost:8000/api/rooms/set-code-room/" + floor_id).then(resp => {
+            $scope.form.code = resp.data;
+        }).catch(error => {
+            console.log("Error", error);
+        })
+    }
+
+    $scope.setCodeFloor = function () {
+        var array = [];
+        var max = 0;
+        $scope.floors.forEach(item =>{
+            max = item.code.slice(1);
+            array.push(max);
+        })
+        max = Math.max.apply(null, array) + 1;
+        $scope.formFloor.code = "T" + max.toString();
+    }
+    $scope.statusFloorChange = function (floor1) {
+        floor1.status = !floor1.status;
+        if(!floor1.status){
+            $scope.rooms.forEach(item =>{
+                if (floor1.id == item.floor.id && item.status != 1 && floor1.status == false) {
+                    console.log(2);
+                    alert("Tầng này vẫn có phòng đang hoạt động");
+                    floor1.status = true;
+                }
+            })
+        }
+        $http.put("http://localhost:8000/api/floors", floor1).then(resp => {
+            alert("Đổi trạng thái tầng thành công");
+        }).catch(error => {
+            console.log("Error", error);
+        })
+    }
     $scope.supplySearch = function (supply) {
         return $scope.supplySelected.find(item => item.id == supply.id);
     }
@@ -131,10 +188,13 @@ app.controller("roomCreateFormCtrl", function ($scope, $http, $location) {
         if (supply2) {
             const index = $scope.supplySelected.findIndex(item => item.id == supply.id);
             $scope.supplySelected.splice(index, 1);
-            if (supply.checked == true) {
+            if (supply.checked) {
                 $scope.supplySelected.push(supply);
+            }else {
+                supply.count = 0;
             }
         } else {
+            supply.count = 1;
             await $scope.supplySelected.push(supply);
         }
     }
@@ -146,58 +206,85 @@ app.controller("roomCreateFormCtrl", function ($scope, $http, $location) {
     $scope.bedTypeChanged = async function (bedType) {
         const bedType2 = $scope.bedTypeSearch(bedType);
         if (bedType2) {
-            const index = $scope.bedTypeSelected.findIndex(item => item.id == bedType.id);
-            $scope.bedTypeSelected.splice(index, 1);
-            if (bedType.checked == true) {
-                $scope.bedTypeSelected.push(bedType);
+            if ((bedType2.id == 6 || bedType2.id == 7) && bedType2.count != 1) {
+                alert(bedType2.name + " trong phòng chỉ được tối đa 1 cái");
+                bedType2.count = 1;
+            }else if (bedType2.id == 5 && (bedType2.count < 1 || bedType2.count > 2)) {
+                alert(bedType2.name + " trong phòng chỉ được tối thiểu 1 cái hoặc tối đa 2 cái");
+                if (bedType2.count < 1) {
+                    bedType2.count = 1;
+                } else {
+                    bedType2.count = 2;
+                }
+            }else {
+                const index = $scope.bedTypeSelected.findIndex(item => item.id == bedType.id);
+                $scope.bedTypeSelected.splice(index, 1);
+                if (bedType.checked == true) {
+                    $scope.bedTypeSelected.push(bedType);
+                }
             }
         } else {
-            $scope.bedTypeSelected.push(bedType);
+            if (bedType.id != 5) {
+                $scope.bedTypeSelected.forEach(item =>{
+                    if (item.id == 6 || item.id == 7) {
+                        alert("Trong phòng chỉ được tối thiểu 1 loại giường đôi");
+                        bedType.checked = false;
+                    }
+                })
+            }
+            if (bedType.checked) {
+                bedType.count = 1;
+                $scope.bedTypeSelected.push(bedType);
+            }
         }
     }
 
     $scope.createSupplyRoom = async function (room1) {
-        var room = room1;
-        $scope.supplySelected.forEach(item => {
-            var supply = item;
-            var quantity = item.count;
-            var supplyRoom = {
-                code: "",
-                room,
-                supply,
-                quantity
-            }
+        if ($scope.supplySelected) {
+            var room = room1;
+            $scope.supplySelected.forEach(item => {
+                var supply = item;
+                var quantity = item.count;
+                var supplyRoom = {
+                    room,
+                    supply,
+                    quantity
+                }
             $http.post("http://localhost:8000/api/supply-rooms", supplyRoom).then(resp => {
             }).catch(error => {
                 console.log("Error", error);
             })
         });
+        }
+        
     }
 
     $scope.createBedRoom = async function (room1) {
-        var room = room1;
-        room.numAdults = 0;
-        room.numChilds = 0;
-        $scope.bedTypeSelected.forEach(item => {
-            var bedType = item;
-            var quantityBed = item.count;
-            var bedRoom = {
-                room,
-                bedType,
-                quantityBed
-            }
-            $http.post("http://localhost:8000/api/bed-rooms", bedRoom).then(resp => {
-            }).catch(error => {
-                console.log("Error", error);
-            })
-            room.numAdults += bedType.maxAdults * quantityBed;
-            room.numChilds += bedType.maxChilds * quantityBed;
-
-            $http.put("http://localhost:8000/api/rooms", room).then(resp => {
-            }).catch(error => {
-                console.log("Error", error);
+        if ($scope.bedTypeSelected) {
+            var room = room1;
+            room.numAdults = 0;
+            room.numChilds = 0;
+            $scope.bedTypeSelected.forEach(item => {
+                var bedType = item;
+                var quantityBed = item.count;
+                var bedRoom = {
+                    room,
+                    bedType,
+                    quantityBed
+                }
+                $http.post("http://localhost:8000/api/bed-rooms", bedRoom).then(resp => {
+                }).catch(error => {
+                    console.log("Error", error);
+                })
+                room.numAdults += bedType.maxAdults * quantityBed;
+                room.numChilds += bedType.maxChilds * quantityBed;
+    
+                $http.put("http://localhost:8000/api/rooms", room).then(resp => {
+                }).catch(error => {
+                    console.log("Error", error);
+                });
             });
-        });
+        }
     }
 
     $scope.uploadImageStorage = function (files) {
@@ -217,7 +304,6 @@ app.controller("roomCreateFormCtrl", function ($scope, $http, $location) {
                     }
                 ]
             }).then(resp => {
-                console.log(resp.data);
                 $scope.chooseImageRooms.push(resp.data);
             }).catch(error => {
                 console.log("Error", error);
@@ -240,17 +326,19 @@ app.controller("roomCreateFormCtrl", function ($scope, $http, $location) {
     }
 
     $scope.createImageRoom = function (room) {
-        $scope.chooseImageRooms.forEach(item =>{
-            var fileName = item;
-            var roomImage = {
-                room,
-                fileName
-            };
-            $http.post("http://localhost:8000/api/room-images", roomImage).then(resp => {
-            }).catch(error => {
-                console.log("Error", error);
+        if ($scope.chooseImageRooms) {
+            $scope.chooseImageRooms.forEach(item =>{
+                var fileName = item;
+                var roomImage = {
+                    room,
+                    fileName
+                };
+                $http.post("http://localhost:8000/api/room-images", roomImage).then(resp => {
+                }).catch(error => {
+                    console.log("Error", error);
+                })
             })
-        })
+        }
     }
 
     $scope.create = async function () {
@@ -264,7 +352,6 @@ app.controller("roomCreateFormCtrl", function ($scope, $http, $location) {
             $scope.createSupplyRoom(resp.data);
             $scope.createBedRoom(resp.data);
             $scope.createImageRoom(resp.data);
-            console.log(resp.data);
             alert("Create thành công");
             $location.path("/room");
         }).catch(error => {
@@ -304,23 +391,26 @@ app.controller("roomCreateFormCtrl", function ($scope, $http, $location) {
         $scope.chooseImageRooms = [];
         document.getElementById('formrow-image-input').value = null;
     };
-    
-    $scope.initialize();
 
-    // Room type
-    $scope.createRoomType = function () {
-        var roomType = angular.copy($scope.form);
-        $http.post("http://localhost:8000/api/room-types", roomType).then(resp =>{
-            alert("Create thành công")
-        }).catch(error=>{
-            alert("Create thất bại")
+    $scope.createFloor = function () {
+        var floor = angular.copy($scope.formFloor);
+        $http.post("http://localhost:8000/api/floors", floor).then(resp => {
+            $scope.floors.push(resp.data);
+            alert("Thêm tầng thành công");
+            $('#viewFloor').modal('show')
+        }).catch(error => {
+            alert("Thêm tầng thất bại")
             console.log("Error", error);
         })
     }
+    
+    $scope.resetFormFloor = function(){
+        $scope.formFloor = {
+            status: true
+        }
+    }
 
-    $scope.resetRoomType = function () {
-        $scope.formRoomType = {};
-    };
+    $scope.initialize();
 });
 
 app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $location) {
@@ -339,15 +429,16 @@ app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $loc
     $scope.imageRooms = [];
     $scope.chooseImageRooms = [];
 
-    $scope.formRoomType = {};
-    $scope.roomTypes = [];
-    
-
     // Load data room
     $scope.initialize = async function () {
         //Load room detail
         await $http.get("http://localhost:8000/api/rooms/" + $routeParams.id).then(resp => {
             $scope.form = resp.data;
+            if ($scope.form.status == 1) {
+                $scope.form.status2 = false;
+            } else {
+                $scope.form.status2 = true;
+            }
         }).catch(error => {
             console.log("Error", error);
         })
@@ -449,10 +540,13 @@ app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $loc
         if (supply2) {
             const index = $scope.supplySelected.findIndex(item => item.id == supply.id);
             $scope.supplySelected.splice(index, 1);
-            if (supply.checked == true) {
+            if (supply.checked) {
                 $scope.supplySelected.push(supply);
+            }else {
+                supply.count = 0;
             }
         } else {
+            supply.count = 1;
             await $scope.supplySelected.push(supply);
         }
     }
@@ -464,19 +558,41 @@ app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $loc
     $scope.bedTypeChanged = async function (bedType) {
         const bedType2 = $scope.bedTypeSearch(bedType);
         if (bedType2) {
-            const index = $scope.bedTypeSelected.findIndex(item => item.id == bedType.id);
-            $scope.bedTypeSelected.splice(index, 1);
-            if (bedType.checked == true) {
-                $scope.bedTypeSelected.push(bedType);
+            if ((bedType2.id == 6 || bedType2.id == 7) && bedType2.count != 1) {
+                alert(bedType2.name + " trong phòng chỉ được tối đa 1 cái");
+                bedType2.count = 1;
+            }else if (bedType2.id == 5 && (bedType2.count < 1 || bedType2.count > 2)) {
+                alert(bedType2.name + " trong phòng chỉ được tối thiểu 1 cái hoặc tối đa 2 cái");
+                if (bedType2.count < 1) {
+                    bedType2.count = 1;
+                } else {
+                    bedType2.count = 2;
+                }
+            }else {
+                const index = $scope.bedTypeSelected.findIndex(item => item.id == bedType.id);
+                $scope.bedTypeSelected.splice(index, 1);
+                if (bedType.checked == true) {
+                    $scope.bedTypeSelected.push(bedType);
+                }
             }
         } else {
-            $scope.bedTypeSelected.push(bedType);
+            if (bedType.id != 5) {
+                $scope.bedTypeSelected.forEach(item =>{
+                    if (item.id == 6 || item.id == 7) {
+                        alert("Trong phòng chỉ được tối thiểu 1 loại giường đôi");
+                        bedType.checked = false;
+                    }
+                })
+            }
+            if (bedType.checked) {
+                bedType.count = 1;
+                $scope.bedTypeSelected.push(bedType);
+            }
         }
     }
 
-
     $scope.updateSupplyRoom = async function (room1) {
-        if ($scope.bedRooms) {
+        if ($scope.supplyRooms) {
             await $scope.supplyRooms.forEach(item => {
                 $http.delete("http://localhost:8000/api/supply-rooms/" + item.id).then(resp => {
                 }).catch(error => {
@@ -484,20 +600,22 @@ app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $loc
                 })
             })
         }
-        var room = room1;
-        await $scope.supplySelected.forEach(item => {
-            var supply = item;
-            var quantity = item.count;
-            var supplyRoom = {
-                room,
-                supply,
-                quantity
-            }
-            $http.post("http://localhost:8000/api/supply-rooms", supplyRoom).then(resp => {
-            }).catch(error => {
-                console.log("Error", error);
-            })
-        });
+        if ($scope.supplySelected) {
+            var room = room1;
+            await $scope.supplySelected.forEach(item => {
+                var supply = item;
+                var quantity = item.count;
+                var supplyRoom = {
+                    room,
+                    supply,
+                    quantity
+                }
+                $http.post("http://localhost:8000/api/supply-rooms", supplyRoom).then(resp => {
+                }).catch(error => {
+                    console.log("Error", error);
+                })
+            });
+        }
     }
 
     $scope.updateBedRoom = async function (room1) {
@@ -509,31 +627,31 @@ app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $loc
                 })
             })
         }
-
-        var room = room1;
-        room.numAdults = 0;
-        room.numChilds = 0;
-        await $scope.bedTypeSelected.forEach(item => {
-            var bedType = item;
-            var quantityBed = item.count;
-            var bedRoom = {
-                room,
-                bedType,
-                quantityBed
-            }
-            $http.post("http://localhost:8000/api/bed-rooms", bedRoom).then(resp => {
-            }).catch(error => {
-                console.log("Error", error);
-            })
-            room.numAdults += bedType.maxAdults * quantityBed;
-            room.numChilds += bedType.maxChilds * quantityBed;
-
-            $http.put("http://localhost:8000/api/rooms", room).then(resp => {
-            }).catch(error => {
-                console.log("Error", error);
+        if ($scope.bedTypeSelected) {
+            var room = room1;
+            room.numAdults = 0;
+            room.numChilds = 0;
+            await $scope.bedTypeSelected.forEach(item => {
+                var bedType = item;
+                var quantityBed = item.count;
+                var bedRoom = {
+                    room,
+                    bedType,
+                    quantityBed
+                }
+                $http.post("http://localhost:8000/api/bed-rooms", bedRoom).then(resp => {
+                }).catch(error => {
+                    console.log("Error", error);
+                })
+                room.numAdults += bedType.maxAdults * quantityBed;
+                room.numChilds += bedType.maxChilds * quantityBed;
+    
+                $http.put("http://localhost:8000/api/rooms", room).then(resp => {
+                }).catch(error => {
+                    console.log("Error", error);
+                });
             });
-        });
-        $scope.reset();
+        }
     }
 
     $scope.uploadImageStorage = function (files) {
@@ -577,39 +695,45 @@ app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $loc
     }
 
     $scope.deleteImageRoom = function(){
-        $scope.chooseImageRooms.forEach(item1 =>{
-            $scope.imageRooms.forEach(item2 =>{
-                if(item1.fileName == item2.fileName){
-                    const index1 = $scope.imageRooms.findIndex(name => name.fileName == item1.fileName);
-                    $scope.imageRooms.splice(index1, 1);
-                    const index2 = $scope.chooseImageRooms.findIndex(name => name.fileName == item2.fileName);
-                    $scope.chooseImageRooms.splice(index2, 1);
-                }
-            })
-        });
+        if ($scope.chooseImageRooms) {
+            $scope.chooseImageRooms.forEach(item1 =>{
+                $scope.imageRooms.forEach(item2 =>{
+                    if(item1.fileName == item2.fileName){
+                        const index1 = $scope.imageRooms.findIndex(name => name.fileName == item1.fileName);
+                        $scope.imageRooms.splice(index1, 1);
+                        const index2 = $scope.chooseImageRooms.findIndex(name => name.fileName == item2.fileName);
+                        $scope.chooseImageRooms.splice(index2, 1);
+                    }
+                })
+            });
+        }
 
-        $scope.imageRooms.forEach(item => {
-            $http.delete("http://localhost:8000/api/room-images/" + item.id).then(resp => { 
-            }).catch(error => {
-                console.log("Error", error);
+        if ($scope.imageRooms) {
+            $scope.imageRooms.forEach(item => {
+                $http.delete("http://localhost:8000/api/room-images/" + item.id).then(resp => { 
+                }).catch(error => {
+                    console.log("Error", error);
+                })
             })
-        })
+        }
     }
 
     $scope.updateImageRoom =function(room) {
         $scope.deleteImageRoom();
-        $scope.chooseImageRooms.forEach(item =>{
-            var fileName = item.fileName;
-            var roomImage = {
-                room,
-                fileName
-            };
-            $http.post("http://localhost:8000/api/room-images", roomImage).then(resp =>{
-
-            }).catch(error =>{
-                console.log("Error", error);
+        if ($scope.chooseImageRooms) {
+            $scope.chooseImageRooms.forEach(item =>{
+                var fileName = item.fileName;
+                var roomImage = {
+                    room,
+                    fileName
+                };
+                $http.post("http://localhost:8000/api/room-images", roomImage).then(resp =>{
+    
+                }).catch(error =>{
+                    console.log("Error", error);
+                })
             })
-        })
+        }
     }
 
     $scope.url = function(imageName){
@@ -618,6 +742,11 @@ app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $loc
 
     //Update room
     $scope.update = function () {
+        if ($scope.form.status2 && $scope.form.status == 1) {
+            $scope.form.status = 0;
+        }else if(!$scope.form.status2 && $scope.form.status == 0){
+            $scope.form.status = 1;
+        }
         var room = angular.copy($scope.form);
         $http.put("http://localhost:8000/api/rooms", room).then(resp => {
             $scope.updateSupplyRoom(resp.data);
@@ -656,21 +785,6 @@ app.controller("roomUpdateFormCtrl", function ($scope, $routeParams, $http, $loc
         };
         $scope.supplySelected = [];
     };
-
-    // Room type
-    $scope.createRoomType = function () {
-        var roomType = angular.copy($scope.form);
-        $http.post("http://localhost:8000/api/room-types", roomType).then(resp =>{
-            alert("Create thành công")
-        }).catch(error=>{
-            alert("Create thất bại")
-            console.log("Error", error);
-        })
-    }
-
-    $scope.resetRoomType = function () {
-        $scope.formRoomType = {};
-    };
     $scope.initialize();
-   
+
 });

@@ -1,32 +1,40 @@
 app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http, $window) {
+
     $scope.statuses = [
         {
             id: 0,
-            name: "Trống"
+            name: "Trống",
+            description: ""
         },
         {
             id: 3,
-            name: "Đang đặt"
+            name: "Đang đặt",
+            description: "Phòng được giữ khi khách hàng đặt online"
         },
         {
             id: 4,
-            name: "Chờ nhận phòng"
+            name: "Chờ nhận phòng",
+            description: ""
         },
         {
             id: 2,
-            name: "Đang ở"
+            name: "Đang ở",
+            description: "Phòng đang được khách hàng sử dụng"
         },
         {
             id: 5,
-            name: "Quá hạn trả"
+            name: "Quá hạn trả",
+            description: ""
         },
         {
             id: 6,
-            name: "Đang dọn dẹp"
+            name: "Đang dọn dẹp",
+            description: ""
         },
         {
             id: 1,
-            name: "Không hoạt động"
+            name: "Không hoạt động",
+            description: "Phòng đang được sửa chữa"
         }
     ]
     $scope.isLoading = false;

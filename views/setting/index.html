@@ -24,6 +24,11 @@
                     PHƯƠNG THỨC THANH TOÁN
                 </h5>
                 <div class="card-body">
+                    <div class="mb-3">
+                        <a href="/#!/payment/create" class="btn btn-primary w-md waves-effect waves-light me-1">
+                            <i class="mdi mdi-plus"></i> Thêm thương thức
+                        </a>
+                    </div>
                     <input class="form-control mb-3" type="search" placeholder="Tìm kiếm"
                         id="search-datatable-payment-method">
                     <table id="datatable-payment-method" class="table table-bordered dt-responsive nowrap w-100">
@@ -43,15 +48,15 @@
                                 </td>
                                 <td>{{item.name}}</td>
                                 <td>
-                                    <span class="badge rounded-pill" ng-class="item.status ? 'bg-success ' : 'badge-soft-danger'">
+                                    <span class="badge badge-pill" ng-class="item.status ? 'bg-success ' : 'badge-soft-danger'">
                                         {{item.status ? 'Đang hoạt động' : 'Ngừng hoạt động'}}
                                     </span>
                                 </td>
                                 <td>{{item.description}}</td>
                                 <td>
-                                    <button ng-click="" class="btn btn-outline-secondary btn-sm edit" title="Chỉnh sửa">
+                                    <a href="/#!/payment/update/{{item.id}}" class="btn btn-outline-secondary btn-sm edit" title="Chỉnh sửa">
                                         <i class="fas fa-pencil-alt"></i>
-                                    </button>
+                                    </a>
                                 </td>
                             </tr>
                         </tbody>

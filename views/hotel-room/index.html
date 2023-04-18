@@ -9,7 +9,7 @@
                     </span>
                     <span ng-repeat="item in statuses">
                         <input ng-click="search.status = item.id" type="radio" class="btn-check" name="room-status" id="status{{item.id}}">
-                        <label class="btn p-3 fs-14" for="status{{item.id}}" ng-class="getColor('btn', item.id)">
+                        <label class="btn p-3 fs-14" for="status{{item.id}}" ng-class="getColor('btn', item.id)" title="{{item.description}}">
                             {{item.name}} <span class="badge rounded-pill bg-dark">{{checkStatusCount(item.id)}}</span>
                         </label>
                     </span>

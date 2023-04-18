@@ -29,10 +29,6 @@
                                 <th scope="row">Địa chỉ</th>
                                 <td>{{invoice.booking.customer.address}}</td>
                             </tr>
-                            <tr class="d-print-none">
-                                <th scope="row">Trạng thái</th>
-                                <td>{{invoice.status == 1 ? 'Đang chờ' : (invoice.status == 2 ? 'Chưa thanh toán' :  (invoice.status == 3 ? 'Chờ thanh toán' : (invoice.status == 4 ? 'Hoàn thành' : 'Đã huỷ')))}}</td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -184,6 +180,12 @@
                                         {{invoice.status == 1 ? 'Đang chờ' : (invoice.status == 2 ? 'Chưa thanh toán' :  (invoice.status == 3 ? 'Chờ thanh toán' : (invoice.status == 4 ? 'Hoàn thành' : 'Đã huỷ')))}}
                                     </td>
                                 </tr>
+                                <tr>
+                                    <th>Ghi chú</th>
+                                    <td class="border-0 text-end">
+                                        {{invoice.note}}
+                                    </td>
+                                </tr>
                                 <tr ng-show="invoice.status == 3 || invoice.status == 4">
                                     <th>Tổng tiền thanh toán</th>
                                     <td class="border-0 text-end">
@@ -196,14 +198,14 @@
                 </div>
                 <div class="card-body border-top d-print-none">
                     <div class="float-end">
-                        <a href="javascript:window.print()" class="btn btn-primary waves-effect waves-light"><i class="fa fa-print"></i></a>
+                        <a href="javascript:window.print()" class="btn btn-primary waves-effect waves-light" title="In hóa đơn"><i class="fa fa-print"></i></a>
                         <!-- <button ng-show="invoice.status == 2" class="btn btn-primary waves-effect waves-light"><i
                                 class="bx bx-money"></i> Tách hoá đơn</button> -->
                         <button ng-show="invoice.status == 2" ng-click="modalPayment('show')"
                             class="btn btn-success waves-effect waves-light"><i class="bx bx-money"></i> Thanh
                             toán</button>
                         <button ng-show="invoice.status == 3 && invoice.paymentMethod.code == 'VNPAY'" ng-click="handlerVNPay()"
-                            class="btn btn-success waves-effect waves-light"><i class="bx bx-money"></i> VNPay</button>
+                            class="btn btn-success waves-effect waves-light" title="Thanh toán VNPay"><i class="bx bx-money"></i> VNPay</button>
                         <button ng-show="invoice.status == 3 && invoice.paymentMethod.code != 'VNPAY'" ng-click="confirmPayment()"
                             class="btn btn-success waves-effect waves-light">Xác nhận</button>
                     </div>
@@ -416,6 +418,11 @@
                                 <input ng-value="(payment.money - getTotalPayment() | currency: '' : 0) + '₫'" class="form-control" type="text" id="" readonly>
                             </div>
                         </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="note" class="form-label">Ghi chú</label>
+                        <textarea ng-model="invoice.note" class="form-control" id="note"
+                            rows="3"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">

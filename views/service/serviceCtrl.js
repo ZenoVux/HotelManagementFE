@@ -12,11 +12,16 @@ app.controller("serviceCtrl", function ($scope, $http) {
 		$http.get("http://localhost:8000/api/services").then(resp => {
 			$scope.items = resp.data;
 			$(document).ready(function () {
-                $('#datatable-services').DataTable({
+                tableServices = $('#datatable-services').DataTable({
                     language: {
                         url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
-                    }
+                    },
+					dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>'
                 });
+
+				$('#search-datatable-services').keyup(function () {
+					tableServices.search($(this).val()).draw();
+				});
             });
 		})
 

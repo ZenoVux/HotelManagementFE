@@ -52,9 +52,10 @@
                                     <label class="form-label">Password</label>
                                     <div class="input-group auth-pass-inputgroup">
                                         <input type="password" class="form-control" placeholder="Enter password"
-                                         ng-model="form.password"   aria-label="Password" aria-describedby="password-addon" />
-                                        <button class="btn btn-light" type="button" id="password-addon">
-                                            <i class="mdi mdi-eye-outline"></i>
+                                         ng-model="form.password" id="password" />
+                                         <button ng-click="handlerShowPassword()" class="btn btn-light" type="button">
+                                            <i ng-show="!isShowPassword" class="mdi mdi-eye-outline"></i>
+                                            <i ng-show="isShowPassword" class="mdi mdi-eye-off-outline"></i>
                                         </button>
                                     </div>
                                 </div> 

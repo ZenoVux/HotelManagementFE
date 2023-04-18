@@ -430,18 +430,29 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
             alert("Vui lòng chọn phương thức thanh toán!")
             return;
         }
-        if (!confirm("Bạn muốn thanh toán hoá đơn " + $scope.invoice.code + "?")) {
+        var text = "";
+        if ($scope.payment.paymentMethod.code == "BANK" || $scope.payment.paymentMethod.code == "VNPAY" || $scope.payment.paymentMethod.code == "CREDIT") {
+            text = "Xác nhận thanh toán " + $scope.payment.paymentMethod.name;
+        } else {
+            text = "Bạn muốn thanh toán"
+        }
+        if (!confirm(text + " hoá đơn " + $scope.invoice.code + "?")) {
             return;
         }
         $http.post("http://localhost:8000/api/hotel/payment", {
             invoiceCode: $scope.invoice.code,
             promotionCode: $scope.payment.promotion ? $scope.payment.promotion.code : null,
-            paymentMethodCode: $scope.payment.paymentMethod ? $scope.payment.paymentMethod.code : null
+            paymentMethodCode: $scope.payment.paymentMethod ? $scope.payment.paymentMethod.code : null,
+            note: $scope.invoice.note
         }).then(function (resp) {
-            alert("Thanh toán thành công!");
+            if ($scope.payment.paymentMethod.code == "CASH") {
+                alert("Thanh toán thành công!");
+            } else {
+                alert(text + " thành công!");
+            }
             $window.location.reload();
-        }, function () {
-            alert("Thanh toán thất bại!");
+        }, function (resp) {
+            alert(resp.data.error);
         });
     }
 

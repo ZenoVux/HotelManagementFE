@@ -42,28 +42,28 @@ app.controller("invoiceCtrl", function ($scope, $http) {
                         targets: 7,
                         orderable: false
                     },
-                    { 
-                        type: "num", 
-                        targets: 0 
+                    {
+                        type: "num",
+                        targets: 0
                     }
                 ],
                 buttons: [
                     {
                         extend: 'excelHtml5',
                         exportOptions: {
-                            columns: [ 0, 1, 2, 3, 4, 5, 6 ]
+                            columns: [0, 1, 2, 3, 4, 5, 6]
                         }
                     },
                     {
                         extend: 'pdfHtml5',
                         exportOptions: {
-                            columns: [ 0, 1, 2, 3, 4, 5, 6 ]
+                            columns: [0, 1, 2, 3, 4, 5, 6]
                         }
                     },
                     {
                         extend: 'print',
                         exportOptions: {
-                            columns: [ 0, 1, 2, 3, 4, 5, 6 ]
+                            columns: [0, 1, 2, 3, 4, 5, 6]
                         }
                     }
                 ],
@@ -160,6 +160,9 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
     $scope.invoiceDetailHistories = [];
     $scope.paymentMethods = [];
     $scope.promotions = [];
+    $scope.slpitInvoice = {
+        selection: []
+    };
 
     $scope.init = async function () {
         $scope.isLoading = true;
@@ -196,7 +199,7 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
     }
 
     $scope.loadUsedServices = async function (invoiceDetail) {
-        await $http.get("http://localhost:8000/api/used-services?invoiceDetailId=" +  + invoiceDetail.id + "&status=true").then(function (resp) {
+        await $http.get("http://localhost:8000/api/used-services?invoiceDetailId=" + + invoiceDetail.id + "&status=true").then(function (resp) {
             invoiceDetail.usedServices = resp.data;
         });
     }
@@ -318,8 +321,8 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
     }
 
     $scope.getTotalInvoice = function () {
-        // return $scope.invoiceDetails.reduce((total, invoiceDetail) => total + $scope.getTotalInvoiceDetail(invoiceDetail, invoiceDetail.usedServices), 0);
-        return $scope.invoice.total;
+        return $scope.invoiceDetails.reduce((total, invoiceDetail) => total + $scope.getTotalInvoiceDetail(invoiceDetail, invoiceDetail.usedServices), 0);
+        // return $scope.invoice.total;
     }
 
     $scope.getTotalDeposit = function () {
@@ -331,7 +334,7 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
     }
 
     $scope.isSplitInvoice = function () {
-        if ($scope.isPaymentInvoice() && $scope.invoiceDetails.length >= 2) {
+        if ($scope.invoiceDetails.length >= 2) {
             return true;
         }
         return false;
@@ -342,6 +345,13 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
             return true;
         }
         return false;
+    }
+
+    $scope.modalSplit = async function (action) {
+        if (action == "show") {
+        } else {
+        }
+        $('#modal-split').modal(action);
     }
 
     $scope.modalPayment = async function (action) {
@@ -399,6 +409,37 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
         }, 1000);
     }
 
+    $scope.toggleSelection = function (roomCode) {
+        var idx = $scope.slpitInvoice.selection.indexOf(roomCode);
+
+        if (idx > -1) {
+            $scope.slpitInvoice.selection.splice(idx, 1);
+        }
+
+        else {
+            $scope.slpitInvoice.selection.push(roomCode);
+        }
+    };
+
+    $scope.handlerSplitInvoice = function () {
+        if (!confirm("Bạn muốn tách phòng " + $scope.slpitInvoice.selection.join(', ') + " sang hoá đơn mới?")) {
+            return;
+        }
+        console.log($scope.slpitInvoice.selection.join(','));
+        $scope.isLoading = true;
+        $http.post("http://localhost:8000/api/hotel/split-invoice", {
+            invoiceCode: $scope.invoice.code,
+            roomCodes: $scope.slpitInvoice.selection
+        }).then(function (resp) {
+            alert("Tách hoá đơn thành công!");
+            $scope.isLoading = false;
+            $location.path("/invoices/" + resp.data.code);
+        }, function (resp) {
+            alert(resp.data.error);
+            $scope.isLoading = false;
+        });
+    }
+
     $scope.handlerUpdateRoom = function () {
         if ($scope.invoiceDetailUpdate.note === "") {
             alert("Vui lòng nhập ghi chú!");
@@ -428,6 +469,10 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
         });
         if (!$scope.payment.paymentMethod) {
             alert("Vui lòng chọn phương thức thanh toán!")
+            return;
+        }
+        if ($scope.payment.paymentMethod.code == 'CASH' && ($scope.payment.money - $scope.getTotalPayment()) < 0) {
+            alert("Tiền khách đưa không đủ để thanh toán!");
             return;
         }
         var text = "";

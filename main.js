@@ -2,11 +2,14 @@ var app = angular.module("myApp", ["ngRoute"]);
 app.component("appLayout", {
   templateUrl: "layout.html",
   transclude: true,
-  controller: function ($scope, $window, $location, authService) {
+  controller: function ($scope, $window, $location, authService, $http) {
 
     $scope.isAdmin = authService.hasRole('ADMIN');
-    $scope.isLogin = false
-    $scope.nameUser = "Welcome!"
+    $scope.isLogin = false;
+    $scope.nameUser = "Welcome!";
+    $scope.checkinTime;
+    $scope.checkoutTime;
+
     if (authService.getToken()) {
       $scope.isLogin = true;
       $scope.nameUser = authService.getUsername();
@@ -29,6 +32,16 @@ app.component("appLayout", {
         seconds.toString().padStart(2, '0');
       document.getElementById('clock').innerHTML = timeString;
     }, 1000);
+
+    $scope.loadSetting = async function () {
+      await $http.get("http://localhost:8000/api/settings").then(function (resp) {
+          $scope.checkinTime = new Date(resp.data.checkinTime);
+          $scope.checkoutTime = new Date(resp.data.checkoutTime);
+      });
+    }
+
+    $scope.loadSetting();
+
     (function ($) {
       "use strict";
 

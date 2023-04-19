@@ -117,6 +117,18 @@
                                     </td>
                                 </tr>
                                 <tr>
+                                    <td colspan="5" class="border-0 text-end">Phụ phí người lớn</td>
+                                    <td class="border-0 text-end">{{invoiceDetail.adultSurcharge  | currency: '' : 0}}₫</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" class="border-0 text-end">Phụ phí trẻ em</td>
+                                    <td class="border-0 text-end">{{invoiceDetail.childSurcharge  | currency: '' : 0}}₫</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" class="border-0 text-end">Phụ phí khác</td>
+                                    <td class="border-0 text-end">{{invoiceDetail.ortherSurcharge  | currency: '' : 0}}₫</td>
+                                </tr>
+                                <tr>
                                     <td colspan="5" class="border-0 text-end">Nhận phòng sớm</td>
                                     <td class="border-0 text-end">{{invoiceDetail.earlyCheckinFee | currency: '' : 0}}₫
                                     </td>
@@ -172,7 +184,7 @@
                                 <tr>
                                     <th>Tổng tiền hoá đơn</th>
                                     <td class="border-0 text-end">
-                                        {{invoice.status == 3 ? invoice.total : getTotalInvoice() | currency: '' : 0}}₫
+                                        {{invoice.status == 2 ? invoice.total : getTotalInvoice() | currency: '' : 0}}₫
                                     </td>
                                 </tr>
                                 <tr ng-show="invoice.status == 3 || invoice.status == 4">
@@ -260,6 +272,33 @@
                                 <label for="deposit" class="form-label">Trả trước</label>
                                 <input ng-model="invoiceDetailUpdate.deposit" type="number" min="0" class="form-control"
                                     id="deposit">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label for="deposit" class="form-label">Phụ phí người lớn</label>
+                                <input ng-model="invoiceDetailUpdate.adultSurcharge" type="number" min="0"
+                                    class="form-control" id="deposit">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label for="deposit" class="form-label">Phụ phí trẻ em</label>
+                                <input ng-model="invoiceDetailUpdate.childSurcharge" type="number" min="0"
+                                    class="form-control" id="deposit">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label for="deposit" class="form-label">Phụ phí khác</label>
+                                <input ng-model="invoiceDetailUpdate.ortherSurcharge" type="number" min="0"
+                                    class="form-control" id="deposit">
                             </div>
                         </div>
                     </div>
@@ -361,6 +400,9 @@
                                 <th scope="col">Ngày trả</th>
                                 <th scope="col">Giá phòng</th>
                                 <th scope="col">Trả trước</th>
+                                <th scope="col">Phụ phí người lớn</th>
+                                <th scope="col">Phụ phí trẻ em</th>
+                                <th scope="col">Phụ phí khác</th>
                                 <th scope="col">Nhận phòng sớm</th>
                                 <th scope="col">Trả phòng muộn</th>
                                 <th scope="col">Người cập nhật</th>
@@ -376,6 +418,9 @@
                                 <td>{{item.checkoutExpected | date:'dd/MM/yyyy'}}</td>
                                 <td>{{item.roomPrice | currency: '' : 0}}₫</td>
                                 <td>{{item.deposit | currency: '' : 0}}₫</td>
+                                <td>{{item.adultSurcharge | currency: '' : 0}}₫</td>
+                                <td>{{item.childSurcharge | currency: '' : 0}}₫</td>
+                                <td>{{item.ortherSurcharge | currency: '' : 0}}₫</td>
                                 <td>{{item.earlyCheckinFee | currency: '' : 0}}₫</td>
                                 <td>{{item.lateCheckoutFee | currency: '' : 0}}₫</td>
                                 <td>{{item.createdBy}}</td>

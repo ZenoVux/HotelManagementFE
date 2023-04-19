@@ -97,6 +97,18 @@
                                     <td class="border-0 text-end">{{invoiceDetail.deposit  | currency: '' : 0}}₫</td>
                                 </tr>
                                 <tr>
+                                    <td colspan="5" class="border-0 text-end">Phụ phí người lớn</td>
+                                    <td class="border-0 text-end">{{invoiceDetail.adultSurcharge  | currency: '' : 0}}₫</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" class="border-0 text-end">Phụ phí trẻ em</td>
+                                    <td class="border-0 text-end">{{invoiceDetail.childSurcharge  | currency: '' : 0}}₫</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" class="border-0 text-end">Phụ phí khác</td>
+                                    <td class="border-0 text-end">{{invoiceDetail.ortherSurcharge  | currency: '' : 0}}₫</td>
+                                </tr>
+                                <tr>
                                     <td colspan="5" class="border-0 text-end">Nhận phòng sớm</td>
                                     <td class="border-0 text-end">{{invoiceDetail.earlyCheckinFee | currency: '' : 0}}₫
                                     </td>

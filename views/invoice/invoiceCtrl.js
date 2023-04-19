@@ -153,7 +153,9 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
 
     $scope.isLoading = false;
     $scope.invoice = {};
-    $scope.payment = {};
+    $scope.payment = {
+        money: 0
+    };
     $scope.invoiceDetail = {};
     $scope.invoiceDetailUpdate = {};
     $scope.invoiceDetails = [];
@@ -356,6 +358,9 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
 
     $scope.modalPayment = async function (action) {
         if (action == "show") {
+            $scope.payment = {
+                money: 0
+            };
             await $scope.loadPromotions();
             await $scope.loadPaymentMethods();
         } else {
@@ -370,6 +375,9 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
             $scope.invoiceDetailUpdate.invoiceDetailId = $scope.invoiceDetail.id;
             $scope.invoiceDetailUpdate.roomPrice = $scope.invoiceDetail.roomPrice;
             $scope.invoiceDetailUpdate.deposit = $scope.invoiceDetail.deposit;
+            $scope.invoiceDetailUpdate.adultSurcharge = $scope.invoiceDetail.adultSurcharge;
+            $scope.invoiceDetailUpdate.childSurcharge = $scope.invoiceDetail.childSurcharge;
+            $scope.invoiceDetailUpdate.ortherSurcharge = $scope.invoiceDetail.ortherSurcharge;
             $scope.invoiceDetailUpdate.earlyCheckinFee = $scope.invoiceDetail.earlyCheckinFee;
             $scope.invoiceDetailUpdate.lateCheckoutFee = $scope.invoiceDetail.lateCheckoutFee;
             $scope.invoiceDetailUpdate.note = "";

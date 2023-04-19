@@ -36,9 +36,25 @@
             <h3 class="d-none d-xl-inline-block mb-0" id="clock"></h3>
           </button>
         </div>
+
+        <!-- App Setting Time -->
       </div>
 
       <div class="d-flex">
+        <div class="d-lg-block">
+          <button type="button" class="btn header-item waves-effect">
+            <h4 class="d-none d-xl-inline-block mb-0">
+              <i class="mdi mdi-login-variant"></i> {{checkinTime | date:'HH:mm'}}
+            </h4>
+          </button>
+        </div>
+        <div class="d-lg-block">
+          <button type="button" class="btn header-item waves-effect">
+            <h4 class="d-none d-xl-inline-block mb-0">
+              <i class="mdi mdi-logout-variant"></i> {{checkoutTime | date:'HH:mm'}}
+            </h4>
+          </button>
+        </div>
         <div class="dropdown d-none d-lg-inline-block ms-1">
           <button type="button" class="btn header-item noti-icon waves-effect" data-bs-toggle="fullscreen">
             <i class="bx bx-fullscreen"></i>
@@ -75,7 +91,7 @@
           <li>
             <a ng-href="/#!/hotel-room" class="waves-effect">
               <i class="bx bxs-grid"></i>
-              <span>Hotel</span>
+              <span>Sơ đồ phòng</span>
             </a>
           </li>
           <li>
@@ -87,32 +103,32 @@
           <li ng-show="isAdmin">
             <a ng-href="/#!/invoices">
               <i class="bx bx-receipt"></i>
-              <span>Invoice</span>
+              <span>Hoá đơn</span>
             </a>
           </li>
           <li ng-show="isAdmin">
-            <a ng-href="/#!/accounts" class="waves-effect">
-              <i class="bx bx-check-shield"></i>
-              <span>Account</span>
+            <a ng-href="/#!/statistical" class="waves-effect">
+              <i class="bx bx-line-chart"></i>
+              <span>Thống kê</span>
             </a>
           </li>
           <!-- Room -->
           <li ng-show="isAdmin">
             <a ng-href="/#!/room" class="waves-effect">
               <i class="bx bx-hotel"></i>
-              <span>Room</span>
+              <span>Phòng</span>
             </a>
           </li>
           <li ng-show="isAdmin">
             <a ng-href="/#!/service">
               <i class="bx bx-bell"></i>
-              <span>Service</span>
+              <span>Dịch vụ</span>
             </a>
           </li>
           <li>
             <a ng-href="/#!/customers" class="waves-effect">
               <i class="bx bx-user"></i>
-              <span>Customer</span>
+              <span>Khách hàng</span>
             </a>
           </li>
           <!-- <li>
@@ -130,19 +146,19 @@
           <li ng-show="isAdmin">
             <a ng-href="/#!/promotion">
               <i class="bx bx-barcode"></i>
-              <span>Promotion</span>
+              <span>Khuyến mại</span>
             </a>
           </li>
           <li ng-show="isAdmin">
-            <a ng-href="/#!/statistical" class="waves-effect">
-              <i class="bx bx-line-chart"></i>
-              <span>Statistical</span>
+            <a ng-href="/#!/accounts" class="waves-effect">
+              <i class="bx bx-check-shield"></i>
+              <span>Tài khoản</span>
             </a>
           </li>
           <li ng-show="isAdmin">
             <a ng-href="/#!/setting">
               <i class="bx bx-cog"></i>
-              <span>Setting</span>
+              <span>Cấu hình</span>
             </a>
           </li>
         </ul>

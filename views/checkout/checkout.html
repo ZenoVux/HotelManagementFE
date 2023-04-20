@@ -27,6 +27,10 @@
                                         <th scope="row">SĐT</th>
                                         <td>{{invoiceDetail.invoice.booking.customer.phoneNumber}}</td>
                                     </tr>
+                                    <tr>
+                                        <th scope="row">Địa chỉ</th>
+                                        <td>{{invoiceDetail.invoice.booking.customer.address}}</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -35,7 +39,11 @@
                             <table class="table mb-0 table-bordered">
                                 <tbody>
                                     <tr>
-                                        <th scope="row" style="width: 300px;">Loại phòng</th>
+                                        <th scope="row" style="width: 300px;">Mã đặt</th>
+                                        <td>{{invoiceDetail.invoice.booking.code}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Loại phòng</th>
                                         <td>{{invoiceDetail.room.roomType.name}}</td>
                                     </tr>
                                     <tr>
@@ -97,12 +105,12 @@
                                     <td class="border-0 text-end">{{invoiceDetail.deposit  | currency: '' : 0}}₫</td>
                                 </tr>
                                 <tr>
-                                    <td colspan="5" class="border-0 text-end">Phụ phí người lớn</td>
-                                    <td class="border-0 text-end">{{invoiceDetail.adultSurcharge  | currency: '' : 0}}₫</td>
+                                    <td colspan="5" class="border-0 text-end">Phụ phí người lớn ({{peopleInRoom.numAdults}}/{{invoiceDetail.room.roomType.numAdults}})</td>
+                                    <td class="border-0 text-end">{{peopleInRoom.adultSurcharge  | currency: '' : 0}}₫</td>
                                 </tr>
                                 <tr>
-                                    <td colspan="5" class="border-0 text-end">Phụ phí trẻ em</td>
-                                    <td class="border-0 text-end">{{invoiceDetail.childSurcharge  | currency: '' : 0}}₫</td>
+                                    <td colspan="5" class="border-0 text-end">Phụ phí trẻ em ({{peopleInRoom.numChilds}}/{{invoiceDetail.room.roomType.numChilds}})</td>
+                                    <td class="border-0 text-end">{{peopleInRoom.childSurcharge  | currency: '' : 0}}₫</td>
                                 </tr>
                                 <tr>
                                     <td colspan="5" class="border-0 text-end">Phụ phí khác</td>

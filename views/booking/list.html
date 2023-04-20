@@ -337,7 +337,11 @@
                                             </div>
                                         </div>
                                         <div class="col-sm-6">
-
+                                            <div class="text-sm-end" ng-if="currentBooking.status == 1">
+                                                <a class="btn btn-primary btn-lg" ng-click="confirmBooking()"
+                                                    role="button">
+                                                    Xác nhận</a>
+                                            </div>
                                         </div>
                                         <div class="col-sm-1">
                                             <div class="text-sm-end">

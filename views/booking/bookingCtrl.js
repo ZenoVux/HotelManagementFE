@@ -46,7 +46,13 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
                     language: {
                         url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
                     },
-                    dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>'
+                    dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                    columnDefs: [
+                        {
+                            type: "num",
+                            targets: 0
+                        }
+                    ],
                 });
                 $('#search-datatable-confirmBooking').keyup(function () {
                     confirmedTable.search($(this).val()).draw();
@@ -57,7 +63,13 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
                     language: {
                         url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
                     },
-                    dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>'
+                    dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                    columnDefs: [
+                        {
+                            type: "num",
+                            targets: 0
+                        }
+                    ],
                 });
                 $('#search-datatable-pendingBooking').keyup(function () {
                     pendingTable.search($(this).val()).draw();
@@ -522,6 +534,26 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
         });
 
     };
+
+    $scope.confirmBooking = function () {
+        var r = confirm("Xác nhận Booking " + $scope.currentBooking.code);
+        if (r != true) {
+            return;
+        }
+
+        console.log($scope.currentBooking);
+
+        $scope.loading = true;
+        $http.post("http://localhost:8000/api/bookings/confirm/" + $scope.currentBooking.code).then(function (resp) {
+            $('#booking-modal').modal('hide');
+            alert('Xác nhận booking thành công!');
+            $scope.loading = false;
+        }).catch(function (error) {
+            console.error('Error fetching data:', error);
+            $scope.loading = false;
+        });
+
+    }
 
     $scope.cancelBooking = function () {
         var reason = prompt("Nhập lý do và xác nhận huỷ booking " + $scope.currentBooking.code);

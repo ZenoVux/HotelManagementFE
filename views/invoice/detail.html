@@ -371,7 +371,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="item in invoiceDetailHistories">
+                            <tr ng-repeat="item in invoiceDetailHistories | orderBy:'-updateDate'">
                                 <td>
                                     <b>{{$index + 1}}</b>
                                 </td>

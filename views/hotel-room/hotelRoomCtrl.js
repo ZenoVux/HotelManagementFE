@@ -139,7 +139,9 @@ app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http
     }
 
     $scope.loadChangeRooms = async function () {
-        await $http.get("http://localhost:8000/api/hotel/room-unbooked?checkin-date=" + $scope.changeRoom.checkinDate.toLocaleDateString('vi-VN') + "&checkout-date=" + $scope.changeRoom.checkoutDate.toLocaleDateString('vi-VN')).then(resp => {
+        const now = new Date();
+        now.setHours(0, 0, 0, 0);
+        await $http.get("http://localhost:8000/api/hotel/room-unbooked?checkin-date=" + now.toLocaleDateString('vi-VN') + "&checkout-date=" + $scope.changeRoom.checkoutDate.toLocaleDateString('vi-VN')).then(resp => {
             $scope.roomUnbookeds = resp.data;
         }).catch(error => {
             console.log("Error", error);

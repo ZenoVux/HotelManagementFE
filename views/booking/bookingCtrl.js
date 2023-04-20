@@ -9,9 +9,12 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
     $scope.currentTable = 2;
     $scope.booking = {};
     $scope.addRoom = {};
+    $scope.addRoom.checkinDate = null;
+    $scope.addRoom.checkoutDate = null;
     $scope.bookingDetail = {};
     $scope.rooms = [];
     $scope.listRoomEditBkd = [];
+    $scope.addBookings = [];
 
     $scope.closeDropdown = function () {
         $('.dropdown-menu').removeClass('show');
@@ -26,7 +29,13 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
                     language: {
                         url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json',
                     },
-                    dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>'
+                    dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                    columnDefs: [
+                        {
+                            type: "num",
+                            targets: 0
+                        }
+                    ],
                 });
                 $('#search-datatable-booking').keyup(function () {
                     bookingTable.search($(this).val()).draw();
@@ -68,6 +77,7 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
 
         $http.get("http://localhost:8000/api/customers/in-use").then(function (resp) {
             $scope.customersInUse = resp.data;
+            console.log($scope.customersInUse);
             $scope.customersInUse.reverse();
             $(document).ready(function () {
                 customerTable = $('#customerTable').DataTable({
@@ -91,6 +101,10 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
         $scope.showHistory = false;
         $scope.showAddRoom = false;
         $scope.showEditBkd = false;
+        $scope.addBookings = [];
+        $scope.showAlert = false;
+        $scope.addRoom.checkinDate = null;
+        $scope.addRoom.checkoutDate = null;
     }
 
     $scope.viewCustomer = function (customer) {
@@ -236,6 +250,21 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
                 }
             }).then(function (response) {
                 $scope.addBookings = response.data;
+                for (var i = 0; i < $scope.addBookings.length; i++) {
+                    if ($scope.addBookings[i].promotion != null) {
+                        var percent = $scope.addBookings[i].promotion.percent;
+                        var price = $scope.addBookings[i].price;
+                        var maxDiscount = $scope.addBookings[i].promotion.maxDiscount;
+
+                        $scope.addBookings[i].newPrice = price * (100 - percent) / 100;
+                        if ((percent / 100 * price) > maxDiscount) {
+                            $scope.addBookings[i].newPrice = price - maxDiscount;
+                        }
+                    }
+                }
+                if ($scope.addBookings.length == 0) {
+                    alert('Không có phòng hợp lệ.');
+                }
                 $scope.loading = false;
             }).catch(function (error) {
                 console.error('Error fetching data:', error);
@@ -245,9 +274,10 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
     };
 
     $scope.updateSelectedRooms = function (info) {
-
-        var numAdults = $scope.addRoom.adults;
-        var numChildren = $scope.addRoom.children;
+        $scope.totalPrice = 0;
+        $scope.rooms = [];
+        var numAdults = $scope.booking.adults;
+        var numChildren = $scope.booking.children;
         var maxAdults = 0;
         var maxChildren = 0;
         var selectedCount = 0;
@@ -258,17 +288,22 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
         });
         info.roomCount = selectedCount;
         for (var i = 0; i < $scope.addBookings.length; i++) {
-            var info = $scope.addBookings[i];
-            for (var j = 0; j < info.listRooms.length; j++) {
-                var room = info.listRooms[j];
+            var infoBook = $scope.addBookings[i];
+            for (var j = 0; j < infoBook.listRooms.length; j++) {
+                var room = infoBook.listRooms[j];
                 if (room.selected) {
+                    maxAdults += room.roomType.numAdults;
+                    maxChildren += room.roomType.numChilds;
+                    if (infoBook.newPrice != undefined) {
+                        $scope.totalPrice += infoBook.newPrice;
+                        room.roomType.price = infoBook.newPrice;
+                    } else {
+                        $scope.totalPrice += room.roomType.price;
+                    }
                     $scope.rooms.push(room);
-                    maxAdults += room.numAdults;
-                    maxChildren += room.numChilds;
                 }
             }
         }
-
         if (numAdults > maxAdults && numChildren > maxChildren) {
             $scope.showAlert = true;
             $scope.alertMessage = 'Đã chọn ' + $scope.rooms.length + ' phòng. Bạn cần chọn thêm cho ' + (numAdults - maxAdults) + ' người lớn và ' + (numChildren - maxChildren) + ' trẻ em nữa!';
@@ -283,7 +318,6 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
             $scope.showAlert = true;
             $scope.alertMessage = 'Đã chọn ' + $scope.rooms.length + ' phòng đáp ứng đủ số lượng khách!';
         }
-
     };
 
     $scope.addRoomToBooking = function () {
@@ -557,7 +591,6 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
     };
 
     $scope.init = function () {
-        //roomTypes
         $http.get("http://localhost:8000/api/room-types").then(function (resp) {
             $scope.roomTypes = resp.data;
         }).catch(function (error) {
@@ -599,22 +632,15 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
                 for (var i = 0; i < $scope.bookings.length; i++) {
                     if ($scope.bookings[i].promotion != null) {
                         var percent = $scope.bookings[i].promotion.percent;
-                        var minPrice = $scope.bookings[i].minPrice;
-                        var maxPrice = $scope.bookings[i].maxPrice;
+                        var price = $scope.bookings[i].price;
                         var maxDiscount = $scope.bookings[i].promotion.maxDiscount;
 
-                        $scope.bookings[i].newMinPrice = minPrice * (100 - percent) / 100;
-                        if ((percent / 100 * minPrice) > maxDiscount) {
-                            $scope.bookings[i].newMinPrice = minPrice - maxDiscount;
-                        }
-
-                        $scope.bookings[i].newMaxPrice = maxPrice * (100 - percent) / 100;
-                        if ((percent / 100 * maxPrice) > maxDiscount) {
-                            $scope.bookings[i].newMaxPrice = minPrice - maxDiscount;
+                        $scope.bookings[i].newPrice = price * (100 - percent) / 100;
+                        if ((percent / 100 * price) > maxDiscount) {
+                            $scope.bookings[i].newPrice = price - maxDiscount;
                         }
                     }
                 }
-
                 if ($scope.bookings.length == 0) {
                     alert('Không có phòng hợp lệ.');
                 }
@@ -626,8 +652,13 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
         }
     };
 
-    $scope.updateSelectedRooms = function (info) {
+    $scope.showDetailRoomType = function (roomType) {
+        $scope.currentRoomType = roomType;
+        console.log(roomType);
+        $('#room-type-modal').modal('show');
+    };
 
+    $scope.updateSelectedRooms = function (info) {
         $scope.totalPrice = 0;
         $scope.rooms = [];
         var numAdults = $scope.booking.adults;
@@ -642,14 +673,19 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
         });
         info.roomCount = selectedCount;
         for (var i = 0; i < $scope.bookings.length; i++) {
-            var info = $scope.bookings[i];
-            for (var j = 0; j < info.listRooms.length; j++) {
-                var room = info.listRooms[j];
+            var infoBook = $scope.bookings[i];
+            for (var j = 0; j < infoBook.listRooms.length; j++) {
+                var room = infoBook.listRooms[j];
                 if (room.selected) {
+                    maxAdults += room.roomType.numAdults;
+                    maxChildren += room.roomType.numChilds;
+                    if (infoBook.newPrice != undefined) {
+                        $scope.totalPrice += infoBook.newPrice;
+                        room.roomType.price = infoBook.newPrice;
+                    } else {
+                        $scope.totalPrice += room.roomType.price;
+                    }
                     $scope.rooms.push(room);
-                    maxAdults += room.numAdults;
-                    maxChildren += room.numChilds;
-                    $scope.totalPrice += room.price;
                 }
             }
         }

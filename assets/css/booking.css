@@ -14,7 +14,7 @@
 
 /* Style for the active tab */
 .active-tab {
-    background-color: #2A3042;
+    background-color: #212529;
     color: #fff;
     transition: background-color 0.2s ease-in-out;
 }
@@ -22,8 +22,18 @@
 /* Style for the active circle */
 .active-tab .circle {
     background-color: #fff;
-    color: #2A3042;
+    color: #212529;
     transition: background-color 0.2s ease-in-out;
+}
+
+.room-type-detail {
+    text-decoration: none;
+    color: #212529;
+}
+
+.room-type-detail:hover {
+    color: red;
+    cursor: pointer;
 }
 
 /* Style for the pill-shaped background */
@@ -240,4 +250,6 @@
         left: 0;
         width: 100%;
     }
+
+
 }

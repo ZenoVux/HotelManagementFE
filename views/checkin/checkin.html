@@ -27,6 +27,10 @@
                                         <th scope="row">SĐT</th>
                                         <td>{{bookingDetail.booking.customer.phoneNumber}}</td>
                                     </tr>
+                                    <tr>
+                                        <th scope="row">Địa chỉ</th>
+                                        <td>{{bookingDetail.booking.customer.address}}</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -35,7 +39,11 @@
                             <table class="table mb-0 table-bordered">
                                 <tbody>
                                     <tr>
-                                        <th scope="row" style="width: 300px;">Loại phòng</th>
+                                        <th scope="row" style="width: 300px;">Mã đặt</th>
+                                        <td>{{bookingDetail.booking.code}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Loại phòng</th>
                                         <td>{{bookingDetail.room.roomType.name}}</td>
                                     </tr>
                                     <tr>

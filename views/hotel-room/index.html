@@ -155,11 +155,18 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-click="changeRoom.toRoomCode = item.code" ng-repeat="item in rooms">
+                                <tr ng-click="changeRoom.toRoomCode = item.code" ng-repeat="item in roomUnbookeds">
                                     <td>{{item.code}}</td>
-                                    <td>{{item.roomType.name}}</td>
-                                    <td>{{item.roomType.price | currency: '' : 0}}₫</td>
-                                    <td>{{item.roomType.area}}m²</td>
+                                    <td>{{item.roomType}}</td>
+                                    <td>
+                                        <div ng-show="!item.newPrice">
+                                            {{item.price | currency: '' : 0}}₫
+                                        </div>
+                                        <div ng-show="item.newPrice" style="color: red">
+                                            {{item.newPrice | currency: '' : 0}}₫
+                                        </div>
+                                    </td>
+                                    <td>{{item.area}}m²</td>
                                     <td><input ng-model="changeRoom.toRoomCode" ng-value="item.code"
                                             class="form-check-input" type="radio" name="toRoomCode"></td>
                                 </tr>
@@ -395,16 +402,16 @@
                             <table class="table mb-2 table-bordered">
                                 <tbody>
                                     <tr>
-                                        <th scope="row">Phù hợp mới</th>
-                                        <td>{{room.roomType.numAdults}} người lớn và {{room.roomType.numChilds}} trẻ em</td>
-                                    </tr>
-                                    <tr>
                                         <th scope="row">Phụ phí người lớn</th>
-                                        <td>{{room.roomType.adultSurcharge | currency: '' : 0}}₫/người, thêm tối đa {{room.roomType.maxAdultsAdd}}</td>
+                                        <td>
+                                            {{room.roomType.adultSurcharge | currency: '' : 0}}₫/người, thêm tối đa {{room.roomType.maxAdultsAdd}}, đang ở ({{peopleInRoom.numAdults}}/{{room.roomType.numAdults}})
+                                        </td>
                                     </tr>
                                     <tr>
                                         <th scope="row">Phụ phí trẻ em</th>
-                                        <td>{{room.roomType.childSurcharge | currency: '' : 0}}₫/người, thêm tối đa {{room.roomType.maxChildsAdd}}</td>
+                                        <td>
+                                            {{room.roomType.childSurcharge | currency: '' : 0}}₫/người, thêm tối đa {{room.roomType.maxChildsAdd}}, đang ở ({{peopleInRoom.numChilds}}/{{room.roomType.numChilds}})
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -618,10 +625,10 @@
                                 <th scope="row" style="width: 300px;">Loại phòng</th>
                                 <td>{{room.roomType.name}}</td>
                             </tr>
-                            <tr>
+                            <!-- <tr>
                                 <th scope="row">Giá phòng</th>
                                 <td>{{room.roomType.price | currency: '' : 0}}₫</td>
-                            </tr>
+                            </tr> -->
                             <tr>
                                 <th scope="row">Diện tích</th>
                                 <td>{{room.roomType.area}}m²</td>
@@ -665,6 +672,10 @@
                             <tr>
                                 <th scope="row">SĐT</th>
                                 <td>{{booking.customer.phoneNumber}}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Địa chỉ</th>
+                                <td>{{booking.customer.address}}</td>
                             </tr>
                         </tbody>
                     </table>

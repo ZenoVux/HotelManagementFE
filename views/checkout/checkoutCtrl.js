@@ -126,8 +126,7 @@ app.controller("checkoutCtrl", function ($scope, $routeParams, $location, $http,
     $scope.modalUpdateRoom = async function (action) {
         if (action == "show") {
             $scope.invoiceDetailUpdate.invoiceDetailId = $scope.invoiceDetail.id;
-            $scope.invoiceDetailUpdate.roomPrice = $scope.invoiceDetail.roomPrice;
-            $scope.invoiceDetailUpdate.deposit = $scope.invoiceDetail.deposit;
+            $scope.invoiceDetailUpdate.ortherSurcharge = $scope.invoiceDetail.ortherSurcharge;
             $scope.invoiceDetailUpdate.earlyCheckinFee = $scope.invoiceDetail.earlyCheckinFee;
             $scope.invoiceDetailUpdate.lateCheckoutFee = $scope.invoiceDetail.lateCheckoutFee;
             $scope.invoiceDetailUpdate.note = "";

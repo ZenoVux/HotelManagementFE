@@ -342,7 +342,7 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
     }
 
     $scope.getTotalPayment = function () {
-        return $scope.getTotalInvoice() - $scope.getDiscount();
+        return $scope.invoice.total - $scope.getDiscount();
     }
 
     $scope.isSplitInvoice = function () {
@@ -449,8 +449,8 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
             invoiceCode: $scope.invoice.code,
             roomCodes: $scope.slpitInvoice.selection
         }).then(function (resp) {
-            alert("Tách hoá đơn thành công!");
             $scope.isLoading = false;
+            alert("Tách hoá đơn thành công!");
             $location.path("/invoices/" + resp.data.code);
         }, function (resp) {
             alert(resp.data.error);
@@ -507,7 +507,7 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
             promotionCode: $scope.payment.promotion ? $scope.payment.promotion.code : null,
             paymentMethodCode: $scope.payment.paymentMethod ? $scope.payment.paymentMethod.code : null,
             note: $scope.invoice.note
-        }).then(function (resp) {
+        }).then(function () {
             if ($scope.payment.paymentMethod.code == "CASH") {
                 alert("Thanh toán thành công!");
             } else {
@@ -525,7 +525,7 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
         }
         $http.post("http://localhost:8000/api/hotel/confirm-payment", {
             invoiceCode: $scope.invoice.code
-        }).then(function (resp) {
+        }).then(function () {
             alert("Xác nhận thành công!");
             $window.location.reload();
         }, function () {

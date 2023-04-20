@@ -166,16 +166,9 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="mb-3">
-                                <label for="roomPrice" class="form-label">Giá phòng</label>
-                                <input ng-model="invoiceDetailUpdate.roomPrice" type="number" min="0" class="form-control" id="roomPrice">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="mb-3">
-                                <label for="deposit" class="form-label">Trả trước</label>
-                                <input ng-model="invoiceDetailUpdate.deposit" type="number" min="0" class="form-control" id="deposit">
+                                <label for="deposit" class="form-label">Phụ phí khác</label>
+                                <input ng-model="invoiceDetailUpdate.ortherSurcharge" type="number" min="0"
+                                    class="form-control" id="deposit">
                             </div>
                         </div>
                     </div>
@@ -183,7 +176,8 @@
                         <div class="col-12">
                             <div class="mb-3">
                                 <label for="deposit" class="form-label">Nhận phòng sớm</label>
-                                <input ng-model="invoiceDetailUpdate.earlyCheckinFee" type="number" min="0" class="form-control" id="deposit">
+                                <input ng-model="invoiceDetailUpdate.earlyCheckinFee" type="number" min="0"
+                                    class="form-control" id="deposit">
                             </div>
                         </div>
                     </div>
@@ -191,7 +185,8 @@
                         <div class="col-12">
                             <div class="mb-3">
                                 <label for="deposit" class="form-label">Trả phòng muộn</label>
-                                <input ng-model="invoiceDetailUpdate.lateCheckoutFee" type="number" min="0" class="form-control" id="deposit">
+                                <input ng-model="invoiceDetailUpdate.lateCheckoutFee" type="number" min="0"
+                                    class="form-control" id="deposit">
                             </div>
                         </div>
                     </div>
@@ -224,6 +219,21 @@
                     <button ng-click="modalHostedAt('hide')" type="button" class="btn-close"></button>
                 </div>
                 <div class="modal-body">
+                    <table class="table mb-2 table-bordered">
+                        <tbody>
+                            <tr>
+                                <th scope="row">Phụ phí người lớn</th>
+                                <td>
+                                    {{invoiceDetail.room.roomType.adultSurcharge | currency: '' : 0}}₫/người, thêm tối đa {{invoiceDetail.room.roomType.maxAdultsAdd}}
+                            </tr>
+                            <tr>
+                                <th scope="row">Phụ phí trẻ em</th>
+                                <td>
+                                    {{invoiceDetail.room.roomType.childSurcharge | currency: '' : 0}}₫/người, thêm tối đa {{invoiceDetail.room.roomType.maxChildsAdd}}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                     <input class="form-control" type="search" placeholder="Tìm kiếm"
                         id="search-datatable-hosted-at">
                     <div class="table-responsive">

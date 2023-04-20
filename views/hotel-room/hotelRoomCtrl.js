@@ -44,7 +44,7 @@ app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http
     $scope.usedServices = [];
     $scope.hostedAts = [];
     $scope.roomTypes = [];
-    $scope.rooms = [];
+    $scope.roomUnbookeds = [];
     $scope.customers = [];
     $scope.room = {};
     $scope.selectRoom = {};
@@ -59,6 +59,7 @@ app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http
     };
     $scope.booking = {};
     $scope.search = {};
+    $scope.peopleInRoom = {};
 
     $scope.frontIdCardBase64 = null;
     $scope.backIdCardBase64 = null;
@@ -138,8 +139,8 @@ app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http
     }
 
     $scope.loadChangeRooms = async function () {
-        await $http.get("http://localhost:8000/api/rooms/unbooked?checkin-date=" + $scope.changeRoom.checkinDate.toLocaleDateString('vi-VN') + "&checkout-date=" + $scope.changeRoom.checkoutDate.toLocaleDateString('vi-VN')).then(resp => {
-            $scope.rooms = resp.data;
+        await $http.get("http://localhost:8000/api/hotel/room-unbooked?checkin-date=" + $scope.changeRoom.checkinDate.toLocaleDateString('vi-VN') + "&checkout-date=" + $scope.changeRoom.checkoutDate.toLocaleDateString('vi-VN')).then(resp => {
+            $scope.roomUnbookeds = resp.data;
         }).catch(error => {
             console.log("Error", error);
         });
@@ -148,6 +149,12 @@ app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http
     $scope.loadBooking = async function () {
         await $http.get("http://localhost:8000/api/hotel/booking/" + $scope.selectRoom.bookingCode).then(resp => {
             $scope.booking = resp.data;
+        });
+    }
+
+    $scope.loadPeopleInRoom = async function () {
+        await $http.get("http://localhost:8000/api/hotel/people-in-room/" + $scope.selectRoom.invoiceDetailId).then(function (resp) {
+            $scope.peopleInRoom = resp.data;
         });
     }
 
@@ -409,6 +416,7 @@ app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http
         $scope.selectRoom = room;
         if (action == 'show') {
             await $scope.loadRoom();
+            await $scope.loadPeopleInRoom();
             await $scope.loadHostedAts();
             await $scope.loadCustomers();
             await $scope.initTableHostedAt();
@@ -417,6 +425,7 @@ app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http
             $scope.clearTableHostedAt();
             $scope.clearTableCustomer();
             $scope.room = {};
+            $scope.peopleInRoom = {};
             $scope.hostedAts = [];
             $scope.customers = [];
             $scope.customer = {
@@ -518,7 +527,7 @@ app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http
         } else {
             await $scope.clearTableChangeRoom();
             $scope.invoiceDetail = {};
-            $scope.rooms = [];
+            $scope.roomUnbookeds = [];
         }
         $('#modal-change-room').modal(action);
     }
@@ -553,6 +562,7 @@ app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http
                 await $scope.clearTableHostedAt();
                 await $scope.loadHostedAts();
                 await $scope.initTableHostedAt();
+                await $scope.loadPeopleInRoom();
                 $('.nav-tabs a[href="#hosted-at-tab"]').tab('show');
             }, function (resp) {
                 alert(resp.data.error);
@@ -569,6 +579,7 @@ app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http
             await $scope.clearTableHostedAt();
             await $scope.loadHostedAts();
             await $scope.initTableHostedAt();
+            await $scope.loadPeopleInRoom();
         }, function (resp) {
             alert(resp.data.error);
         });
@@ -776,38 +787,42 @@ app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http
         console.log("changeRoom", $scope.changeRoom);
 
         $scope.isLoading = true;
-        $http.post("http://localhost:8000/api/hotel/change", $scope.changeRoom).then(function (resp) {
-            $scope.statusCounts.forEach(statusCount => {
-                if (statusCount.status == 6) {
-                    statusCount.count++
-                    return;
-                }
-            });
-            $scope.hotelRooms.forEach(hotelRoom => {
-                if (hotelRoom.code == $scope.changeRoom.toRoomCode) {
-                    hotelRoom.bookingCode = $scope.selectRoom.bookingCode;
-                    hotelRoom.bookingDetailId = $scope.selectRoom.bookingDetailId;
-                    hotelRoom.invoiceDetailId = $scope.selectRoom.invoiceDetailId;
-                    hotelRoom.checkinExpected = $scope.selectRoom.checkinExpected;
-                    hotelRoom.checkoutExpected = $scope.changeRoom.checkoutDate;
-                    hotelRoom.customer = $scope.selectRoom.customer;
-                    hotelRoom.phoneNumber = $scope.selectRoom.phoneNumber;
-                    hotelRoom.status = 2;
-                    return;
-                }
-            });
+        $http.post("http://localhost:8000/api/hotel/change", $scope.changeRoom).then(async function () {
+            await $http.get("http://localhost:8000/api/hotel/" + $scope.changeRoom.toRoomCode).then(async function (resp) {
+                await $scope.statusCounts.forEach(statusCount => {
+                    if (statusCount.status == 6) {
+                        statusCount.count++
+                    }
+                    if (statusCount.status == 0) {
+                        statusCount.count--;
+                    }
+                });
+                await $scope.hotelRooms.forEach(hotelRoom => {
+                    if (hotelRoom.code == resp.data.code) {
+                        hotelRoom.bookingCode = resp.data.bookingCode;
+                        hotelRoom.bookingDetailId = resp.data.bookingDetailId;
+                        hotelRoom.invoiceDetailId = resp.data.invoiceDetailId;
+                        hotelRoom.checkinExpected = resp.data.checkinExpected;
+                        hotelRoom.checkoutExpected = resp.data.checkoutExpected;
+                        hotelRoom.customer = resp.data.customer;
+                        hotelRoom.phoneNumber = resp.data.phoneNumber;
+                        hotelRoom.status = resp.data.status;
+                        return;
+                    }
+                });
             
-            $scope.selectRoom.bookingCode = "";
-            $scope.selectRoom.bookingDetailId = null;
-            $scope.selectRoom.invoiceDetailId = null;
-            $scope.selectRoom.checkinExpected = null;
-            $scope.selectRoom.checkoutExpected = null;
-            $scope.selectRoom.customer = null;
-            $scope.selectRoom.phoneNumber = null;
-            $scope.selectRoom.status = 6;
-            $scope.modalChangeRoom('hide');
-            alert("Đổi phòng thành công!");
-            $scope.isLoading = false;
+                $scope.selectRoom.bookingCode = "";
+                $scope.selectRoom.bookingDetailId = null;
+                $scope.selectRoom.invoiceDetailId = null;
+                $scope.selectRoom.checkinExpected = null;
+                $scope.selectRoom.checkoutExpected = null;
+                $scope.selectRoom.customer = null;
+                $scope.selectRoom.phoneNumber = null;
+                $scope.selectRoom.status = 6;
+                $scope.modalChangeRoom('hide');
+                alert("Đổi phòng thành công!");
+                $scope.isLoading = false;
+            });
         }, function (resp) {
             alert(resp.data.error);
         });

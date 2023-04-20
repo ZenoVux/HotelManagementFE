@@ -184,7 +184,7 @@
                                 <tr>
                                     <th>Tổng tiền hoá đơn</th>
                                     <td class="border-0 text-end">
-                                        {{invoice.status == 2 ? invoice.total : getTotalInvoice() | currency: '' : 0}}₫
+                                        {{(invoice.status == 2 || invoice.status == 3 || invoice.status == 4) ? invoice.total : getTotalInvoice() | currency: '' : 0}}₫
                                     </td>
                                 </tr>
                                 <tr ng-show="invoice.status == 3 || invoice.status == 4">
@@ -257,24 +257,6 @@
                     <button ng-click="modalUpdateRoom('hide')" type="button" class="btn-close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="mb-3">
-                                <label for="roomPrice" class="form-label">Giá phòng</label>
-                                <input ng-model="invoiceDetailUpdate.roomPrice" type="number" min="0"
-                                    class="form-control" id="roomPrice">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="mb-3">
-                                <label for="deposit" class="form-label">Trả trước</label>
-                                <input ng-model="invoiceDetailUpdate.deposit" type="number" min="0" class="form-control"
-                                    id="deposit">
-                            </div>
-                        </div>
-                    </div>
                     <div class="row">
                         <div class="col-12">
                             <div class="mb-3">
@@ -380,8 +362,6 @@
                             <tr>
                                 <th scope="col">#</th>
                                 <th scope="col">Ngày trả</th>
-                                <th scope="col">Giá phòng</th>
-                                <th scope="col">Trả trước</th>
                                 <th scope="col">Phụ phí khác</th>
                                 <th scope="col">Nhận phòng sớm</th>
                                 <th scope="col">Trả phòng muộn</th>
@@ -396,8 +376,6 @@
                                     <b>{{$index + 1}}</b>
                                 </td>
                                 <td>{{item.checkoutExpected | date:'dd/MM/yyyy'}}</td>
-                                <td>{{item.roomPrice | currency: '' : 0}}₫</td>
-                                <td>{{item.deposit | currency: '' : 0}}₫</td>
                                 <td>{{item.ortherSurcharge | currency: '' : 0}}₫</td>
                                 <td>{{item.earlyCheckinFee | currency: '' : 0}}₫</td>
                                 <td>{{item.lateCheckoutFee | currency: '' : 0}}₫</td>
@@ -483,14 +461,13 @@
                         <label for="promotion" class="form-label">Khuyến mãi</label>
                         <select ng-options="promotion as promotion.description for promotion in promotions"
                             ng-model="payment.promotion" class="form-select" id="promotion">
-                            <option ng-value="null"></option>
                         </select>
                     </div>
                     <table class="table table-bordered">
                         <tbody>
                             <tr>
                                 <th scope="row" style="width: 250px;">Tổng tiền hoá đơn</th>
-                                <td>{{getTotalInvoice() | currency: '' : 0}}₫</td>
+                                <td>{{invoice.total | currency: '' : 0}}₫</td>
                             </tr>
                             <tr>
                                 <th scope="row">Giảm giá</th>

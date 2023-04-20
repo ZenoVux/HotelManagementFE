@@ -179,18 +179,18 @@
                                         <thead style="text-align: center;">
                                             <tr>
                                                 <th style="width: 20%;">
-                                                    <h4>Danh mục</h4>
+                                                    <h4>Loại phòng</h4>
                                                 </th>
-                                                <th style="width: 30%;">
+                                                <th style="width: 25%;">
                                                     <h4>Chi tiết</h4>
                                                 </th>
-                                                <th style="width: 10%;">
+                                                <th style="width: 15%;">
                                                     <h4>Giá</h4>
                                                 </th>
-                                                <th style="width: 10%;">
-                                                    <h4>Số lượng</h4>
+                                                <th style="width: 7%;">
+                                                    <h4>Còn lại</h4>
                                                 </th>
-                                                <th style="width: 10%;">
+                                                <th style="width: 5%;">
                                                     <h4>Đặt</h4>
                                                 </th>
                                                 <th style="width: 30%;">
@@ -201,60 +201,35 @@
                                         <tbody style="font-size: 15px;">
                                             <tr ng-repeat="info in bookings">
                                                 <td>
-                                                    <span>{{ info.name }}</span>
+                                                    <a ng-click="showDetailRoomType(info.roomType)"
+                                                        class="room-type-detail">
+                                                        <h5>{{ info.name }}</h5>
+                                                    </a>
                                                 </td>
                                                 <td>
-                                                    <ul>
-                                                        <li>
-                                                            <span> Số người lớn tối đa:
-                                                                <strong>{{info.maxAdults}}</strong>
-                                                                (Phụ phí:
-                                                                <strong>{{info.roomType.adultSurcharge |
-                                                                    currency: '' : 0}}đ</strong>)</span>
-                                                        </li>
-                                                        <li>
-                                                            <span> Số trẻ em tối đa:
-                                                                <strong>{{info.maxChilds}}</strong>
-                                                                (Phụ phí:
-                                                                <strong>{{info.roomType.childSurcharge |
-                                                                    currency: '' : 0}}đ</strong>)</span>
-                                                        </li>
-                                                        <li>
-                                                            <span> Chính sách huỷ:
-                                                                <strong>{{info.roomType.cancellationPolicy}}</strong>
-                                                            </span>
-                                                        </li>
-                                                        <li>
-                                                            <span> Chính sách khác:
-                                                                <strong>{{info.roomType.otherPolicy}}</strong>
-                                                            </span>
-                                                        </li>
-                                                    </ul>
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <p>Diện tích</p>
+                                                            <p>Hút thuốc</p>
+                                                            <p>Phù hợp</p>
+                                                        </div>
+                                                        <div class="col-md-8">
+                                                            <p>: {{info.roomType.area}} m<sup>2</sup></p>
+                                                            <p>: {{info.roomType.isSmoking ? 'Có' : 'Không'}}</p>
+                                                            <p>: {{info.roomType.numAdults}} người lớn và
+                                                                {{info.roomType.numChilds}} trẻ em</p>
+                                                        </div>
+                                                    </div>
                                                 </td>
                                                 <td ng-if="info.promotion == null">
-                                                    <strong>{{ info.minPrice === info.maxPrice ?
-                                                        (info.maxPrice | currency: '' : 0) :
-                                                        (info.minPrice | currency: '' : 0) + ' - ' +
-                                                        (info.maxPrice
-                                                        |
-                                                        currency: '' : 0) }}đ</strong>
+                                                    <strong>{{ info.price | currency: '' : 0}}đ</strong>
                                                 </td>
                                                 <td ng-if="info.promotion != null">
-                                                    <strong style="text-decoration: line-through;">{{ info.minPrice
-                                                        === info.maxPrice ?
-                                                        (info.maxPrice | currency: '' : 0) :
-                                                        (info.minPrice | currency: '' : 0) + ' - ' +
-                                                        (info.maxPrice
-                                                        |
-                                                        currency: '' : 0) }}đ</strong>
+                                                    <strong style="text-decoration: line-through;">{{ info.price |
+                                                        currency: '' : 0 }}đ</strong>
                                                     <br>
-                                                    <strong style="color: red">{{ info.newMinPrice
-                                                        === info.newMaxPrice ?
-                                                        (info.newMaxPrice | currency: '' : 0) :
-                                                        (info.newMinPrice | currency: '' : 0) + ' - ' +
-                                                        (info.newMaxPrice
-                                                        |
-                                                        currency: '' : 0) }}đ</strong>
+                                                    <strong style="color: red">{{ info.newPrice |
+                                                        currency: '' : 0}}đ</strong>
                                                     <br>
                                                     <span style="color: red">({{info.promotion.name}}-{{
                                                         info.promotion.percent }}%</span>
@@ -265,12 +240,8 @@
                                                 <td style="text-align: center;">
                                                     <span>{{ info.quantity }}</span>
                                                 </td>
-                                                <td>
-                                                    <div class="input-group">
-                                                        <input class="form-control" type="number"
-                                                            ng-model="info.roomCount" ng-init="info.roomCount = 0"
-                                                            min="0" max="{{ info.quantity }}" readonly>
-                                                    </div>
+                                                <td style="text-align: center;">
+                                                    <span>{{ info.roomCount ? info.roomCount : '0' }}</span>
                                                 </td>
                                                 <td>
                                                     <div class="row">
@@ -296,6 +267,112 @@
                                     </table>
                                 </div>
                             </section>
+
+                            <div class="modal fade" id="room-type-modal" data-bs-backdrop="static"
+                                data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                aria-hidden="true">
+                                <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+
+                                        <div class="modal-header">
+                                            <h4 class="modal-title" id="customer-modal-label">{{ currentRoomType.name }}
+                                            </h4>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div id="carouselExampleIndicators" class="carousel slide"
+                                                data-bs-ride="carousel">
+                                                <div class="carousel-indicators">
+                                                    <button type="button" data-bs-target="#carouselExampleIndicators"
+                                                        data-bs-slide-to="0" class="active" aria-current="true"
+                                                        aria-label="Slide 1"></button>
+                                                    <button type="button" data-bs-target="#carouselExampleIndicators"
+                                                        data-bs-slide-to="1" aria-label="Slide 2"></button>
+                                                    <button type="button" data-bs-target="#carouselExampleIndicators"
+                                                        data-bs-slide-to="2" aria-label="Slide 3"></button>
+                                                </div>
+                                                <div class="carousel-inner" style="height: 400px;">
+                                                    <div class="carousel-item active">
+                                                        <img src="https://picsum.photos/200/300" class="d-block w-100"
+                                                            alt="...">
+                                                    </div>
+                                                    <div class="carousel-item">
+                                                        <img src="https://picsum.photos/200/300" class="d-block w-100"
+                                                            alt="...">
+                                                    </div>
+                                                    <div class="carousel-item">
+                                                        <img src="https://picsum.photos/200/300" class="d-block w-100"
+                                                            alt="...">
+                                                    </div>
+                                                </div>
+                                                <button class="carousel-control-prev" type="button"
+                                                    data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                    <span class="visually-hidden">Previous</span>
+                                                </button>
+                                                <button class="carousel-control-next" type="button"
+                                                    data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                    <span class="visually-hidden">Next</span>
+                                                </button>
+                                            </div>
+                                            <table class="table table-hover table-reponsive">
+                                                <tr>
+                                                    <td><strong>Mô tả:</strong></td>
+                                                    <td>{{ currentRoomType.description }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Diện tích:</strong></td>
+                                                    <td>{{ currentRoomType.area }} m<sup>2</sup></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Phù hợp:</strong></td>
+                                                    <td>{{ currentRoomType.numAdults }} người lớn và
+                                                        {{ currentRoomType.numChilds }} trẻ em</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Thêm tối đa:</strong></td>
+                                                    <td>
+                                                        {{ currentRoomType.maxAdultsAdd }} người lớn
+                                                        ({{currentRoomType.adultSurcharge | currency: '' : 0}}đ/người)
+                                                        <br>
+                                                        và
+                                                        {{ currentRoomType.maxChildsAdd }} trẻ em
+                                                        ({{currentRoomType.childSurcharge | currency: '' : 0}}đ/trẻ)
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Hút thuốc:</strong></td>
+                                                    <td>{{ currentRoomType.isSmoking ? 'Có' : 'Không' }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Giá:</strong></td>
+                                                    <td>{{ currentRoomType.price | currency: '' : 0 }}đ</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Chính sách huỷ:</strong></td>
+                                                    <td>
+                                                        {{currentRoomType.cancellationPolicy}}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Chính sách khác:</strong></td>
+                                                    <td>
+                                                        {{currentRoomType.otherPolicy}}
+                                                    </td>
+                                                </tr>
+                                                <!-- vật dụng -->
+                                                <tr>
+                                                    <td><strong>Vật tư:</strong></td>
+                                                    <td></td>
+                                                </tr>
+                                            </table>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
 
                             <!-- Section 2: Khách hàng -->
                             <section ng-show="currentSection == 1">
@@ -464,7 +541,8 @@
                                                             <tr ng-repeat="room in rooms">
                                                                 <td>{{ $index + 1 }}</td>
                                                                 <td>{{room.code}}</td>
-                                                                <td>{{room.price | currency: '' : 0}}đ</td>
+                                                                <td>{{room.roomType.price | currency: '' : 0}}đ</td>
+
                                                                 <td>{{(booking.checkoutDate - booking.checkinDate) /
                                                                     (1000*60*60*24)}}</td>
                                                                 <td class="text-end">

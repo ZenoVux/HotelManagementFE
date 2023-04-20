@@ -88,6 +88,7 @@
                         <input class="form-control" type="search" placeholder="Tìm kiếm" id="search-datatable-booking">
                         <thead>
                             <tr>
+                                <th>STT</th>
                                 <th>Mã</th>
                                 <th>Phòng</th>
                                 <th>Số người lớn</th>
@@ -98,7 +99,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="booking in bookings">
+                            <tr ng-repeat="booking in bookings | orderBy: '-createdDate'">
+                                <td>{{$index + 1}}</td>
                                 <td>{{booking.code}}</td>
                                 <td>{{booking.numOfRoom}}</td>
                                 <td>{{booking.adults}}</td>
@@ -115,11 +117,10 @@
                                         class="badge badge-pill badge-soft-primary font-size-16">Đã xử lý</span>
                                 </td>
                                 <td>
-                                    <button class="btn">
-                                        <a class="text-secondary" title="Xem chi tiết" ng-click="viewBooking(booking)">
-                                            <i class="fas fa-eye font-size-16"></i>
-                                        </a>
-                                    </button>
+                                    <a class="btn btn-outline-secondary btn-sm edit" title="Xem chi tiết"
+                                        ng-click="viewBooking(booking)">
+                                        <i class="fas fa-eye font-size-16"></i>
+                                    </a>
                                 </td>
                             </tr>
                         </tbody>
@@ -481,18 +482,18 @@
                                                             <thead style="text-align: center;">
                                                                 <tr>
                                                                     <th style="width: 20%;">
-                                                                        <h4>Danh mục</h4>
+                                                                        <h4>Loại phòng</h4>
                                                                     </th>
-                                                                    <th style="width: 30%;">
+                                                                    <th style="width: 25%;">
                                                                         <h4>Chi tiết</h4>
                                                                     </th>
-                                                                    <th style="width: 10%;">
+                                                                    <th style="width: 15%;">
                                                                         <h4>Giá</h4>
                                                                     </th>
-                                                                    <th style="width: 10%;">
-                                                                        <h4>Số lượng</h4>
+                                                                    <th style="width: 7%;">
+                                                                        <h4>Còn lại</h4>
                                                                     </th>
-                                                                    <th style="width: 10%;">
+                                                                    <th style="width: 5%;">
                                                                         <h4>Đặt</h4>
                                                                     </th>
                                                                     <th style="width: 30%;">
@@ -503,58 +504,54 @@
                                                             <tbody style="font-size: 15px;">
                                                                 <tr ng-repeat="info in addBookings">
                                                                     <td>
-                                                                        <span>{{ info.name }}</span>
+                                                                        <h5>{{ info.name }}</h5>
                                                                     </td>
                                                                     <td>
-                                                                        <ul>
-                                                                            <li>
-                                                                                <span> Số người lớn tối đa:
-                                                                                    <strong>{{info.maxAdults}}</strong>
-                                                                                    (Phụ phí:
-                                                                                    <strong>{{info.roomType.adultSurcharge
-                                                                                        |
-                                                                                        currency: '' :
-                                                                                        0}}đ</strong>)</span>
-                                                                            </li>
-                                                                            <li>
-                                                                                <span> Số trẻ em tối đa:
-                                                                                    <strong>{{info.maxChilds}}</strong>
-                                                                                    (Phụ phí:
-                                                                                    <strong>{{info.roomType.childSurcharge
-                                                                                        |
-                                                                                        currency: '' :
-                                                                                        0}}đ</strong>)</span>
-                                                                            </li>
-                                                                            <li>
-                                                                                <span> Chính sách huỷ:
-                                                                                    <strong>{{info.roomType.cancellationPolicy}}</strong>
-                                                                                </span>
-                                                                            </li>
-                                                                            <li>
-                                                                                <span> Chính sách khác:
-                                                                                    <strong>{{info.roomType.otherPolicy}}</strong>
-                                                                                </span>
-                                                                            </li>
-                                                                        </ul>
+                                                                        <div class="row">
+                                                                            <div class="col-md-4">
+                                                                                <p>Diện tích</p>
+                                                                                <p>Hút thuốc</p>
+                                                                                <p>Phù hợp</p>
+                                                                            </div>
+                                                                            <div class="col-md-8">
+                                                                                <p>: {{info.roomType.area}}
+                                                                                    m<sup>2</sup></p>
+                                                                                <p>: {{info.roomType.isSmoking ? 'Có' :
+                                                                                    'Không'}}</p>
+                                                                                <p>: {{info.roomType.numAdults}} người
+                                                                                    lớn và
+                                                                                    {{info.roomType.numChilds}} trẻ em
+                                                                                </p>
+                                                                            </div>
+                                                                        </div>
                                                                     </td>
-                                                                    <td>
-                                                                        <strong>{{ info.minPrice === info.maxPrice ?
-                                                                            (info.maxPrice | currency: '' : 0) :
-                                                                            (info.minPrice | currency: '' : 0) + ' - ' +
-                                                                            (info.maxPrice
-                                                                            |
-                                                                            currency: '' : 0) }}đ</strong>
+                                                                    <td ng-if="info.promotion == null">
+                                                                        <strong>{{ info.price | currency: '' :
+                                                                            0}}đ</strong>
+                                                                    </td>
+                                                                    <td ng-if="info.promotion != null">
+                                                                        <strong
+                                                                            style="text-decoration: line-through;">{{
+                                                                            info.price |
+                                                                            currency: '' : 0 }}đ</strong>
+                                                                        <br>
+                                                                        <strong style="color: red">{{ info.newPrice |
+                                                                            currency: '' : 0}}đ</strong>
+                                                                        <br>
+                                                                        <span
+                                                                            style="color: red">({{info.promotion.name}}-{{
+                                                                            info.promotion.percent }}%</span>
+                                                                        <br>
+                                                                        <span style="color: red">Tối đa:
+                                                                            {{info.promotion.maxDiscount |
+                                                                            currency: '' : 0}}đ)</span>
                                                                     </td>
                                                                     <td style="text-align: center;">
                                                                         <span>{{ info.quantity }}</span>
                                                                     </td>
-                                                                    <td>
-                                                                        <div class="input-group">
-                                                                            <input class="form-control" type="number"
-                                                                                ng-model="info.roomCount"
-                                                                                ng-init="info.roomCount = 0" min="0"
-                                                                                max="{{ info.quantity }}" readonly>
-                                                                        </div>
+                                                                    <td style="text-align: center;">
+                                                                        <span>{{ info.roomCount ? info.roomCount : '0'
+                                                                            }}</span>
                                                                     </td>
                                                                     <td>
                                                                         <div class="row">
@@ -818,12 +815,14 @@
                         <input class="form-control" type="search" placeholder="Tìm kiếm" id="search-datatable-customer">
                         <thead>
                             <tr>
+                            <tr>
                                 <th>#</th>
-                                <th>Name</th>
-                                <th>Phone</th>
+                                <th>Họ tên</th>
+                                <th>Số điện thoại</th>
                                 <th>Email</th>
-                                <th>Type</th>
-                                <th>Action</th>
+                                <th>Hạng</th>
+                                <th>#</th>
+                            </tr>
                             </tr>
                         </thead>
                         <tbody>
@@ -833,18 +832,16 @@
                                 <td>{{customer.phoneNumber}}</td>
                                 <td>{{customer.email}}</td>
                                 <td>
-                                    <span class="badge rounded-pill" ng-class="{'bg-warning': customer.customerType.code == 'member', 
-                                        'bg-success': customer.customerType.code == 'vip'}">
+                                    <span class="badge badge-pill font-size-15"
+                                        ng-class="{'badge-soft-success': customer.customerType.id == 1, 'badge-soft-warning': customer.customerType.id != 1}">
                                         {{customer.customerType.name}}
                                     </span>
                                 </td>
                                 <td>
-                                    <button class="btn">
-                                        <a class="text-secondary" title="Xem chi tiết"
-                                            ng-click="viewCustomer(customer)">
-                                            <i class="fas fa-eye font-size-16"></i>
-                                        </a>
-                                    </button>
+                                    <a class="btn btn-outline-secondary btn-sm edit" title="Xem chi tiết"
+                                        ng-click="viewCustomer(customer)">
+                                        <i class="fas fa-eye font-size-16"></i>
+                                    </a>
                                 </td>
                             </tr>
                         </tbody>
@@ -936,6 +933,7 @@
                             id="search-datatable-confirmBooking">
                         <thead>
                             <tr>
+                                <th>STT</th>
                                 <th>Mã</th>
                                 <th>Phòng</th>
                                 <th>Số người lớn</th>
@@ -946,7 +944,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="booking in bookings" ng-if="booking.status === 2">
+                            <tr ng-repeat="booking in bookings | orderBy: '-createdDate'" ng-if="booking.status === 2">
+                                <th scope="row">{{$index + 1}}</th>
                                 <td>{{booking.code}}</td>
                                 <td>{{booking.numOfRoom}}</td>
                                 <td>{{booking.adults}}</td>
@@ -963,11 +962,10 @@
                                         class="badge badge-pill badge-soft-primary font-size-16">Đã xử lý</span>
                                 </td>
                                 <td>
-                                    <button class="btn">
-                                        <a class="text-secondary" title="Xem chi tiết" ng-click="viewBooking(booking)">
-                                            <i class="fas fa-eye font-size-16"></i>
-                                        </a>
-                                    </button>
+                                    <a class="btn btn-outline-secondary btn-sm edit" title="Xem chi tiết"
+                                        ng-click="viewBooking(booking)">
+                                        <i class="fas fa-eye font-size-16"></i>
+                                    </a>
                                 </td>
                             </tr>
                         </tbody>
@@ -991,6 +989,7 @@
                             id="search-datatable-pendingBooking">
                         <thead>
                             <tr>
+                                <th>STT</th>
                                 <th>Mã</th>
                                 <th>Phòng</th>
                                 <th>Số người lớn</th>
@@ -1001,7 +1000,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="booking in bookings" ng-if="booking.status === 1">
+                            <tr ng-repeat="booking in bookings | orderBy: '-createdDate'" ng-if="booking.status === 1">
+                                <th scope="row">{{$index + 1}}</th>
                                 <td>{{booking.code}}</td>
                                 <td>{{booking.numOfRoom}}</td>
                                 <td>{{booking.adults}}</td>
@@ -1018,11 +1018,10 @@
                                         class="badge badge-pill badge-soft-primary font-size-16">Đã xử lý</span>
                                 </td>
                                 <td>
-                                    <button class="btn">
-                                        <a class="text-secondary" title="Xem chi tiết" ng-click="viewBooking(booking)">
-                                            <i class="fas fa-eye font-size-16"></i>
-                                        </a>
-                                    </button>
+                                    <a class="btn btn-outline-secondary btn-sm edit" title="Xem chi tiết"
+                                        ng-click="viewBooking(booking)">
+                                        <i class="fas fa-eye font-size-16"></i>
+                                    </a>
                                 </td>
                             </tr>
                         </tbody>

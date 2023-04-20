@@ -278,24 +278,6 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="mb-3">
-                                <label for="deposit" class="form-label">Phụ phí người lớn</label>
-                                <input ng-model="invoiceDetailUpdate.adultSurcharge" type="number" min="0"
-                                    class="form-control" id="deposit">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="mb-3">
-                                <label for="deposit" class="form-label">Phụ phí trẻ em</label>
-                                <input ng-model="invoiceDetailUpdate.childSurcharge" type="number" min="0"
-                                    class="form-control" id="deposit">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="mb-3">
                                 <label for="deposit" class="form-label">Phụ phí khác</label>
                                 <input ng-model="invoiceDetailUpdate.ortherSurcharge" type="number" min="0"
                                     class="form-control" id="deposit">
@@ -400,8 +382,6 @@
                                 <th scope="col">Ngày trả</th>
                                 <th scope="col">Giá phòng</th>
                                 <th scope="col">Trả trước</th>
-                                <th scope="col">Phụ phí người lớn</th>
-                                <th scope="col">Phụ phí trẻ em</th>
                                 <th scope="col">Phụ phí khác</th>
                                 <th scope="col">Nhận phòng sớm</th>
                                 <th scope="col">Trả phòng muộn</th>
@@ -418,8 +398,6 @@
                                 <td>{{item.checkoutExpected | date:'dd/MM/yyyy'}}</td>
                                 <td>{{item.roomPrice | currency: '' : 0}}₫</td>
                                 <td>{{item.deposit | currency: '' : 0}}₫</td>
-                                <td>{{item.adultSurcharge | currency: '' : 0}}₫</td>
-                                <td>{{item.childSurcharge | currency: '' : 0}}₫</td>
                                 <td>{{item.ortherSurcharge | currency: '' : 0}}₫</td>
                                 <td>{{item.earlyCheckinFee | currency: '' : 0}}₫</td>
                                 <td>{{item.lateCheckoutFee | currency: '' : 0}}₫</td>

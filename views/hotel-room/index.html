@@ -158,8 +158,8 @@
                                 <tr ng-click="changeRoom.toRoomCode = item.code" ng-repeat="item in rooms">
                                     <td>{{item.code}}</td>
                                     <td>{{item.roomType.name}}</td>
-                                    <td>{{item.price | currency: '' : 0}}₫</td>
-                                    <td>{{item.area}}m²</td>
+                                    <td>{{item.roomType.price | currency: '' : 0}}₫</td>
+                                    <td>{{item.roomType.area}}m²</td>
                                     <td><input ng-model="changeRoom.toRoomCode" ng-value="item.code"
                                             class="form-check-input" type="radio" name="toRoomCode"></td>
                                 </tr>
@@ -604,15 +604,15 @@
                             </tr>
                             <tr>
                                 <th scope="row">Giá phòng</th>
-                                <td>{{room.price | currency: '' : 0}}₫</td>
+                                <td>{{room.roomType.price | currency: '' : 0}}₫</td>
                             </tr>
                             <tr>
                                 <th scope="row">Diện tích</th>
-                                <td>{{room.area}}m²</td>
+                                <td>{{room.roomType.area}}m²</td>
                             </tr>
                             <tr>
                                 <th scope="row">Hút thuốc</th>
-                                <td>{{room.isSmoking ? 'Có' : 'Không'}}</td>
+                                <td>{{room.roomType.isSmoking ? 'Có' : 'Không'}}</td>
                             </tr>
                             <tr>
                                 <th scope="row">Mô tả</th>

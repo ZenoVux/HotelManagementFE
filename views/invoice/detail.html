@@ -48,7 +48,7 @@
                             </tr>
                             <tr>
                                 <th scope="row">Giá phòng</th>
-                                <td>{{invoiceDetail.room.price | currency: '' : 0}}₫</td>
+                                <td>{{invoiceDetail.roomPrice | currency: '' : 0}}₫</td>
                             </tr>
                             <tr>
                                 <th scope="row">Ngày thuê</th>
@@ -117,12 +117,12 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td colspan="5" class="border-0 text-end">Phụ phí người lớn</td>
-                                    <td class="border-0 text-end">{{invoiceDetail.adultSurcharge  | currency: '' : 0}}₫</td>
+                                    <td colspan="5" class="border-0 text-end">Phụ phí người lớn ({{invoiceDetail.peopleInRoom.numAdults}}/{{invoiceDetail.room.roomType.numAdults}})</td>
+                                    <td class="border-0 text-end">{{invoiceDetail.peopleInRoom.adultSurcharge  | currency: '' : 0}}₫</td>
                                 </tr>
                                 <tr>
-                                    <td colspan="5" class="border-0 text-end">Phụ phí trẻ em</td>
-                                    <td class="border-0 text-end">{{invoiceDetail.childSurcharge  | currency: '' : 0}}₫</td>
+                                    <td colspan="5" class="border-0 text-end">Phụ phí trẻ em ({{invoiceDetail.peopleInRoom.numChilds}}/{{invoiceDetail.room.roomType.numChilds}})</td>
+                                    <td class="border-0 text-end">{{invoiceDetail.peopleInRoom.childSurcharge  | currency: '' : 0}}₫</td>
                                 </tr>
                                 <tr>
                                     <td colspan="5" class="border-0 text-end">Phụ phí khác</td>

@@ -201,8 +201,11 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
     }
 
     $scope.loadUsedServices = async function (invoiceDetail) {
-        await $http.get("http://localhost:8000/api/used-services?invoiceDetailId=" + + invoiceDetail.id + "&status=true").then(function (resp) {
+        await $http.get("http://localhost:8000/api/used-services?invoiceDetailId=" + invoiceDetail.id + "&status=true").then(function (resp) {
             invoiceDetail.usedServices = resp.data;
+        });
+        await $http.get("http://localhost:8000/api/hotel/people-in-room/" + invoiceDetail.id).then(function (resp) {
+            invoiceDetail.peopleInRoom = resp.data;
         });
     }
 
@@ -312,14 +315,21 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
         if (!invoiceDetail) {
             return 0;
         }
-        return invoiceDetail.room.price * $scope.getDays(invoiceDetail);
+        return invoiceDetail.roomPrice * $scope.getDays(invoiceDetail);
     }
 
     $scope.getTotalInvoiceDetail = function (invoiceDetail, usedServices) {
         if (!usedServices || !invoiceDetail) {
             return 0;
         }
-        return $scope.getTotalUsedService(usedServices) + $scope.getTotalRoom(invoiceDetail) - invoiceDetail.deposit + invoiceDetail.earlyCheckinFee + invoiceDetail.lateCheckoutFee;
+        return $scope.getTotalUsedService(usedServices) + 
+        $scope.getTotalRoom(invoiceDetail) - 
+        invoiceDetail.deposit + 
+        invoiceDetail.peopleInRoom.adultSurcharge +
+        invoiceDetail.peopleInRoom.childSurcharge +
+        invoiceDetail.ortherSurcharge +
+        invoiceDetail.earlyCheckinFee + 
+        invoiceDetail.lateCheckoutFee;
     }
 
     $scope.getTotalInvoice = function () {

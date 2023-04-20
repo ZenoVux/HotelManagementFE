@@ -392,6 +392,22 @@
                     </ul>
                     <div class="tab-content py-3">
                         <div class="tab-pane active" id="hosted-at-tab" role="tabpanel">
+                            <table class="table mb-2 table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th scope="row">Phù hợp mới</th>
+                                        <td>{{room.roomType.numAdults}} người lớn và {{room.roomType.numChilds}} trẻ em</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Phụ phí người lớn</th>
+                                        <td>{{room.roomType.adultSurcharge | currency: '' : 0}}₫/người, thêm tối đa {{room.roomType.maxAdultsAdd}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Phụ phí trẻ em</th>
+                                        <td>{{room.roomType.childSurcharge | currency: '' : 0}}₫/người, thêm tối đa {{room.roomType.maxChildsAdd}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                             <input class="form-control" type="search" placeholder="Tìm kiếm"
                                 id="search-datatable-hosted-at">
                             <div class="table-responsive">
@@ -613,6 +629,18 @@
                             <tr>
                                 <th scope="row">Hút thuốc</th>
                                 <td>{{room.roomType.isSmoking ? 'Có' : 'Không'}}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Phù hợp mới</th>
+                                <td>{{room.roomType.numAdults}} người lớn và {{room.roomType.numChilds}} trẻ em</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Phụ phí người lớn</th>
+                                <td>{{room.roomType.adultSurcharge | currency: '' : 0}}₫/người, thêm tối đa {{room.roomType.maxAdultsAdd}}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Phụ phí trẻ em</th>
+                                <td>{{room.roomType.childSurcharge | currency: '' : 0}}₫/người, thêm tối đa {{room.roomType.maxChildsAdd}}</td>
                             </tr>
                             <tr>
                                 <th scope="row">Mô tả</th>

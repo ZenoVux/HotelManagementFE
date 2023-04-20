@@ -2,6 +2,7 @@ app.controller("checkoutCtrl", function ($scope, $routeParams, $location, $http,
 
     $scope.isLoading = false;
     $scope.invoiceDetail = null;
+    $scope.peopleInRoom = null;
     $scope.invoiceDetailUpdate = {};
     $scope.usedServices = [];
     $scope.hostedAts = [];
@@ -10,6 +11,7 @@ app.controller("checkoutCtrl", function ($scope, $routeParams, $location, $http,
         $scope.isLoading = true;
         await $scope.loadInvoiceDetail();
         if ($scope.invoiceDetail) {
+            await $scope.loadPeopleInRoom();
             await $scope.loadUsedServices();
         }
     }
@@ -21,6 +23,12 @@ app.controller("checkoutCtrl", function ($scope, $routeParams, $location, $http,
         }, function () {
             alert("Có lỗi xảy ra vui lòng thử lại!");
             $location.path("/hotel-room");
+        });
+    }
+
+    $scope.loadPeopleInRoom = async function () {
+        await $http.get("http://localhost:8000/api/hotel/people-in-room/" + $scope.invoiceDetail.id).then(function (resp) {
+            $scope.peopleInRoom = resp.data;
         });
     }
 
@@ -64,7 +72,7 @@ app.controller("checkoutCtrl", function ($scope, $routeParams, $location, $http,
         startedTime.setHours(0, 0, 0, 0);
         const endedTime = new Date(usedService.endedTime);
         endedTime.setHours(0, 0, 0, 0);
-        const days = (endedTime.getTime() - startedTime.getTime())  / (1000 * 3600 * 24);
+        const days = (endedTime.getTime() - startedTime.getTime()) / (1000 * 3600 * 24);
         return usedService.servicePrice * days;
     }
 
@@ -88,9 +96,9 @@ app.controller("checkoutCtrl", function ($scope, $routeParams, $location, $http,
         if (now.getTime() === checkinExpected.getTime()) {
             return 1;
         } else if (now.getTime() > checkoutExpected.getTime()) {
-            return (checkoutExpected.getTime() - checkinExpected.getTime())  / (1000 * 3600 * 24);
+            return (checkoutExpected.getTime() - checkinExpected.getTime()) / (1000 * 3600 * 24);
         } else {
-            return (now.getTime() - checkinExpected.getTime())  / (1000 * 3600 * 24);
+            return (now.getTime() - checkinExpected.getTime()) / (1000 * 3600 * 24);
         }
     }
 
@@ -105,7 +113,14 @@ app.controller("checkoutCtrl", function ($scope, $routeParams, $location, $http,
         if (!$scope.usedServices || !$scope.invoiceDetail) {
             return 0;
         }
-        return $scope.totalUsedService() + $scope.totalRoom() - $scope.invoiceDetail.deposit + $scope.invoiceDetail.earlyCheckinFee + $scope.invoiceDetail.lateCheckoutFee;
+        return $scope.totalUsedService() +
+            $scope.totalRoom() -
+            $scope.invoiceDetail.deposit +
+            $scope.peopleInRoom.adultSurcharge +
+            $scope.peopleInRoom.childSurcharge +
+            $scope.invoiceDetail.ortherSurcharge +
+            $scope.invoiceDetail.earlyCheckinFee +
+            $scope.invoiceDetail.lateCheckoutFee;
     }
 
     $scope.modalUpdateRoom = async function (action) {
@@ -136,13 +151,13 @@ app.controller("checkoutCtrl", function ($scope, $routeParams, $location, $http,
         }, 1000);
     }
 
-    $scope.handlerUpdateRoom = function() {
+    $scope.handlerUpdateRoom = function () {
         if ($scope.invoiceDetailUpdate.note === "") {
             alert("Vui lòng nhập ghi chú!");
             $('#note').focus()
             return;
         }
-        if (!confirm("Bạn muốn cập nhật phòng " + $scope.invoiceDetail.room.code +  "?")) {
+        if (!confirm("Bạn muốn cập nhật phòng " + $scope.invoiceDetail.room.code + "?")) {
             return;
         }
         $scope.isLoading = true;
@@ -156,8 +171,8 @@ app.controller("checkoutCtrl", function ($scope, $routeParams, $location, $http,
         });
     }
 
-    $scope.handlerCheckout = function() {
-        if (!confirm("Bạn muốn trả phòng " + $routeParams.roomCode +  "?")) {
+    $scope.handlerCheckout = function () {
+        if (!confirm("Bạn muốn trả phòng " + $routeParams.roomCode + "?")) {
             return;
         }
         $scope.isLoading = true;

@@ -408,6 +408,7 @@ app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http
     $scope.modalHostedAt = async function (action, room) {
         $scope.selectRoom = room;
         if (action == 'show') {
+            await $scope.loadRoom();
             await $scope.loadHostedAts();
             await $scope.loadCustomers();
             await $scope.initTableHostedAt();
@@ -415,6 +416,7 @@ app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http
         } else {
             $scope.clearTableHostedAt();
             $scope.clearTableCustomer();
+            $scope.room = {};
             $scope.hostedAts = [];
             $scope.customers = [];
             $scope.customer = {

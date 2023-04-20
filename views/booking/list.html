@@ -216,7 +216,7 @@
                                                             <thead>
                                                                 <tr>
                                                                     <th>Phòng</th>
-                                                                    <th>Giá</th>
+                                                                    <!-- <th>Giá</th> -->
                                                                     <th>Check-in</th>
                                                                     <th>Check-out</th>
                                                                     <th>Số đêm</th>
@@ -236,7 +236,7 @@
                                                             <tbody>
                                                                 <tr ng-repeat="bk in bookingInfo.bkList">
                                                                     <td>{{bk.room.code}}</td>
-                                                                    <td>{{bk.room.price | currency: '' : 0}}đ</td>
+                                                                    <!-- <td>{{bk.room.roomType.price | currency: '' : 0}}đ</td> -->
                                                                     <td>{{bk.checkinExpected | date:'dd-MM-yyyy'}}</td>
                                                                     <td>{{bk.checkoutExpected | date:'dd-MM-yyyy'}}</td>
                                                                     <td>{{(bk.checkoutExpected - bk.checkinExpected) /

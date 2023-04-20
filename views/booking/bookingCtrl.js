@@ -1,4 +1,4 @@
-app.controller("listBookingCtrl", function ($scope, $http, $filter) {
+app.controller("listBookingCtrl", function ($scope, $http, $window, $filter) {
 
     $scope.loading = false;
     $scope.showBookingTable = false;
@@ -548,6 +548,7 @@ app.controller("listBookingCtrl", function ($scope, $http, $filter) {
             $('#booking-modal').modal('hide');
             alert('Xác nhận booking thành công!');
             $scope.loading = false;
+            $window.location.reload();
         }).catch(function (error) {
             console.error('Error fetching data:', error);
             $scope.loading = false;

@@ -118,6 +118,45 @@ app.controller("invoiceCtrl", function ($scope, $http) {
         return $scope.statusCounts.reduce((total, statusCount) => total + statusCount.count, 0);
     }
 
+    $scope.modalQRCodeScan = async function () {
+        var modal = document.createElement('div');
+        modal.style.zIndex = '10000';
+        modal.style.position = 'fixed';
+        modal.style.top = '0';
+        modal.style.left = '0';
+        modal.style.width = '100%';
+        modal.style.height = '100%';
+        modal.style.background = 'rgba(0, 0, 0, 0.5)';
+        modal.style.display = 'flex';
+        modal.style.justifyContent = 'center';
+        modal.style.alignItems = 'center';
+        modal.style.flexDirection = 'column';
+
+
+
+        var scanContainer = document.createElement('div');
+        scanContainer.id = "reader";
+
+        modal.appendChild(scanContainer);
+
+        document.body.appendChild(modal);
+
+        var html5QrcodeScanner = new Html5QrcodeScanner("reader", {
+            fps: 10,
+            qrbox: 250
+        });
+
+        function onScanSuccess(decodedText, decodedResult) {
+            $('#search-datatable-invoices').val(decodedText);
+            tableInvoice.search(decodedText).draw();
+
+            html5QrcodeScanner.clear();
+            modal.remove();
+        }
+
+        html5QrcodeScanner.render(onScanSuccess);
+    }
+
     $scope.modalInvoiceDetail = async function (action, item) {
         if (action == 'show') {
             await $http.get("http://localhost:8000/api/invoice-details/invoice-code/" + item.code).then(function (resp) {

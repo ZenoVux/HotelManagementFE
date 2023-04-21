@@ -22,15 +22,18 @@
                 <div class="card-body">
                     <input class="form-control mb-3" type="search" placeholder="Tìm kiếm"
                         id="search-datatable-invoices">
+                    <input class="form-control mb-3" type="text" id="min" name="min">
+                    <input class="form-control mb-3" type="text" id="max" name="max">
                     <table id="datatable-invoices" class="table table-bordered dt-responsive nowrap w-100">
                         <thead>
                             <tr>
                                 <th>STT</th>
                                 <th>Mã đặt</th>
                                 <th>Khách hàng</th>
-                                <th>Nhân viên</th>
+                                <th>SĐT</th>
                                 <th>Tổng tiền</th>
                                 <th>Trạng thái</th>
+                                <th>Nhân viên</th>
                                 <th>Ngày tạo</th>
                                 <th style="width: 100px;"></th>
                             </tr>
@@ -42,13 +45,14 @@
                                 </td>
                                 <td>{{item.bookingCode}}</td>
                                 <td>{{item.customer}}</td>
-                                <td>{{item.staff}}</td>
+                                <td>{{item.phoneNumber}}</td>
                                 <td>{{item.total | currency: '' : 0}}₫</td>
                                 <td>
                                     <span class="badge badge-pill" ng-class="getColor('bg', item.status)">
                                         {{item.status == 1 ? 'Đang chờ' : (item.status == 2 ? 'Chưa thanh toán' :  (item.status == 3 ? 'Chờ thanh toán' : (item.status == 4 ? 'Hoàn thành' : 'Đã huỷ')))}}
                                     </span>
                                 </td>
+                                <td>{{item.staff}}</td>
                                 <td>{{item.createdDate | date:'HH:mm dd/MM/yyyy'}}</td>
                                 <td>
                                     <a href="/#!/invoices/{{item.code}}" target="_blank" class="btn btn-outline-secondary btn-sm edit" title="Chi tiết">

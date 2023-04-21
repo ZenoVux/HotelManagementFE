@@ -4,17 +4,25 @@
             <div class="card">
                 <div class="card-body">
                     <span>
-                        <input ng-click="search.status = ''" type="radio" class="btn-check" name="room-status" id="status">
-                        <label class="btn p-3 fs-14 btn-hotel" for="status">Tất cả <span class="badge rounded-pill bg-dark">{{getTotalStatus()}}</span></label>
+                        <input ng-click="search.status = ''" type="radio" class="btn-check" name="room-status"
+                            id="status">
+                        <label class="btn p-3 fs-14 btn-purple" for="status">Tất cả <span
+                                class="badge rounded-pill bg-dark">{{getTotalStatus()}}</span></label>
                     </span>
                     <span ng-repeat="item in statuses">
-                        <input ng-click="search.status = item.id" type="radio" class="btn-check" name="room-status" id="status{{item.id}}">
-                        <label class="btn p-3 fs-14" for="status{{item.id}}" ng-class="getColor('btn', item.id)" title="{{item.description}}">
+                        <input ng-click="search.status = item.id" type="radio" class="btn-check" name="room-status"
+                            id="status{{item.id}}">
+                        <label class="btn p-3 fs-14" for="status{{item.id}}" ng-class="getColor('btn', item.id)"
+                            title="{{item.description}}">
                             {{item.name}} <span class="badge rounded-pill bg-dark">{{checkStatusCount(item.id)}}</span>
                         </label>
                     </span>
                     <div class="float-end">
-                        <input ng-model="search.bookingCode" class="form-control p-3" type="search" placeholder="Mã đặt phòng">
+                        <div class="input-group">
+                            <input ng-model="search.bookingCode" class="form-control p-3" type="search" id="bookingCode"
+                                placeholder="Mã đặt phòng">
+                            <button ng-click="modalQRCodeScan('show')" class="btn btn-secondary" type="button"><i class="mdi mdi-qrcode-scan"></i></button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -24,7 +32,8 @@
         <span>Danh sách phòng trống</span>
     </div>
     <div class="row">
-        <div ng-repeat="room in hotelRooms | filter : { status: search.status , bookingCode: search.bookingCode }" class="col-xl-2 col-sm-3">
+        <div ng-repeat="room in hotelRooms | filter : { status: search.status , bookingCode: search.bookingCode }"
+            class="col-xl-2 col-sm-3">
             <div class="card border border-3" ng-class="getColor('border', room.status)">
                 <div class="card-body p-2">
                     <div class="">
@@ -49,10 +58,8 @@
                                             class="mdi mdi-calendar-plus"></i> Gia hạn</button>
                                     <button ng-show="room.status == 2 || room.status == 5" ng-click="checkout(room)"
                                         class="dropdown-item"><i class="mdi mdi-logout-variant"></i> Trả phòng</button>
-                                    <button
-                                        ng-show="room.status == 4"
-                                        ng-click="modalCancelRoom('show', room)" class="dropdown-item"><i
-                                            class="mdi mdi-cancel"></i> Huỷ phòng</button>
+                                    <button ng-show="room.status == 4" ng-click="modalCancelRoom('show', room)"
+                                        class="dropdown-item"><i class="mdi mdi-cancel"></i> Huỷ phòng</button>
                                     <button ng-show="room.status == 6" ng-click="handlerReadyRoom(room)"
                                         class="dropdown-item"><i class="mdi mdi-broom"></i> Sẵn sàng</button>
                                     <button ng-click="modalInfoRoom('show', room)" class="dropdown-item"><i
@@ -76,7 +83,7 @@
                                 </p>
                                 <p class="font-size-14 text-truncate mb-2">
                                     {{room.phoneNumber}}
-                                </p>    
+                                </p>
                             </div>
                             <div ng-show="room.status != 4 && room.status != 5 && room.status != 2">
                                 <p class="font-size-14 text-truncate mb-0">
@@ -105,7 +112,7 @@
             </div>
         </div>
     </div>
-    
+
     <div id="modal-change-room" class="modal fade" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -137,8 +144,8 @@
                     <div class="mb-3">
                         <label for="changeRoomCheckoutDate" class="form-label">Ngày trả</label>
                         <div class="input-group">
-                            <input ng-blur="handlerFindChangeRoom()" ng-model="changeRoom.checkoutDate" type="date" class="form-control"
-                                id="changeRoomCheckoutDate">
+                            <input ng-blur="handlerFindChangeRoom()" ng-model="changeRoom.checkoutDate" type="date"
+                                class="form-control" id="changeRoomCheckoutDate">
                             <button ng-click="handlerFindChangeRoom()" class="btn btn-secondary">Tìm</button>
                         </div>
                     </div>
@@ -219,9 +226,11 @@
                             <div class="mb-3">
                                 <label for="extendCheckoutRoomDate" class="form-label">Ngày trả</label>
                                 <div class="input-group">
-                                    <input ng-blur="handlerCheckExtendCheckout()" ng-model="extendCheckoutRoom.extendDate" type="date" class="form-control"
+                                    <input ng-blur="handlerCheckExtendCheckout()"
+                                        ng-model="extendCheckoutRoom.extendDate" type="date" class="form-control"
                                         id="extendCheckoutRoomDate">
-                                    <button ng-click="handlerCheckExtendCheckout()" class="btn btn-secondary">Kiểm tra</button>
+                                    <button ng-click="handlerCheckExtendCheckout()" class="btn btn-secondary">Kiểm
+                                        tra</button>
                                 </div>
                             </div>
                         </div>
@@ -404,13 +413,17 @@
                                     <tr>
                                         <th scope="row">Phụ phí người lớn</th>
                                         <td>
-                                            {{room.roomType.adultSurcharge | currency: '' : 0}}₫/người, thêm tối đa {{room.roomType.maxAdultsAdd}}, đang ở ({{peopleInRoom.numAdults}}/{{room.roomType.numAdults}})
+                                            {{room.roomType.adultSurcharge | currency: '' : 0}}₫/người, thêm tối đa
+                                            {{room.roomType.maxAdultsAdd}}, đang ở
+                                            ({{peopleInRoom.numAdults}}/{{room.roomType.numAdults}})
                                         </td>
                                     </tr>
                                     <tr>
                                         <th scope="row">Phụ phí trẻ em</th>
                                         <td>
-                                            {{room.roomType.childSurcharge | currency: '' : 0}}₫/người, thêm tối đa {{room.roomType.maxChildsAdd}}, đang ở ({{peopleInRoom.numChilds}}/{{room.roomType.numChilds}})
+                                            {{room.roomType.childSurcharge | currency: '' : 0}}₫/người, thêm tối đa
+                                            {{room.roomType.maxChildsAdd}}, đang ở
+                                            ({{peopleInRoom.numChilds}}/{{room.roomType.numChilds}})
                                         </td>
                                     </tr>
                                 </tbody>
@@ -600,7 +613,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button ng-click="handlerCreateCustomer()" class="btn btn-success">Thêm khách hàng</button>
+                                <button ng-click="handlerCreateCustomer()" class="btn btn-success">Thêm khách
+                                    hàng</button>
                             </form>
                         </div>
                     </div>
@@ -643,11 +657,13 @@
                             </tr>
                             <tr>
                                 <th scope="row">Phụ phí người lớn</th>
-                                <td>{{room.roomType.adultSurcharge | currency: '' : 0}}₫/người, thêm tối đa {{room.roomType.maxAdultsAdd}}</td>
+                                <td>{{room.roomType.adultSurcharge | currency: '' : 0}}₫/người, thêm tối đa
+                                    {{room.roomType.maxAdultsAdd}}</td>
                             </tr>
                             <tr>
                                 <th scope="row">Phụ phí trẻ em</th>
-                                <td>{{room.roomType.childSurcharge | currency: '' : 0}}₫/người, thêm tối đa {{room.roomType.maxChildsAdd}}</td>
+                                <td>{{room.roomType.childSurcharge | currency: '' : 0}}₫/người, thêm tối đa
+                                    {{room.roomType.maxChildsAdd}}</td>
                             </tr>
                             <tr>
                                 <th scope="row">Mô tả</th>
@@ -655,7 +671,8 @@
                             </tr>
                         </tbody>
                     </table>
-                    <table ng-show="selectRoom.status == 2 || selectRoom.status == 4 || selectRoom.status == 5" class="table mb-0 table-bordered">
+                    <table ng-show="selectRoom.status == 2 || selectRoom.status == 4 || selectRoom.status == 5"
+                        class="table mb-0 table-bordered">
                         <tbody>
                             <tr>
                                 <th scope="row" style="width: 300px;">Mã đặt</th>
@@ -733,8 +750,8 @@
             </div>
         </div>
     </div>
-    
-    <div ng-show="isLoading" class="loader"> 
+
+    <div ng-show="isLoading" class="loader">
         <div class="loader-inner">
             <div class="loader-line-wrap">
                 <div class="loader-line"></div>

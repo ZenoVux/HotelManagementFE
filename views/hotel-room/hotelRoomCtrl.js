@@ -7,11 +7,6 @@ app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http
             description: ""
         },
         {
-            id: 3,
-            name: "Đang đặt",
-            description: "Phòng được giữ khi khách hàng đặt online"
-        },
-        {
             id: 4,
             name: "Chờ nhận phòng",
             description: ""
@@ -534,6 +529,57 @@ app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http
         $('#modal-change-room').modal(action);
     }
 
+    $scope.modalQRCodeScan = async function () {
+        var modal = document.createElement('div');
+        modal.style.zIndex = '10000';
+        modal.style.position = 'fixed';
+        modal.style.top = '0';
+        modal.style.left = '0';
+        modal.style.width = '100%';
+        modal.style.height = '100%';
+        modal.style.background = 'rgba(0, 0, 0, 0.5)';
+        modal.style.display = 'flex';
+        modal.style.justifyContent = 'center';
+        modal.style.alignItems = 'center';
+        modal.style.flexDirection = 'column';
+
+
+
+        var scanContainer = document.createElement('div');
+        scanContainer.id = "reader";
+
+        modal.appendChild(scanContainer);
+
+        document.body.appendChild(modal);
+
+        var html5QrcodeScanner = new Html5QrcodeScanner("reader", {
+            fps: 10,
+            qrbox: 250
+        });
+
+        function onScanSuccess(decodedText, decodedResult) {
+
+            $scope.$apply(function () {
+                $scope.search.bookingCode = decodedText;
+            });
+
+            html5QrcodeScanner.clear();
+            modal.remove();
+        }
+
+        
+        function onKeyEvent(event) {
+            if (event.code === 'Escape') {
+                event.preventDefault();
+                html5QrcodeScanner.clear();
+                modal.remove();
+            }
+        }
+        document.addEventListener('keydown', onKeyEvent);
+
+        html5QrcodeScanner.render(onScanSuccess);
+    }
+
     $scope.handlerFindChangeRoom = async function () {
         const checkoutExpected = new Date($scope.selectRoom.checkoutExpected);
         if ($scope.changeRoom.checkoutDate < checkoutExpected) {
@@ -812,7 +858,7 @@ app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http
                         return;
                     }
                 });
-            
+
                 $scope.selectRoom.bookingCode = "";
                 $scope.selectRoom.bookingDetailId = null;
                 $scope.selectRoom.invoiceDetailId = null;

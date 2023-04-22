@@ -1,4 +1,4 @@
-app.controller("invoiceCtrl", function ($scope, $http) {
+app.controller("invoiceCtrl", function ($scope, $http, $filter) {
 
     $scope.statuses = [
         {
@@ -19,9 +19,27 @@ app.controller("invoiceCtrl", function ($scope, $http) {
         }
     ]
 
-    $scope.search = {};
     $scope.invoices = [];
     $scope.statusCounts = [];
+    $scope.addBookings = [];
+    $scope.search = {
+        status: null,
+        startDate: null,
+        endDate: null
+    };
+    $scope.invoice = {};
+    $scope.bookingRoom = {
+        roomCodes: []
+    };
+
+    $scope.toggleSelection = function (roomCode) {
+        var idx = $scope.bookingRoom.roomCodes.indexOf(roomCode);
+        if (idx > -1) {
+            $scope.bookingRoom.roomCodes.splice(idx, 1);
+        } else {
+            $scope.bookingRoom.roomCodes.push(roomCode);
+        }
+    };
 
     $scope.init = async function () {
         $scope.isLoading = true;
@@ -39,7 +57,7 @@ app.controller("invoiceCtrl", function ($scope, $http) {
                 dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
                 columnDefs: [
                     {
-                        targets: 7,
+                        targets: 8,
                         orderable: false
                     },
                     {
@@ -69,6 +87,7 @@ app.controller("invoiceCtrl", function ($scope, $http) {
                 ],
                 dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-end"B>>t<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>'
             });
+
             $('#search-datatable-invoices').keyup(function () {
                 tableInvoice.search($(this).val()).draw();
             });
@@ -89,8 +108,21 @@ app.controller("invoiceCtrl", function ($scope, $http) {
         });
     }
 
-    $scope.loadInvoiceByStatus = async function (status) {
-        await $http.get("http://localhost:8000/api/invoices?status=" + status).then(function (resp) {
+    $scope.loadInvoiceByStatus = async function (_status) {
+        await $http.get("http://localhost:8000/api/invoices?status=" + _status).then(function (resp) {
+            $scope.invoices = resp.data;
+            $scope.isLoading = false;
+        });
+    }
+
+    $scope.loadInvoiceByRangeDate = async function () {
+        await $http.get("http://localhost:8000/api/invoices", {
+            params: {
+                status: $scope.search.status,
+                startDate: $filter('date')($scope.search.startDate, 'dd-MM-yyyy'),
+                endDate: $filter('date')($scope.search.endDate, 'dd-MM-yyyy')
+            }
+        }).then(function (resp) {
             $scope.invoices = resp.data;
             $scope.isLoading = false;
         });
@@ -99,6 +131,47 @@ app.controller("invoiceCtrl", function ($scope, $http) {
     $scope.loadStatusCount = async function () {
         await $http.get("http://localhost:8000/api/invoices/status-count").then(function (resp) {
             $scope.statusCounts = resp.data;
+        });
+    }
+
+    $scope.loadBookingRoom = async function () {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if ($scope.bookingRoom.checkoutDate == null) {
+            alert('Hãy chọn ngày check-out!');
+            return;
+        } else if ($scope.bookingRoom.checkoutDate <= today) {
+            alert('Ngày check-out phải sau ngày hôm nay!');
+            return;
+        }
+        $scope.isLoading = true;
+        await $http.get('http://localhost:8000/api/bookings/info', {
+            params: {
+                checkinDate: $filter('date')(today, 'dd-MM-yyyy'),
+                checkoutDate: $filter('date')($scope.bookingRoom.checkoutDate, 'dd-MM-yyyy'),
+                roomType: ""
+            }
+        }).then(function (response) {
+            $scope.addBookings = response.data;
+            for (var i = 0; i < $scope.addBookings.length; i++) {
+                if ($scope.addBookings[i].promotion != null) {
+                    var percent = $scope.addBookings[i].promotion.percent;
+                    var price = $scope.addBookings[i].price;
+                    var maxDiscount = $scope.addBookings[i].promotion.maxDiscount;
+
+                    $scope.addBookings[i].newPrice = price * (100 - percent) / 100;
+                    if ((percent / 100 * price) > maxDiscount) {
+                        $scope.addBookings[i].newPrice = price - maxDiscount;
+                    }
+                }
+            }
+            if ($scope.addBookings.length == 0) {
+                alert('Không có phòng hợp lệ.');
+            }
+            $scope.isLoading = false;
+        }).catch(function (error) {
+            console.error('Error fetching data:', error);
+            $scope.isLoading = false;
         });
     }
 
@@ -157,32 +230,75 @@ app.controller("invoiceCtrl", function ($scope, $http) {
         html5QrcodeScanner.render(onScanSuccess);
     }
 
-    $scope.modalInvoiceDetail = async function (action, item) {
-        if (action == 'show') {
-            await $http.get("http://localhost:8000/api/invoice-details/invoice-code/" + item.code).then(function (resp) {
-                $scope.invoiceDetails = resp.data;
-            });
+    $scope.modalBookingRoom = async function (_action, _invoice) {    
+        $scope.invoice = _invoice;
+        if (_action == 'show') {
+            var today = new Date();
+            today.setDate(today.getDate() + 1);
+            $scope.bookingRoom.checkoutDate = today;
         } else {
-            $scope.invoiceDetails = [];
+            $scope.invoice = {};
+            $scope.addBookings = [];
         }
-        console.log($scope.invoiceDetails);
-        $('#modal-invoice-detail').modal(action);
+        $('#modal-booking-room').modal(_action);
     }
 
-    $scope.handlerLoadByStatus = async function (status) {
+    $scope.handlerLoadByRangeDate = async function () {
         $scope.isLoading = true;
         await $scope.loadStatusCount();
         await $scope.clearTableInvoice();
-        await $scope.loadInvoiceByStatus(status);
+        await $scope.loadInvoiceByRangeDate();
+        await $scope.initTableInvoice();
+    }
+
+    $scope.handlerLoadByStatus = async function (_status) {
+        $scope.isLoading = true;
+        $scope.search.status = _status;
+        await $scope.loadStatusCount();
+        await $scope.clearTableInvoice();
+        await $scope.loadInvoiceByStatus(_status);
         await $scope.initTableInvoice();
     }
 
     $scope.handlerLoadAll = async function () {
         $scope.isLoading = true;
+        $scope.search.status = null;
         await $scope.loadStatusCount();
         await $scope.clearTableInvoice();
         await $scope.loadInvoice();
         await $scope.initTableInvoice();
+    }
+
+    $scope.handlerBookingRoom = function () {
+        console.log("bookingRoom", {
+            invoiceCode: $scope.invoice.code,
+            checkoutExpected: $filter('date')($scope.bookingRoom.checkoutDate, 'dd-MM-yyyy'),
+            roomCodes: $scope.bookingRoom.roomCodes
+        });
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if ($scope.bookingRoom.checkoutDate == null) {
+            alert('Hãy chọn ngày check-out!');
+            return;
+        } else if ($scope.bookingRoom.checkoutDate <= today) {
+            alert('Ngày check-out phải sau ngày hôm nay!');
+            return;
+        }
+        if (!confirm("Bạn muốn đặt thêm phòng " + $scope.bookingRoom.roomCodes.join(', ') + " vào hoá đơn này?")) {
+            return;
+        }
+        $scope.isLoading = true;
+        $http.post("http://localhost:8000/api/hotel/booking-room", {
+            invoiceCode: $scope.invoice.code,
+            checkoutExpected: $filter('date')($scope.bookingRoom.checkoutDate, 'yyyy-MM-dd'),
+            roomCodes: $scope.bookingRoom.roomCodes
+        }).then(function () {
+            alert("Đặt thêm phòng thành công!");
+            $scope.isLoading = false;
+            $location.path("/hotel-room");
+        }, function (resp) {
+            alert(resp.data.error);
+        });
     }
 
     $scope.init();

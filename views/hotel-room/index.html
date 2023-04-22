@@ -21,7 +21,7 @@
                         <div class="input-group">
                             <input ng-model="search.bookingCode" class="form-control p-3" type="search" id="bookingCode"
                                 placeholder="Mã đặt phòng">
-                            <button ng-click="modalQRCodeScan('show')" class="btn btn-secondary" type="button"><i class="mdi mdi-qrcode-scan"></i></button>
+                            <button ng-click="modalQRCodeScan('show')" class="btn btn-secondary" type="button"><i class="mdi mdi-qrcode-scan font-size-16"></i></button>
                         </div>
                     </div>
                 </div>
@@ -114,7 +114,7 @@
     </div>
 
     <div id="modal-change-room" class="modal fade" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Đổi phòng {{selectRoom.code}}</h5>
@@ -149,7 +149,7 @@
                             <button ng-click="handlerFindChangeRoom()" class="btn btn-secondary">Tìm</button>
                         </div>
                     </div>
-                    <input class="form-control" type="search" placeholder="Tìm kiếm" id="search-datatable-change-room">
+                    <!-- <input class="form-control" type="search" placeholder="Tìm kiếm" id="search-datatable-change-room">
                     <div class="table-responsive mb-3">
                         <table id="datatable-change-room" class="table align-middle table-nowrap table-hover">
                             <thead>
@@ -180,6 +180,99 @@
                             </tbody>
                         </table>
                     </div>
+                    <div class="mb-3">
+                        <label for="changeRoomNote" class="form-label">Ghi chú</label>
+                        <textarea ng-model="changeRoom.note" class="form-control" id="changeRoomNote"
+                            rows="3"></textarea>
+                    </div> -->
+                    <table class="table table-bordered mb-3">
+                        <thead style="text-align: center;">
+                            <tr>
+                                <th style="width: 20%;">
+                                    <h4>Loại phòng</h4>
+                                </th>
+                                <th style="width: 25%;">
+                                    <h4>Chi tiết</h4>
+                                </th>
+                                <th style="width: 15%;">
+                                    <h4>Giá</h4>
+                                </th>
+                                <th style="width: 30%;">
+                                    <h4>Chi tiết</h4>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody style="font-size: 15px;">
+                            <tr ng-repeat="info in addBookings">
+                                <td>
+                                    <h5>{{ info.name }}</h5>
+                                </td>
+                                <td>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <p>Diện tích</p>
+                                            <p>Hút thuốc</p>
+                                            <p>Phù hợp</p>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <p>: {{info.roomType.area}}
+                                                m<sup>2</sup></p>
+                                            <p>: {{info.roomType.isSmoking ? 'Có' :
+                                                'Không'}}</p>
+                                            <p>: {{info.roomType.numAdults}} người
+                                                lớn và
+                                                {{info.roomType.numChilds}} trẻ em
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td ng-if="info.promotion == null">
+                                    <strong>{{ info.price | currency: '' :
+                                        0}}đ</strong>
+                                </td>
+                                <td ng-if="info.promotion != null">
+                                    <strong
+                                        style="text-decoration: line-through;">{{
+                                        info.price |
+                                        currency: '' : 0 }}đ</strong>
+                                    <br>
+                                    <strong style="color: red">{{ info.newPrice |
+                                        currency: '' : 0}}đ</strong>
+                                    <br>
+                                    <span
+                                        style="color: red">({{info.promotion.name}}-{{
+                                        info.promotion.percent }}%</span>
+                                    <br>
+                                    <span style="color: red">Tối đa:
+                                        {{info.promotion.maxDiscount |
+                                        currency: '' : 0}}đ)</span>
+                                </td>
+                                <td>
+                                    <div class="row">
+                                        <div class="col-sm-1"></div>
+                                        <div class="col-sm-10">
+                                            <div class="row">
+                                                <div class="col-sm-4 form-check"
+                                                    ng-repeat="room in info.listRooms">
+                                                    <input class="form-check-input"
+                                                        type="radio"
+                                                        id="{{room.code}}"
+                                                        name="toRoomCode"
+                                                        ng-value="room.code"
+                                                        ng-model="changeRoom.toRoomCode">
+                                                    <label class="form-check-label"
+                                                        for="{{room.code}}">
+                                                        {{ room.code }}
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-1"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                     <div class="mb-3">
                         <label for="changeRoomNote" class="form-label">Ghi chú</label>
                         <textarea ng-model="changeRoom.note" class="form-control" id="changeRoomNote"

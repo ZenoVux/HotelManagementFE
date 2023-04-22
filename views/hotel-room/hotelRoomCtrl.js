@@ -1,4 +1,4 @@
-app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http, $window) {
+app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http, $window, $filter) {
 
     $scope.statuses = [
         {
@@ -61,6 +61,7 @@ app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http
     $scope.frontIdCardDisplay = null;
     $scope.backIdCardDisplay = null;
     $scope.isFrontImageCaptured = false;
+    $scope.addBookings = [];
 
     $scope.init = async function () {
         await $scope.loadHotelRooms();
@@ -134,12 +135,37 @@ app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http
     }
 
     $scope.loadChangeRooms = async function () {
-        const now = new Date();
-        now.setHours(0, 0, 0, 0);
-        await $http.get("http://localhost:8000/api/hotel/room-unbooked?checkin-date=" + now.toLocaleDateString('vi-VN') + "&checkout-date=" + $scope.changeRoom.checkoutDate.toLocaleDateString('vi-VN')).then(resp => {
-            $scope.roomUnbookeds = resp.data;
-        }).catch(error => {
-            console.log("Error", error);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if ($scope.changeRoom.checkoutDate <= today) {
+            alert('Ngày check-out phải sau ngày hôm nay!');
+            return;
+        }
+        $scope.isLoading = true;
+        await $http.get('http://localhost:8000/api/bookings/info', {
+            params: {
+                checkinDate: $filter('date')(today, 'dd-MM-yyyy'),
+                checkoutDate: $filter('date')($scope.changeRoom.checkoutDate, 'dd-MM-yyyy'),
+                roomType: ""
+            }
+        }).then(function (response) {
+            $scope.addBookings = response.data;
+            for (var i = 0; i < $scope.addBookings.length; i++) {
+                if ($scope.addBookings[i].promotion != null) {
+                    var percent = $scope.addBookings[i].promotion.percent;
+                    var price = $scope.addBookings[i].price;
+                    var maxDiscount = $scope.addBookings[i].promotion.maxDiscount;
+
+                    $scope.addBookings[i].newPrice = price * (100 - percent) / 100;
+                    if ((percent / 100 * price) > maxDiscount) {
+                        $scope.addBookings[i].newPrice = price - maxDiscount;
+                    }
+                }
+            }
+            $scope.isLoading = false;
+        }).catch(function (error) {
+            console.error('Error fetching data:', error);
+            $scope.isLoading = false;
         });
     }
 
@@ -515,14 +541,9 @@ app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http
         $scope.selectRoom = room;
         $scope.changeRoom.toRoomCode = null;
         if (action == 'show') {
-            $scope.changeRoom.checkinDate = new Date($scope.selectRoom.checkinExpected);
             $scope.changeRoom.checkoutDate = new Date($scope.selectRoom.checkoutExpected);
             await $scope.loadInvoiceDetail();
-            await $scope.loadChangeRooms();
-            await $scope.initTableChangeRoom();
-
         } else {
-            await $scope.clearTableChangeRoom();
             $scope.invoiceDetail = {};
             $scope.roomUnbookeds = [];
         }
@@ -547,6 +568,8 @@ app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http
 
         var scanContainer = document.createElement('div');
         scanContainer.id = "reader";
+        scanContainer.style.width = "500px";
+        scanContainer.style.backgroundColor = "white";
 
         modal.appendChild(scanContainer);
 
@@ -820,8 +843,14 @@ app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http
     }
 
     $scope.handlerChangeRoom = function () {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
         if (!$scope.changeRoom.toRoomCode) {
             alert("Vui lòng chọn phòng muốn đổi!");
+            return;
+        }
+        if ($scope.changeRoom.checkoutDate <= today) {
+            alert('Ngày trả phòng phải sau ngày hôm nay!');
             return;
         }
         if (!$scope.changeRoom.note) {

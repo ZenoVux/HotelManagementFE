@@ -361,12 +361,12 @@
                         <thead>
                             <tr>
                                 <th scope="col">#</th>
+                                <th scope="col">Ngày cập nhật</th>
                                 <th scope="col">Ngày trả</th>
                                 <th scope="col">Phụ phí khác</th>
                                 <th scope="col">Nhận phòng sớm</th>
                                 <th scope="col">Trả phòng muộn</th>
                                 <th scope="col">Người cập nhật</th>
-                                <th scope="col">Ngày cập nhật</th>
                                 <th scope="col">Ghi chú</th>
                             </tr>
                         </thead>
@@ -375,12 +375,12 @@
                                 <td>
                                     <b>{{$index + 1}}</b>
                                 </td>
+                                <td>{{item.updateDate | date:'hh:mm dd/MM/yyyy'}}</td>
                                 <td>{{item.checkoutExpected | date:'dd/MM/yyyy'}}</td>
                                 <td>{{item.ortherSurcharge | currency: '' : 0}}₫</td>
                                 <td>{{item.earlyCheckinFee | currency: '' : 0}}₫</td>
                                 <td>{{item.lateCheckoutFee | currency: '' : 0}}₫</td>
                                 <td>{{item.createdBy}}</td>
-                                <td>{{item.updateDate | date:'hh:mm dd/MM/yyyy'}}</td>
                                 <td>{{item.note}}</td>
                             </tr>
                         </tbody>

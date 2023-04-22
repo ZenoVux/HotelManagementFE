@@ -1,4 +1,4 @@
-app.controller("invoiceCtrl", function ($scope, $http, $filter) {
+app.controller("invoiceCtrl", function ($scope, $http, $location, $filter) {
 
     $scope.statuses = [
         {
@@ -295,7 +295,7 @@ app.controller("invoiceCtrl", function ($scope, $http, $filter) {
         }).then(function () {
             alert("Đặt thêm phòng thành công!");
             $scope.isLoading = false;
-            $location.path("/hotel-room");
+            $location.path("/hotel-room/" + $scope.invoice.code);
         }, function (resp) {
             alert(resp.data.error);
         });

@@ -43,8 +43,14 @@ app.controller("invoiceCtrl", function ($scope, $http, $location, $filter) {
 
     $scope.init = async function () {
         $scope.isLoading = true;
+        const today = new Date();
+        const monthAgo = new Date();
+        monthAgo.setDate(today.getDate() - 7);
+
+        $scope.search.startDate = monthAgo;
+        $scope.search.endDate = today;
         await $scope.loadStatusCount();
-        await $scope.loadInvoice();
+        await $scope.loadInvoiceByRangeDate();
         await $scope.initTableInvoice();
     }
 
@@ -57,7 +63,7 @@ app.controller("invoiceCtrl", function ($scope, $http, $location, $filter) {
                 dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
                 columnDefs: [
                     {
-                        targets: 8,
+                        targets: 9,
                         orderable: false
                     },
                     {
@@ -497,7 +503,14 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
     }
 
     $scope.getTotalPayment = function () {
-        return $scope.invoice.total - $scope.getDiscount();
+        if (!$scope.invoice) {
+            return 0;
+        }
+        if ($scope.invoice.totalDeposit - $scope.invoice.total > 0) {
+            return 0;
+        } else {
+            return $scope.invoice.total - $scope.getDiscount();
+        }
     }
 
     $scope.isSplitInvoice = function () {

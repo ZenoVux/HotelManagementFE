@@ -22,14 +22,14 @@
                 <div class="card-body">
                     <div class="row mb-3">
                         <div class="col-6">
-                            <input class="form-control" type="search" placeholder="Tìm kiếm" id="search-datatable-invoices">
+                            <input class="form-control font-size-14 p-3" type="search" placeholder="Tìm kiếm" id="search-datatable-invoices">
                         </div>
                         <div class="col-6">
                             <div class="input-group">
-                                <input ng-model="search.startDate" class="form-control" type="date">
-                                <input ng-model="search.endDate" class="form-control" type="date">
-                                <button ng-click="handlerLoadByRangeDate()" type="button" class="btn btn-secondary">
-                                    Lọc
+                                <input ng-model="search.startDate" class="form-control font-size-14 p-3" type="date">
+                                <input ng-model="search.endDate" class="form-control font-size-14 p-3" type="date">
+                                <button ng-click="handlerLoadByRangeDate()" type="button" class="btn btn-secondary p-3">
+                                    <i class="mdi mdi-filter-outline font-size-14"></i>
                                 </button>
                             </div>
                         </div>
@@ -43,6 +43,7 @@
                                 <th>Mã đặt</th>
                                 <th>Khách hàng</th>
                                 <th>SĐT</th>
+                                <th>Số phòng</th>
                                 <th>Tổng tiền</th>
                                 <th>Trạng thái</th>
                                 <th>Nhân viên</th>
@@ -58,6 +59,7 @@
                                 <td>{{item.bookingCode}}</td>
                                 <td>{{item.customer}}</td>
                                 <td>{{item.phoneNumber}}</td>
+                                <td>{{item.roomCount}}</td>
                                 <td>{{item.total | currency: '' : 0}}₫</td>
                                 <td>
                                     <span class="badge badge-pill" ng-class="getColor('bg', item.status)">
@@ -65,7 +67,7 @@
                                     </span>
                                 </td>
                                 <td>{{item.staff}}</td>
-                                <td>{{item.createdDate | date:'dd/MM/yyyy'}}</td>
+                                <td>{{item.createdDate | date:'HH:mm dd/MM/yyyy'}}</td>
                                 <td>
                                     <button ng-click="modalBookingRoom('show', item)" ng-disabled="item.status != 1" class="btn btn-outline-success" title="Thêm phòng">
                                         <i class="fas fa-plus"></i>

@@ -571,7 +571,13 @@ app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http
         scanContainer.style.width = "500px";
         scanContainer.style.backgroundColor = "white";
 
+        var note = document.createElement('div');
+        note.style.marginTop = "10px";
+        note.textContent = 'Nhấn ESC để hủy.';
+        note.classList.add('alert', 'alert-secondary');
+
         modal.appendChild(scanContainer);
+        modal.appendChild(note);
 
         document.body.appendChild(modal);
 

@@ -188,6 +188,10 @@
                                     </td>
                                 </tr>
                                 <tr ng-show="invoice.status == 3 || invoice.status == 4">
+                                    <th>Tiền trả khách</th>
+                                    <td class="border-0 text-end">{{invoice.amount | currency: '' : 0}}₫</td>
+                                </tr>
+                                <tr ng-show="invoice.status == 3 || invoice.status == 4">
                                     <th>Giảm giá</th>
                                     <td class="border-0 text-end">{{invoice.discountMoney | currency: '' : 0}}₫</td>
                                 </tr>
@@ -466,7 +470,11 @@
                     <table class="table table-bordered">
                         <tbody>
                             <tr>
-                                <th scope="row" style="width: 250px;">Tổng tiền hoá đơn</th>
+                                <th scope="row" style="width: 250px;">Tổng tiền trả trước</th>
+                                <td>{{getTotalDeposit() | currency: '' : 0}}₫</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Tổng tiền hoá đơn</th>
                                 <td>{{invoice.total | currency: '' : 0}}₫</td>
                             </tr>
                             <tr>

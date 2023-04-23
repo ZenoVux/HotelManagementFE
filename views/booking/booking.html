@@ -77,8 +77,8 @@
                                 <div id="select-room">
                                     <br>
                                     <div class="row" ng-if="bookingByRangeDay.length > 0">
-                                        <div class="col-md-2"></div>
-                                        <div class="col-md-8">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-md-10">
                                             <table class="table table-bordered mb-0">
                                                 <thead style="text-align: center;">
                                                     <tr>
@@ -104,16 +104,16 @@
                                                 </thead>
                                                 <tbody>
                                                     <tr ng-repeat="b in bookingByRangeDay">
-                                                        <td style="text-align: center;">
+                                                        <td style="text-align: center; width: 5%">
                                                             <h5>{{$index + 1}}</h5>
                                                         </td>
-                                                        <td style="text-align: center;">
+                                                        <td style="text-align: center; width: 12%">
                                                             <h5>{{b.checkinDate | date:'dd-MM-yyyy'}}</h5>
                                                         </td>
-                                                        <td style="text-align: center;">
+                                                        <td style="text-align: center; width: 12%">
                                                             <h5>{{b.checkoutDate | date:'dd-MM-yyyy'}}</h5>
                                                         </td>
-                                                        <td style="text-align: center;">
+                                                        <td style="text-align: center; width: 10%">
                                                             <h5>{{b.rooms.length}}</h5>
                                                         </td>
                                                         <td style="text-align: center;">
@@ -126,11 +126,21 @@
                                                                 </span>
                                                             </h5>
                                                         </td>
+                                                        <td style="text-align: center; width:8%">
+                                                            <a class="btn btn-outline-secondary btn-sm edit"
+                                                                title="Chỉnh sửa" ng-click="editBookingRangeDay(b.id)">
+                                                                <i class="fas fa-pencil-alt font-size-14"></i>
+                                                            </a>
+                                                            <a class="btn btn-outline-danger btn-sm delete" title="Xoá"
+                                                                ng-click="deleteBookingRangeDay(b.id)">
+                                                                <i class="fas fa-minus font-size-16"></i>
+                                                            </a>
+                                                        </td>
                                                     </tr>
                                                 </tbody>
                                             </table>
                                         </div>
-                                        <div class="col-md-2"></div>
+                                        <div class="col-md-1"></div>
                                     </div>
                                     <p></p>
                                     <form>
@@ -222,7 +232,7 @@
                                                     ng-click="checkRoom()">Kiểm
                                                     tra</button>
                                                 <button type="button" class="btn btn-success"
-                                                    ng-click="addAnotherRangeDay()">Thêm</button>
+                                                    ng-click="addAnotherRangeDay()">Chọn</button>
                                             </div>
                                         </div>
                                     </form>
@@ -311,7 +321,8 @@
                                                                     ng-repeat="room in info.listRooms">
                                                                     <input class="form-check-input" type="checkbox"
                                                                         id="{{room.id}}" ng-model="room.selected"
-                                                                        ng-change="updateSelectedRooms(info)">
+                                                                        ng-change="updateSelectedRooms(info)"
+                                                                        ng-init="room.selected = isRoomSelected(room, rooms)">
                                                                     <label class="form-check-label" for="{{room.id}}">
                                                                         {{ room.code }}
                                                                     </label>

@@ -76,6 +76,63 @@
                             <section ng-show="currentSection == 0">
                                 <div id="select-room">
                                     <br>
+                                    <div class="row" ng-if="bookingByRangeDay.length > 0">
+                                        <div class="col-md-2"></div>
+                                        <div class="col-md-8">
+                                            <table class="table table-bordered mb-0">
+                                                <thead style="text-align: center;">
+                                                    <tr>
+                                                        <th style="width: 5%;">
+                                                            <h4>STT</h4>
+                                                        </th>
+                                                        <th style="width: 10%;">
+                                                            <h4>Check in</h4>
+                                                        </th>
+                                                        <th style="width: 10%;">
+                                                            <h4>Check out</h4>
+                                                        </th>
+                                                        <th style="width: 10%;">
+                                                            <h4>Số phòng</h4>
+                                                        </th>
+                                                        <th style="width: 10%;">
+                                                            <h4>Số người</h4>
+                                                        </th>
+                                                        <th style="width: 20%;">
+                                                            <h4>Chi tiết</h4>
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="b in bookingByRangeDay">
+                                                        <td style="text-align: center;">
+                                                            <h5>{{$index + 1}}</h5>
+                                                        </td>
+                                                        <td style="text-align: center;">
+                                                            <h5>{{b.checkinDate | date:'dd-MM-yyyy'}}</h5>
+                                                        </td>
+                                                        <td style="text-align: center;">
+                                                            <h5>{{b.checkoutDate | date:'dd-MM-yyyy'}}</h5>
+                                                        </td>
+                                                        <td style="text-align: center;">
+                                                            <h5>{{b.rooms.length}}</h5>
+                                                        </td>
+                                                        <td style="text-align: center;">
+                                                            <h5>{{b.numAdults}} lớn, {{b.numChildren}} trẻ</h5>
+                                                        </td>
+                                                        <td style="text-align: center;">
+                                                            <h5>
+                                                                <span ng-repeat="r in b.rooms">
+                                                                    {{r.code}}<span ng-if="!$last">, </span>
+                                                                </span>
+                                                            </h5>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="col-md-2"></div>
+                                    </div>
+                                    <p></p>
                                     <form>
                                         <div class="row">
                                             <div class="col-md-1"></div>
@@ -160,15 +217,17 @@
                                                     </ul>
                                                 </div>
                                             </div>
-                                            <div class="col-md-2">
-                                                <button type="button" class="btn btn-secondary" style="width: 100%;"
+                                            <div class="col-md-3">
+                                                <button type="button" class="btn btn-secondary"
                                                     ng-click="checkRoom()">Kiểm
                                                     tra</button>
+                                                <button type="button" class="btn btn-success"
+                                                    ng-click="addAnotherRangeDay()">Thêm</button>
                                             </div>
-                                            <div class="col-md-1"></div>
                                         </div>
                                     </form>
                                     <p></p>
+
                                     <div class="alert alert-warning text-center" role="alert" ng-show="showAlert">
                                         {{alertMessage}}
                                     </div>
@@ -497,28 +556,19 @@
                                                     </div>
                                                     <div class="col-sm-6 text-sm-end">
                                                         <address class="mt-2 mt-sm-0">
-                                                            <strong>Số điện thoại:</strong><br>
+                                                            <strong>Số phòng:</strong><br>
                                                             <i>
-                                                                {{customer.phoneNumber}}
+                                                                {{finalRooms.length}}
                                                             </i>
                                                         </address>
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-sm-6 mt-3">
-                                                        <address>
-                                                            <strong>Thời gian:</strong><br>
-                                                            <span>Check in: <i>{{booking.checkinDate |
-                                                                    date:'dd-MM-yyyy'}}</i></span><br>
-                                                            <span>Check out: <i>{{booking.checkoutDate |
-                                                                    date:'dd-MM-yyyy'}}</i></span><br>
-                                                        </address>
-                                                    </div>
-                                                    <div class="col-sm-6 text-sm-end">
                                                         <address class="mt-2 mt-sm-0">
-                                                            <strong>Số phòng:</strong><br>
+                                                            <strong>Số điện thoại:</strong><br>
                                                             <i>
-                                                                {{rooms.length}}
+                                                                {{customer.phoneNumber}}
                                                             </i>
                                                         </address>
                                                     </div>
@@ -533,43 +583,44 @@
                                                                 <th style="width: 70px;">STT</th>
                                                                 <th>Phòng</th>
                                                                 <th>Giá 1 đêm</th>
+                                                                <th>Check in</th>
+                                                                <th>Check out</th>
                                                                 <th>Số đêm</th>
                                                                 <th class="text-end">Tổng</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            <tr ng-repeat="room in rooms">
+                                                            <tr ng-repeat="bkd in finalRooms">
                                                                 <td>{{ $index + 1 }}</td>
-                                                                <td>{{room.code}}</td>
-                                                                <td>{{room.roomType.price | currency: '' : 0}}đ</td>
-
-                                                                <td>{{(booking.checkoutDate - booking.checkinDate) /
+                                                                <td>{{bkd.room.code}}</td>
+                                                                <td>{{bkd.room.roomType.price|currency: '' : 0}}đ</td>
+                                                                <td>{{bkd.checkinDate|date:'dd-MM-yyyy'}}</td>
+                                                                <td>{{bkd.checkoutDate|date:'dd-MM-yyyy'}}</td>
+                                                                <td>{{(bkd.checkoutDate - bkd.checkinDate) /
                                                                     (1000*60*60*24)}}</td>
                                                                 <td class="text-end">
-                                                                    {{room.price *
-                                                                    ((booking.checkoutDate - booking.checkinDate) /
-                                                                    (1000*60*60*24))
-                                                                    | currency: '' : 0}}đ
+                                                                    {{bkd.room.roomType.price * ((bkd.checkoutDate -
+                                                                    bkd.checkinDate) /
+                                                                    (1000*60*60*24))|
+                                                                    currency: '' : 0}}đ
                                                                 </td>
                                                             </tr>
                                                         </tbody>
 
                                                         <tfoot>
                                                             <tr>
-                                                                <td colspan="4" class="border-0 text-end">
+                                                                <td colspan="6" class="border-0 text-end">
                                                                     <strong>Tổng tiền</strong>
                                                                 </td>
                                                                 <td class="border-0 text-end">
                                                                     <h2 class="m-0">
-                                                                        {{totalPrice * ((booking.checkoutDate -
-                                                                        booking.checkinDate) /
-                                                                        (1000*60*60*24))|
+                                                                        {{totalPrice |
                                                                         currency: '' : 0}}đ
                                                                     </h2>
                                                                 </td>
                                                             </tr>
                                                             <tr>
-                                                                <td colspan="4" class="border-0 text-end">
+                                                                <td colspan="6" class="border-0 text-end">
                                                                     <strong>Ghi chú</strong>
                                                                 </td>
                                                                 <td class="border-0 text-end">

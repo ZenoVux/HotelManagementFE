@@ -89,7 +89,6 @@ app.controller("listBookingCtrl", function ($scope, $http, $window, $filter) {
 
         $http.get("http://localhost:8000/api/customers/in-use").then(function (resp) {
             $scope.customersInUse = resp.data;
-            console.log($scope.customersInUse);
             $scope.customersInUse.reverse();
             $(document).ready(function () {
                 customerTable = $('#customerTable').DataTable({
@@ -200,6 +199,7 @@ app.controller("listBookingCtrl", function ($scope, $http, $window, $filter) {
         $scope.currentBooking = booking;
         $http.get("http://localhost:8000/api/bookings/" + booking.code).then(function (resp) {
             $scope.bookingInfo = resp.data;
+            console.log($scope.bookingInfo);
             for (var i = 0; i < $scope.bookingInfo.bkList.length; i++) {
                 var bk = $scope.bookingInfo.bkList[i];
                 bk.checkinExpected = new Date(bk.checkinExpected);
@@ -589,12 +589,14 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
     $scope.loading = false;
     $scope.currentSection = 0;
     $scope.rooms = [];
+    $scope.finalRooms = [];
     $scope.totalPrice = 0;
     $scope.frontIdCardBase64 = null;
     $scope.backIdCardBase64 = null;
     $scope.frontIdCardDisplay = null;
     $scope.backIdCardDisplay = null;
     $scope.isFrontImageCaptured = false;
+    $scope.bookingByRangeDay = [];
 
     $scope.closeDropdown = function () {
         $('.dropdown-menu').removeClass('show');
@@ -602,7 +604,7 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
 
     $scope.nextSection = function () {
         if ($scope.currentSection == 0) {
-            if ($scope.rooms.length == 0) {
+            if ($scope.bookingByRangeDay.length == 0) {
                 alert("Vui lòng chọn phòng!");
                 return;
             }
@@ -685,6 +687,98 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
         }
     };
 
+    $scope.addAnotherRangeDay = function () {
+
+        if ($scope.rooms.length == 0) {
+            alert("Vui lòng chọn phòng!");
+            return;
+        }
+
+        var isExist = false;
+        for (var i = 0; i < $scope.bookingByRangeDay.length; i++) {
+            if ($scope.bookingByRangeDay[i].checkinDate == $scope.booking.checkinDate
+                && $scope.bookingByRangeDay[i].checkoutDate == $scope.booking.checkoutDate) {
+                for (var j = 0; j < $scope.rooms.length; j++) {
+                    var isExistRoom = false;
+                    for (var k = 0; k < $scope.bookingByRangeDay[i].rooms.length; k++) {
+                        if ($scope.bookingByRangeDay[i].rooms[k].id == $scope.rooms[j].id) {
+                            isExistRoom = true;
+                            break;
+                        }
+                    }
+                    if (isExistRoom) {
+                        continue;
+                    }
+                    $scope.bookingByRangeDay[i].rooms.push($scope.rooms[j]);
+                }
+                isExist = true;
+                break;
+            }
+
+        }
+        if (isExist) {
+            alert('Ngày check-in, check-out đã tồn tại, phòng sẽ được cộng dồn.');
+            return;
+        }
+
+        for (var i = 0; i < $scope.bookingByRangeDay.length; i++) {
+            if ($scope.booking.checkinDate >= $scope.bookingByRangeDay[i].checkinDate
+                && $scope.booking.checkinDate <= $scope.bookingByRangeDay[i].checkoutDate
+                || $scope.booking.checkoutDate >= $scope.bookingByRangeDay[i].checkinDate
+                && $scope.booking.checkoutDate <= $scope.bookingByRangeDay[i].checkoutDate
+                || $scope.booking.checkinDate <= $scope.bookingByRangeDay[i].checkinDate
+                && $scope.booking.checkoutDate >= $scope.bookingByRangeDay[i].checkoutDate
+            ) {
+                for (var j = 0; j < $scope.rooms.length; j++) {
+                    var isExistRoom = false;
+                    for (var k = 0; k < $scope.bookingByRangeDay[i].rooms.length; k++) {
+                        if ($scope.bookingByRangeDay[i].rooms[k].id == $scope.rooms[j].id) {
+                            isExistRoom = true;
+                            break;
+                        }
+                    }
+                    if (isExistRoom) {
+                        alert('Phòng đã được chọn trong một khoảng ngày có thời gian trùng với khoảng ngày mới. Vui lòng chọn lại phòng khác.');
+                        return;
+                    }
+                }
+            }
+        }
+
+        $scope.finalRooms = [];
+
+        $scope.bookingByRangeDay.push({
+            checkinDate: $scope.booking.checkinDate,
+            checkoutDate: $scope.booking.checkoutDate,
+            numAdults: $scope.booking.adults,
+            numChildren: $scope.booking.children,
+            rooms: $scope.rooms
+        });
+
+        $scope.finalRooms = $scope.bookingByRangeDay.flatMap(function (bookingDetailRangeDay) {
+            return bookingDetailRangeDay.rooms.map(function (room) {
+                return {
+                    checkinDate: bookingDetailRangeDay.checkinDate,
+                    checkoutDate: bookingDetailRangeDay.checkoutDate,
+                    numAdults: bookingDetailRangeDay.numAdults,
+                    numChildren: bookingDetailRangeDay.numChildren,
+                    room: room
+                };
+            });
+        });
+
+        $scope.totalPrice = $scope.finalRooms.map(function (room) {
+            return room.room.roomType.price * (room.checkoutDate - room.checkinDate) / (1000 * 60 * 60 * 24);
+        }).reduce(function (a, b) {
+            return a + b;
+        }, 0);
+
+        $scope.booking.checkinDate = null;
+        $scope.booking.checkoutDate = null;
+        $scope.rooms = [];
+        $scope.clearDataTable();
+    }
+
     $scope.showDetailRoomType = function (roomType) {
         $scope.currentRoomType = roomType;
         console.log(roomType);
@@ -692,7 +786,6 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
     };
 
     $scope.updateSelectedRooms = function (info) {
-        $scope.totalPrice = 0;
         $scope.rooms = [];
         var numAdults = $scope.booking.adults;
         var numChildren = $scope.booking.children;
@@ -713,10 +806,7 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
                     maxAdults += room.roomType.numAdults;
                     maxChildren += room.roomType.numChilds;
                     if (infoBook.newPrice != undefined) {
-                        $scope.totalPrice += infoBook.newPrice;
                         room.roomType.price = infoBook.newPrice;
-                    } else {
-                        $scope.totalPrice += room.roomType.price;
                     }
                     $scope.rooms.push(room);
                 }
@@ -766,16 +856,23 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
 
         const bookingReqJson = JSON.stringify({
             customer: $scope.customer,
-            rooms: $scope.rooms.map(room => {
-                const { selected, $$hashKey, ...cleanedRoom } = room;
-                return cleanedRoom;
+            bookingDetailRangeDay: $scope.bookingByRangeDay.map(booking => {
+                const { $$hashKey, ...cleanedBooking } = booking;
+                return {
+                    checkinDate: $filter('date')(booking.checkinDate, 'dd-MM-yyyy'),
+                    checkoutDate: $filter('date')(booking.checkoutDate, 'dd-MM-yyyy'),
+                    numAdults: booking.numAdults,
+                    numChildren: booking.numChildren,
+                    rooms: booking.rooms.map(room => {
+                        const { selected, $$hashKey, ...cleanedRoom } = room;
+                        return cleanedRoom;
+                    })
+                }
             }),
-            numChildren: $scope.booking.children,
-            numAdults: $scope.booking.adults,
-            checkinExpected: $filter('date')($scope.booking.checkinDate, 'dd-MM-yyyy'),
-            checkoutExpected: $filter('date')($scope.booking.checkoutDate, 'dd-MM-yyyy'),
             note: $scope.booking.note
         });
+
+        console.log(bookingReqJson);
 
         formData.append('frontIdCard', blobFront, 'frontIdCard.jpg');
         formData.append('backIdCard', blobBack, 'backIdCard.jpg');
@@ -789,9 +886,16 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
         }).then(function (response) {
             if (response.status == 200) {
                 alert('Đặt phòng thành công!');
-                var checkinDate = $filter('date')($scope.booking.checkinDate, 'dd-MM-yyyy');
                 var today = $filter('date')(new Date(), 'dd-MM-yyyy');
-                if (checkinDate == today) {
+                var found = false;
+                for (var i = 0; i < $scope.bookingByRangeDay.length; i++) {
+                    var checkinDate = $filter('date')($scope.bookingByRangeDay[i].checkinDate, 'dd-MM-yyyy');
+                    if (checkinDate === today) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (found) {
                     $http.get('http://localhost:8000/api/bookings/get-by-id/' + response.data.id).then(function (response) {
                         if (response.status == 200) {
                             $location.path("/hotel-room/" + response.data.code);
@@ -981,8 +1085,7 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
                         video.pause();
 
                         const frontResponse = await $scope.uploadFrontIdCard(canvasFront.toDataURL('image/jpeg'));
-
-                        if (frontResponse != undefined && frontResponse.data.data[0].id != null) {
+                        if (frontResponse != undefined && frontResponse.data != '' && frontResponse.data.data[0].id != null) {
                             video.play();
                             document.removeEventListener('keydown', onKeyEvent);
                             note.textContent = 'Chụp mặt sau CMND/CCCD. Nhấn SPACE để chụp, ESC để hủy.';
@@ -1026,7 +1129,7 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
                         canvasBack.getContext('2d').drawImage(video, 0, 0, canvasBack.width, canvasBack.height);
                         video.pause();
                         const backResponse = await $scope.uploadBackIdCard(canvasBack.toDataURL('image/jpeg'));
-                        if (backResponse.data.data[0].features != null) {
+                        if (backResponse.data != '' && backResponse.data.data[0].features != null) {
                             $scope.$apply(function () {
                                 $scope.backIdCardDisplay = canvasBack.toDataURL('image/jpeg');
                             });

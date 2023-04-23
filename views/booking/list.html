@@ -91,8 +91,8 @@
                                 <th>STT</th>
                                 <th>Mã</th>
                                 <th>Phòng</th>
-                                <th>Số người lớn</th>
-                                <th>Số trẻ em</th>
+                                <th>Người đặt</th>
+                                <th>Số điện thoại</th>
                                 <th>Ngày đặt</th>
                                 <th>Trạng thái</th>
                                 <th>Chi tiết</th>
@@ -103,8 +103,8 @@
                                 <td>{{$index + 1}}</td>
                                 <td>{{booking.code}}</td>
                                 <td>{{booking.numOfRoom}}</td>
-                                <td>{{booking.adults}}</td>
-                                <td>{{booking.childs}}</td>
+                                <td>{{booking.customer}}</td>
+                                <td>{{booking.phoneNumber}}</td>
                                 <td>{{booking.createdDate | date:'HH:mm dd-MM-yyyy'}}</td>
                                 <td>
                                     <span ng-if="booking.status == 0"
@@ -174,7 +174,7 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Ngày đặt</td>
+                                                    <td>Ngày cập nhật</td>
                                                     <td>
                                                         {{currentBooking.createdDate | date:'HH:mm dd-MM-yyyy'}}
                                                     </td>
@@ -216,7 +216,7 @@
                                                             <thead>
                                                                 <tr>
                                                                     <th>Phòng</th>
-                                                                    <!-- <th>Giá</th> -->
+                                                                    <th>Giá</th>
                                                                     <th>Check-in</th>
                                                                     <th>Check-out</th>
                                                                     <th>Số đêm</th>
@@ -236,7 +236,8 @@
                                                             <tbody>
                                                                 <tr ng-repeat="bk in bookingInfo.bkList">
                                                                     <td>{{bk.room.code}}</td>
-                                                                    <!-- <td>{{bk.room.roomType.price | currency: '' : 0}}đ</td> -->
+                                                                    <td>{{bk.roomPrice | currency: '' : 0}}đ
+                                                                    </td>
                                                                     <td>{{bk.checkinExpected | date:'dd-MM-yyyy'}}</td>
                                                                     <td>{{bk.checkoutExpected | date:'dd-MM-yyyy'}}</td>
                                                                     <td>{{(bk.checkoutExpected - bk.checkinExpected) /
@@ -465,7 +466,7 @@
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-2">
-                                                                    <label class="form-label">
+                                                                    <label class="form-label" style="color: #ffffff">
                                                                         ...
                                                                     </label>
                                                                     <button type="button" class="btn btn-secondary"
@@ -940,8 +941,8 @@
                                 <th>STT</th>
                                 <th>Mã</th>
                                 <th>Phòng</th>
-                                <th>Số người lớn</th>
-                                <th>Số trẻ em</th>
+                                <th>Người đặt</th>
+                                <th>Số điện thoại</th>
                                 <th>Ngày đặt</th>
                                 <th>Trạng thái</th>
                                 <th>Chi tiết</th>
@@ -952,8 +953,8 @@
                                 <th scope="row">{{$index + 1}}</th>
                                 <td>{{booking.code}}</td>
                                 <td>{{booking.numOfRoom}}</td>
-                                <td>{{booking.adults}}</td>
-                                <td>{{booking.childs}}</td>
+                                <td>{{booking.customer}}</td>
+                                <td>{{booking.phoneNumber}}</td>
                                 <td>{{booking.createdDate | date:'HH:mm dd-MM-yyyy'}}</td>
                                 <td>
                                     <span ng-if="booking.status == 0"
@@ -996,8 +997,8 @@
                                 <th>STT</th>
                                 <th>Mã</th>
                                 <th>Phòng</th>
-                                <th>Số người lớn</th>
-                                <th>Số trẻ em</th>
+                                <th>Người đặt</th>
+                                <th>Số điện thoại</th>
                                 <th>Ngày đặt</th>
                                 <th>Trạng thái</th>
                                 <th>Chi tiết</th>
@@ -1008,8 +1009,8 @@
                                 <th scope="row">{{$index + 1}}</th>
                                 <td>{{booking.code}}</td>
                                 <td>{{booking.numOfRoom}}</td>
-                                <td>{{booking.adults}}</td>
-                                <td>{{booking.childs}}</td>
+                                <td>{{booking.customer}}</td>
+                                <td>{{booking.phoneNumber}}</td>
                                 <td>{{booking.createdDate | date:'HH:mm dd-MM-yyyy'}}</td>
                                 <td>
                                     <span ng-if="booking.status == 0"

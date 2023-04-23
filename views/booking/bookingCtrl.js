@@ -17,17 +17,32 @@ app.controller("listBookingCtrl", function ($scope, $http, $window, $filter) {
     $scope.addBookings = [];
     $scope.search = {};
 
+    $scope.clearTableBooking = function () {
+        $(document).ready(function () {
+            if (bookingTable) {
+                bookingTable.clear();
+                bookingTable.destroy();
+            }
+            if (confirmedTable) {
+                confirmedTable.clear();
+                confirmedTable.destroy();
+            }
+            if (pendingTable) {
+                pendingTable.clear();
+                pendingTable.destroy();
+            }
+            if (customerTable) {
+                customerTable.clear();
+                customerTable.destroy();
+            }
+        });
+    }
+
     $scope.handlerLoadByRangeDate = function () {
         $scope.loading = true;
-        var startDate = $filter('date')($scope.search.startDate, "dd-MM-yyyy");
-        var endDate = $filter('date')($scope.search.endDate, "dd-MM-yyyy");
-        $http.get("http://localhost:8000/api/bookings?startDate=" + startDate + "&endDate=" + endDate).then(function (resp) {
-            $scope.bookings = resp.data;
-            $scope.loading = false;
-        }).catch(function (error) {
-            console.error('Error fetching data:', error);
-            $scope.loading = false;
-        });
+        $scope.bookings = [];
+        $scope.clearTableBooking();
+        $scope.init();
     }
 
     $scope.closeDropdown = function () {

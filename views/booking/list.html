@@ -85,7 +85,21 @@
 
                     <table id="bookingTable" class="table table-bordered dt-responsive table-hover  nowrap w-100"
                         ng-show="showBookingTable">
-                        <input class="form-control" type="search" placeholder="Tìm kiếm" id="search-datatable-booking">
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <input class="form-control" type="search" placeholder="Tìm kiếm"
+                                    id="search-datatable-booking" style="height: 100%; font-size: 16px">
+                            </div>
+                            <div class="col-6">
+                                <div class="input-group">
+                                    <input ng-model="search.startDate" class="form-control font-size-16" type="date">
+                                    <input ng-model="search.endDate" class="form-control font-size-16" type="date">
+                                    <button ng-click="handlerLoadByRangeDate()" type="button" class="btn btn-secondary">
+                                        <i class="mdi mdi-filter-outline font-size-16"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                         <thead>
                             <tr>
                                 <th>STT</th>
@@ -817,7 +831,12 @@
 
                     <table id="customerTable" class="table table-bordered dt-responsive  nowrap w-100"
                         ng-show="showCustomerTable">
-                        <input class="form-control" type="search" placeholder="Tìm kiếm" id="search-datatable-customer">
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <input class="form-control" type="search" placeholder="Tìm kiếm"
+                                    id="search-datatable-customer" style="font-size: 16px;">
+                            </div>
+                        </div>
                         <thead>
                             <tr>
                             <tr>
@@ -934,8 +953,12 @@
 
                     <table id="confirmedTable" class="table table-bordered dt-responsive  nowrap w-100"
                         ng-show="showConfirmedTable">
-                        <input class="form-control" type="search" placeholder="Tìm kiếm"
-                            id="search-datatable-confirmBooking">
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <input class="form-control" type="search" placeholder="Tìm kiếm"
+                                    id="search-datatable-confirmBooking" style="font-size: 16px">
+                            </div>
+                        </div>
                         <thead>
                             <tr>
                                 <th>STT</th>
@@ -990,8 +1013,12 @@
 
                     <table id="pendingTable" class="table table-bordered dt-responsive  nowrap w-100"
                         ng-show="showPendingTable">
-                        <input class="form-control" type="search" placeholder="Tìm kiếm"
-                            id="search-datatable-pendingBooking">
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <input class="form-control" type="search" placeholder="Tìm kiếm"
+                                    id="search-datatable-pendingBooking" style="font-size: 16px">
+                            </div>
+                        </div>
                         <thead>
                             <tr>
                                 <th>STT</th>

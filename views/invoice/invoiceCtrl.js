@@ -43,15 +43,21 @@ app.controller("invoiceCtrl", function ($scope, $http, $location, $filter) {
 
     $scope.init = async function () {
         $scope.isLoading = true;
+        await $scope.initFilterDate();
+        await $scope.loadStatusCount();
+        await $scope.loadInvoiceByStatusAndRangeDate();
+        await $scope.initTableInvoice();
+    }
+
+    $scope.initFilterDate = async function () {
         const today = new Date();
+        const nextDay = new Date();
+        nextDay.setDate(nextDay.getDate() + 1);
         const monthAgo = new Date();
         monthAgo.setDate(today.getDate() - 7);
 
         $scope.search.startDate = monthAgo;
-        $scope.search.endDate = today;
-        await $scope.loadStatusCount();
-        await $scope.loadInvoiceByRangeDate();
-        await $scope.initTableInvoice();
+        $scope.search.endDate = nextDay;
     }
 
     $scope.initTableInvoice = async function () {
@@ -102,8 +108,10 @@ app.controller("invoiceCtrl", function ($scope, $http, $location, $filter) {
 
     $scope.clearTableInvoice = function () {
         $(document).ready(function () {
-            tableInvoice.clear();
-            tableInvoice.destroy();
+            if (tableInvoice) {
+                tableInvoice.clear();
+                tableInvoice.destroy();
+            }
         });
     }
 
@@ -121,7 +129,7 @@ app.controller("invoiceCtrl", function ($scope, $http, $location, $filter) {
         });
     }
 
-    $scope.loadInvoiceByRangeDate = async function () {
+    $scope.loadInvoiceByStatusAndRangeDate = async function () {
         await $http.get("http://localhost:8000/api/invoices", {
             params: {
                 status: $scope.search.status,
@@ -141,6 +149,7 @@ app.controller("invoiceCtrl", function ($scope, $http, $location, $filter) {
     }
 
     $scope.loadBookingRoom = async function () {
+        $scope.bookingRoom.roomCodes = [];
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         if ($scope.bookingRoom.checkoutDate == null) {
@@ -197,45 +206,6 @@ app.controller("invoiceCtrl", function ($scope, $http, $location, $filter) {
         return $scope.statusCounts.reduce((total, statusCount) => total + statusCount.count, 0);
     }
 
-    $scope.modalQRCodeScan = async function () {
-        var modal = document.createElement('div');
-        modal.style.zIndex = '10000';
-        modal.style.position = 'fixed';
-        modal.style.top = '0';
-        modal.style.left = '0';
-        modal.style.width = '100%';
-        modal.style.height = '100%';
-        modal.style.background = 'rgba(0, 0, 0, 0.5)';
-        modal.style.display = 'flex';
-        modal.style.justifyContent = 'center';
-        modal.style.alignItems = 'center';
-        modal.style.flexDirection = 'column';
-
-
-
-        var scanContainer = document.createElement('div');
-        scanContainer.id = "reader";
-
-        modal.appendChild(scanContainer);
-
-        document.body.appendChild(modal);
-
-        var html5QrcodeScanner = new Html5QrcodeScanner("reader", {
-            fps: 10,
-            qrbox: 250
-        });
-
-        function onScanSuccess(decodedText, decodedResult) {
-            $('#search-datatable-invoices').val(decodedText);
-            tableInvoice.search(decodedText).draw();
-
-            html5QrcodeScanner.clear();
-            modal.remove();
-        }
-
-        html5QrcodeScanner.render(onScanSuccess);
-    }
-
     $scope.modalBookingRoom = async function (_action, _invoice) {    
         $scope.invoice = _invoice;
         if (_action == 'show') {
@@ -253,25 +223,27 @@ app.controller("invoiceCtrl", function ($scope, $http, $location, $filter) {
         $scope.isLoading = true;
         await $scope.loadStatusCount();
         await $scope.clearTableInvoice();
-        await $scope.loadInvoiceByRangeDate();
+        await $scope.loadInvoiceByStatusAndRangeDate();
         await $scope.initTableInvoice();
     }
 
     $scope.handlerLoadByStatus = async function (_status) {
         $scope.isLoading = true;
         $scope.search.status = _status;
+        await $scope.initFilterDate();
         await $scope.loadStatusCount();
         await $scope.clearTableInvoice();
-        await $scope.loadInvoiceByStatus(_status);
+        await $scope.loadInvoiceByStatusAndRangeDate();
         await $scope.initTableInvoice();
     }
 
     $scope.handlerLoadAll = async function () {
         $scope.isLoading = true;
         $scope.search.status = null;
+        await $scope.initFilterDate();
         await $scope.loadStatusCount();
         await $scope.clearTableInvoice();
-        await $scope.loadInvoice();
+        await $scope.loadInvoiceByStatusAndRangeDate();
         await $scope.initTableInvoice();
     }
 
@@ -290,6 +262,10 @@ app.controller("invoiceCtrl", function ($scope, $http, $location, $filter) {
             alert('Ngày check-out phải sau ngày hôm nay!');
             return;
         }
+        if ($scope.bookingRoom.roomCodes.length <= 0) {
+            alert('Vui lòng chọn phòng muốn thêm vào hoá đơn!');
+            return;
+        }
         if (!confirm("Bạn muốn đặt thêm phòng " + $scope.bookingRoom.roomCodes.join(', ') + " vào hoá đơn này?")) {
             return;
         }
@@ -301,9 +277,10 @@ app.controller("invoiceCtrl", function ($scope, $http, $location, $filter) {
         }).then(function () {
             alert("Đặt thêm phòng thành công!");
             $scope.isLoading = false;
-            $location.path("/hotel-room/" + $scope.invoice.code);
+            $location.path("/hotel-room/" + $scope.invoice.booking.code);
         }, function (resp) {
             alert(resp.data.error);
+            $scope.isLoading = false;
         });
     }
 

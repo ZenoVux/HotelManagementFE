@@ -232,6 +232,8 @@
                     </div>
                 </div>
                 <div class="card-body border-top d-print-none">
+                    <a ng-href="/#!/invoices" class="btn btn-secondary waves-effect waves-light"><i
+                        class="mdi mdi-arrow-left"></i> Quay lại</a>
                     <div class="float-end">
                         <button ng-show="(invoice.status == 1 || invoice.status == 2) && isSplitInvoice()" ng-click="modalSplit('show')"
                             class="btn btn-warning waves-effect waves-light"><i
@@ -310,7 +312,7 @@
 
     <div id="modal-hosted-at" class="modal fade" data-bs-backdrop="static" tabindex="-1" aria-hidden="true"
         data-bs-keyboard="false">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Người ở phòng {{invoiceDetail.room.code}}</h5>

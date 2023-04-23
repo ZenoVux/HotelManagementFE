@@ -4,7 +4,7 @@
             <div class="card">
                 <div class="card-body">
                     <span>
-                        <input ng-click="search.status = ''" type="radio" class="btn-check" name="room-status"
+                        <input ng-click="search.status = null" type="radio" class="btn-check" name="room-status"
                             id="status">
                         <label class="btn p-3 fs-14 btn-purple" for="status">Tất cả <span
                                 class="badge rounded-pill bg-dark">{{getTotalStatus()}}</span></label>
@@ -19,8 +19,7 @@
                     </span>
                     <div class="float-end">
                         <div class="input-group">
-                            <input ng-model="search.bookingCode" class="form-control p-3" type="search" id="bookingCode"
-                                placeholder="Mã đặt phòng">
+                            <input ng-model="search.keyword" class="form-control p-3" type="search" id="keyword" placeholder="Tìm kiếm">
                             <button ng-click="modalQRCodeScan('show')" class="btn btn-secondary" type="button"><i class="mdi mdi-qrcode-scan font-size-16"></i></button>
                         </div>
                     </div>
@@ -28,11 +27,8 @@
             </div>
         </div>
     </div>
-    <div ng-show="!isLoading && hotelRooms.length == 0" class="text-center">
-        <span>Danh sách phòng trống</span>
-    </div>
     <div class="row">
-        <div ng-repeat="room in hotelRooms | filter : { status: search.status , bookingCode: search.bookingCode }"
+        <div ng-repeat="room in hotelRooms | filter : filterFn as filtered"
             class="col-xl-2 col-sm-3">
             <div class="card border border-3" ng-class="getColor('border', room.status)">
                 <div class="card-body p-2">
@@ -111,6 +107,11 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div ng-show="!isLoading && filtered.length == 0" class="text-center">
+        <p class="font-size-14 text-truncate mb-0">
+            Danh sách trống
+        </p>
     </div>
 
     <div id="modal-change-room" class="modal fade" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
@@ -283,8 +284,7 @@
                             <div class="mb-3">
                                 <label for="extendCheckoutRoomDate" class="form-label">Ngày trả</label>
                                 <div class="input-group">
-                                    <input ng-blur="handlerCheckExtendCheckout()"
-                                        ng-model="extendCheckoutRoom.extendDate" type="date" class="form-control"
+                                    <input ng-model="extendCheckoutRoom.extendDate" type="date" class="form-control"
                                         id="extendCheckoutRoomDate">
                                     <button ng-click="handlerCheckExtendCheckout()" class="btn btn-secondary">Kiểm
                                         tra</button>

@@ -69,7 +69,7 @@
                                 <td>{{item.staff}}</td>
                                 <td>{{item.createdDate | date:'HH:mm dd/MM/yyyy'}}</td>
                                 <td>
-                                    <button ng-click="modalBookingRoom('show', item)" ng-disabled="item.status != 1" class="btn btn-outline-success" title="Thêm phòng">
+                                    <button ng-show="search.status == 1" ng-click="modalBookingRoom('show', item)" class="btn btn-outline-success" title="Thêm phòng">
                                         <i class="fas fa-plus"></i>
                                     </button>
                                     <a href="/#!/invoices/{{item.code}}" target="_blank" class="btn btn-outline-secondary" title="Chi tiết">

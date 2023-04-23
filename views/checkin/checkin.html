@@ -68,7 +68,7 @@
                     <div class="d-flex align-items-center">
                         <h5 class="fw-semibold flex-grow-1">Người ở</h5>
                         <div class="flex-shrink-0">
-                            <button ng-click="modalPeopleRoom('show')" class="btn btn-sm btn-soft-primary"><i
+                            <button ng-click="modalPeopleRoom('show')" class="btn btn-soft-primary"><i
                                 class="mdi mdi-format-list-bulleted"></i></button>
                         </div>
                     </div>
@@ -97,7 +97,7 @@
                                         <ul class="list-unstyled hstack gap-1 mb-0">
                                             <li>
                                                 <button ng-click="removeHostedAt(item)"
-                                                    class="btn btn-sm btn-soft-danger"><i
+                                                    class="btn btn-soft-danger"><i
                                                         class="mdi mdi-delete-outline"></i></button>
                                             </li>
                                         </ul>
@@ -112,7 +112,7 @@
                     <div class="d-flex align-items-center">
                         <h5 class="fw-semibold flex-grow-1">Dịch vụ</h5>
                         <div class="flex-shrink-0">
-                            <button ng-click="modalServiceRoom('show')" class="btn btn-sm btn-soft-primary"><i
+                            <button ng-click="modalServiceRoom('show')" class="btn btn-soft-primary"><i
                                     class="mdi mdi-format-list-bulleted"></i></button>
                         </div>
                     </div>
@@ -139,7 +139,7 @@
                                         <ul class="list-unstyled hstack gap-1 mb-0">
                                             <li>
                                                 <button ng-click="removeServiceRoom(item)"
-                                                    class="btn btn-sm btn-soft-danger"><i
+                                                    class="btn btn-soft-danger"><i
                                                         class="mdi mdi-delete-outline"></i></button>
                                             </li>
                                         </ul>
@@ -150,6 +150,8 @@
                     </div>
                 </div>
                 <div class="card-body border-top">
+                    <a ng-href="/#!/hotel-room" class="btn btn-secondary waves-effect waves-light"><i
+                        class="mdi mdi-arrow-left"></i> Quay lại</a>
                     <div class="float-end">
                         <button ng-click="handlerCheckin()" class="btn btn-success waves-effect waves-light"><i
                                 class="mdi mdi-login-variant"></i> Nhận phòng</button>
@@ -161,7 +163,7 @@
 
     <div id="modal-people-room" class="modal modal-lg fade" data-bs-backdrop="static" data-bs-keyboard="false"
         tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Thêm khánh hàng</h5>
@@ -210,7 +212,7 @@
                                                 <ul class="list-unstyled hstack gap-1 mb-0">
                                                     <li>
                                                         <button ng-click="handlerAddCustomer(item)"
-                                                            class="btn btn-sm btn-soft-success"><i
+                                                            class="btn btn-soft-success"><i
                                                                 class="mdi mdi-plus"></i></button>
                                                     </li>
                                                 </ul>
@@ -338,7 +340,7 @@
     </div>
     <div id="modal-service-room" class="modal modal-lg fade" data-bs-backdrop="static" tabindex="-1" role="dialog"
         aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Dịch vụ</h5>
@@ -369,7 +371,7 @@
                                         <ul class="list-unstyled hstack gap-1 mb-0">
                                             <li>
                                                 <button ng-click="addServiceRoom(item)"
-                                                    class="btn btn-sm btn-soft-success"><i
+                                                    class="btn btn-soft-success"><i
                                                         class="mdi mdi-plus"></i></button>
                                             </li>
                                         </ul>

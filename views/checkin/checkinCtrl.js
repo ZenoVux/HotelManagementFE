@@ -146,6 +146,40 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
             alert("khách hàng đã tồn tại!");
             return;
         } else {
+            // lấy ngày hiện tại
+            const today = new Date();
+            const numAdults = $scope.hostedAts.filter(hostedAt => {
+                // nhập ngày sinh của người dùng, định dạng: yyyy-mm-dd
+                const birthDate = new Date(hostedAt.customer.dateOfBirth);
+                // tính số mili giây giữa ngày hiện tại và ngày sinh
+                const diff = today.getTime() - birthDate.getTime();
+                // chuyển đổi số mili giây thành số năm
+                const age = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+                return age >= 13;
+            }).length;
+            const numChilds = $scope.hostedAts.filter(hostedAt => {
+                // nhập ngày sinh của người dùng, định dạng: yyyy-mm-dd
+                const birthDate = new Date(hostedAt.customer.dateOfBirth);
+                // tính số mili giây giữa ngày hiện tại và ngày sinh
+                const diff = today.getTime() - birthDate.getTime();
+                // chuyển đổi số mili giây thành số năm
+                const age = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+                return age < 13;
+            }).length;
+            const room = $scope.bookingDetail.room;
+            const birthDate = new Date(_customer.dateOfBirth);
+            const diff = today.getTime() - birthDate.getTime();
+            const age = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+            if (age >= 13 && numAdults >= (room.roomType.numAdults + room.roomType.maxAdultsAdd)) {
+                // không thể thêm người lớn vào phòng này. số lượng đạt tối đa
+                alert("Không thể thêm người lớn vào phòng này. Số lượng đạt tối đa!");
+                return;
+            }
+            if (age < 13 && numChilds >= (room.roomType.numChilds + room.roomType.maxChildsAdd)) {
+                // không thể thêm trẻ em vào phòng này. số lượng đạt tối đa
+                alert("Không thể thêm trẻ em vào phòng này. Số lượng đạt tối đa!");
+                return;
+            }
             if (!confirm("Bạn muốn thêm khách hàng " + _customer.fullName + " vào phòng?")) {
                 return;
             }
@@ -311,7 +345,7 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
             $location.path("/hotel-room");
         }, function (resp) {
             alert(resp.data.error);
-            $location.path("/hotel-room");
+            $scope.isLoading = false;
         });
     }
 

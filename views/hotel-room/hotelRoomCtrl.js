@@ -53,7 +53,10 @@ app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http
         gender: false
     };
     $scope.booking = {};
-    $scope.search = {};
+    $scope.search = {
+        status: null,
+        keyword: ""
+    };
     $scope.peopleInRoom = {};
 
     $scope.frontIdCardBase64 = null;
@@ -62,6 +65,18 @@ app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http
     $scope.backIdCardDisplay = null;
     $scope.isFrontImageCaptured = false;
     $scope.addBookings = [];
+
+    $scope.filterFn = function (item) {
+        const keyword = $scope.search.keyword.toLowerCase();
+        const bookingCode = item.bookingCode.toLowerCase();
+        const fullName = item.customer.toLowerCase();
+        const phoneNumber = item.phoneNumber.toLowerCase();
+        if ((item.status == $scope.search.status || $scope.search.status == null) && (bookingCode.includes(keyword) || fullName.includes(keyword) || phoneNumber.includes(keyword))) {
+            return true;
+        } else {
+            return false;
+        }
+    };
 
     $scope.init = async function () {
         await $scope.loadHotelRooms();
@@ -74,7 +89,7 @@ app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http
             $scope.hotelRooms = resp.data.hotelRooms;
             $scope.statusCounts = resp.data.statusCounts;
             if ($routeParams.bookingCode) {
-                $scope.search.bookingCode = $routeParams.bookingCode;
+                $scope.search.keyword = $routeParams.bookingCode;
             }
             $scope.isLoading = false;
         });
@@ -596,7 +611,7 @@ app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http
             modal.remove();
         }
 
-        
+
         function onKeyEvent(event) {
             if (event.code === 'Escape') {
                 event.preventDefault();
@@ -908,6 +923,7 @@ app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http
             });
         }, function (resp) {
             alert(resp.data.error);
+            $scope.isLoading = false;
         });
     }
 

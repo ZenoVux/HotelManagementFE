@@ -9,6 +9,13 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
     $scope.customer = {
         gender: true
     };
+    $scope.peopleInRoom = {
+        numAdults: 0,
+        numChilds: 0
+    }
+    $scope.invoiceDetail = {
+        earlyCheckinFee: 0
+    }
     $scope.frontIdCardBase64 = null;
     $scope.backIdCardBase64 = null;
     $scope.frontIdCardDisplay = null;
@@ -141,6 +148,34 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
         }, 1000);
     }
 
+    $scope.modalSurchargeRoom = async function (action) {
+        $('#modal-surcharge-room').modal(action);
+    }
+
+    $scope.countPeopleInRoom = function () {
+        // lấy ngày hiện tại
+        const today = new Date();
+        const numAdults = $scope.hostedAts.filter(hostedAt => {
+            // nhập ngày sinh của người dùng, định dạng: yyyy-mm-dd
+            const birthDate = new Date(hostedAt.customer.dateOfBirth);
+            // tính số mili giây giữa ngày hiện tại và ngày sinh
+            const diff = today.getTime() - birthDate.getTime();
+            // chuyển đổi số mili giây thành số năm
+            const age = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+            return age >= 13;
+        }).length;
+        const numChilds = $scope.hostedAts.filter(hostedAt => {
+            // nhập ngày sinh của người dùng, định dạng: yyyy-mm-dd
+            const birthDate = new Date(hostedAt.customer.dateOfBirth);
+            // tính số mili giây giữa ngày hiện tại và ngày sinh
+            const diff = today.getTime() - birthDate.getTime();
+            // chuyển đổi số mili giây thành số năm
+            const age = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+            return age < 13;
+        }).length;
+        return { numAdults, numChilds };
+    }
+
     $scope.handlerAddCustomer = function (_customer) {
         if ($scope.hostedAts.find(hostedAt => hostedAt.customer.peopleId == _customer.peopleId)) {
             alert("khách hàng đã tồn tại!");
@@ -148,24 +183,7 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
         } else {
             // lấy ngày hiện tại
             const today = new Date();
-            const numAdults = $scope.hostedAts.filter(hostedAt => {
-                // nhập ngày sinh của người dùng, định dạng: yyyy-mm-dd
-                const birthDate = new Date(hostedAt.customer.dateOfBirth);
-                // tính số mili giây giữa ngày hiện tại và ngày sinh
-                const diff = today.getTime() - birthDate.getTime();
-                // chuyển đổi số mili giây thành số năm
-                const age = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
-                return age >= 13;
-            }).length;
-            const numChilds = $scope.hostedAts.filter(hostedAt => {
-                // nhập ngày sinh của người dùng, định dạng: yyyy-mm-dd
-                const birthDate = new Date(hostedAt.customer.dateOfBirth);
-                // tính số mili giây giữa ngày hiện tại và ngày sinh
-                const diff = today.getTime() - birthDate.getTime();
-                // chuyển đổi số mili giây thành số năm
-                const age = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
-                return age < 13;
-            }).length;
+            const { numAdults, numChilds } = $scope.countPeopleInRoom();
             const room = $scope.bookingDetail.room;
             const birthDate = new Date(_customer.dateOfBirth);
             const diff = today.getTime() - birthDate.getTime();
@@ -179,6 +197,11 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
                 // không thể thêm trẻ em vào phòng này. số lượng đạt tối đa
                 alert("Không thể thêm trẻ em vào phòng này. Số lượng đạt tối đa!");
                 return;
+            }
+            if (age >= 13) {
+                $scope.peopleInRoom.numAdults = numAdults + 1;
+            } else {
+                $scope.peopleInRoom.numChilds = numChilds + 1;
             }
             if (!confirm("Bạn muốn thêm khách hàng " + _customer.fullName + " vào phòng?")) {
                 return;
@@ -307,6 +330,7 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
         }
         const index = $scope.hostedAts.findIndex(item => item.customer.id == customer.id);
         $scope.hostedAts.splice(index, 1);
+        $scope.peopleInRoom = $scope.countPeopleInRoom();
     }
 
     $scope.handlerCheckin = function () {
@@ -337,6 +361,7 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
         });
         $http.post("http://localhost:8000/api/hotel/checkin", {
             code: $routeParams.roomCode,
+            earlyCheckinFee: $scope.invoiceDetail.earlyCheckinFee,
             customers: customers,
             services: services
         }).then(function (resp) {

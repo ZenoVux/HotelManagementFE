@@ -275,9 +275,11 @@ app.controller("invoiceCtrl", function ($scope, $http, $location, $filter) {
             checkoutExpected: $filter('date')($scope.bookingRoom.checkoutDate, 'yyyy-MM-dd'),
             roomCodes: $scope.bookingRoom.roomCodes
         }).then(function () {
+            const bookingCode = $scope.invoice.bookingCode;
+            $scope.modalBookingRoom("hide");
             alert("Đặt thêm phòng thành công!");
             $scope.isLoading = false;
-            $location.path("/hotel-room/" + $scope.invoice.booking.code);
+            $location.path("/hotel-room/" + bookingCode);
         }, function (resp) {
             alert(resp.data.error);
             $scope.isLoading = false;
@@ -302,6 +304,14 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
     $scope.promotions = [];
     $scope.slpitInvoice = {
         selection: []
+    };
+
+    $scope.filterFn = function (item) {
+        if (item.status == 2 && item.total > 0) {
+            return true;
+        } else {
+            return false;
+        }
     };
 
     $scope.init = async function () {
@@ -457,7 +467,7 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
     }
 
     $scope.getTotalInvoiceDetail = function (invoiceDetail, usedServices) {
-        if (!usedServices || !invoiceDetail) {
+        if (!usedServices || !invoiceDetail || !invoiceDetail.peopleInRoom) {
             return 0;
         }
         return $scope.getTotalUsedService(usedServices) + 
@@ -471,22 +481,35 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
     }
 
     $scope.getTotalInvoice = function () {
-        return $scope.invoiceDetails.reduce((total, invoiceDetail) => total + $scope.getTotalInvoiceDetail(invoiceDetail, invoiceDetail.usedServices), 0);
-        // return $scope.invoice.total;
+        return $scope.invoiceDetails.reduce((total, invoiceDetail) => {
+            if (invoiceDetail.status == 1) {
+                return total + $scope.getTotalInvoiceDetail(invoiceDetail, invoiceDetail.usedServices);
+            } else {
+                return total + invoiceDetail.total;
+            }
+        }, 0);
     }
 
     $scope.getTotalDeposit = function () {
         return $scope.invoiceDetails.reduce((total, invoiceDetail) => total + invoiceDetail.deposit, 0);
     }
 
+    $scope.getRemainingDeposit = function () {
+        if ($scope.getTotalDeposit() - $scope.getTotalInvoice() <= 0) {
+            return 0;
+        } else {
+            return $scope.getTotalDeposit() - $scope.getTotalInvoice();
+        }
+    }
+
     $scope.getTotalPayment = function () {
         if (!$scope.invoice) {
             return 0;
         }
-        if ($scope.invoice.totalDeposit - $scope.invoice.total > 0) {
-            return 0;
+        if ($scope.getTotalDeposit() - $scope.getTotalInvoice() + $scope.getDiscount() <= 0) {
+            return $scope.getTotalInvoice() - $scope.getTotalDeposit() - $scope.getDiscount();
         } else {
-            return $scope.invoice.total - $scope.getDiscount();
+            return 0;
         }
     }
 
@@ -505,9 +528,6 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
     }
 
     $scope.modalSplit = async function (action) {
-        if (action == "show") {
-        } else {
-        }
         $('#modal-split').modal(action);
     }
 
@@ -594,8 +614,9 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
             invoiceCode: $scope.invoice.code,
             roomCodes: $scope.slpitInvoice.selection
         }).then(function (resp) {
-            $scope.isLoading = false;
+            $scope.modalSplit("hide");
             alert("Tách hoá đơn thành công!");
+            $scope.isLoading = false;
             $location.path("/invoices/" + resp.data.code);
         }, function (resp) {
             alert(resp.data.error);
@@ -625,6 +646,11 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
     }
 
     $scope.handlerPayment = function () {
+        if ($scope.getTotalPayment() == 0) {
+            $scope.payment.paymentMethod = {
+                code: "DEPOSIT"
+            };
+        }
         console.log("payment", {
             invoiceCode: $scope.invoice.code,
             promotionCode: $scope.payment.promotion ? $scope.payment.promotion.code : null,

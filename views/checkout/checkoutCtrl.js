@@ -3,7 +3,6 @@ app.controller("checkoutCtrl", function ($scope, $routeParams, $location, $http,
     $scope.isLoading = false;
     $scope.invoiceDetail = null;
     $scope.peopleInRoom = null;
-    $scope.invoiceDetailUpdate = {};
     $scope.usedServices = [];
     $scope.hostedAts = [];
 
@@ -125,24 +124,15 @@ app.controller("checkoutCtrl", function ($scope, $routeParams, $location, $http,
         return $scope.totalUsedService() +
             $scope.totalRoom() -
             $scope.invoiceDetail.deposit +
-            $scope.peopleInRoom.adultSurcharge +
-            $scope.peopleInRoom.childSurcharge +
+            $scope.invoiceDetail.adultSurcharge +
+            $scope.invoiceDetail.childSurcharge +
             $scope.invoiceDetail.ortherSurcharge +
             $scope.invoiceDetail.earlyCheckinFee +
             $scope.invoiceDetail.lateCheckoutFee;
     }
 
-    $scope.modalUpdateRoom = async function (action) {
-        if (action == "show") {
-            $scope.invoiceDetailUpdate.invoiceDetailId = $scope.invoiceDetail.id;
-            $scope.invoiceDetailUpdate.ortherSurcharge = $scope.invoiceDetail.ortherSurcharge;
-            $scope.invoiceDetailUpdate.earlyCheckinFee = $scope.invoiceDetail.earlyCheckinFee;
-            $scope.invoiceDetailUpdate.lateCheckoutFee = $scope.invoiceDetail.lateCheckoutFee;
-            $scope.invoiceDetailUpdate.note = "";
-        } else {
-            $scope.invoiceDetailUpdate = {};
-        }
-        $('#modal-update-room').modal(action);
+    $scope.modalSurchargeRoom = async function (action) {
+        $('#modal-surcharge-room').modal(action);
     }
 
     $scope.modalHostedAt = async function (action) {
@@ -185,7 +175,8 @@ app.controller("checkoutCtrl", function ($scope, $routeParams, $location, $http,
         }
         $scope.isLoading = true;
         $http.post("http://localhost:8000/api/hotel/checkout", {
-            code: $routeParams.roomCode
+            code: $routeParams.roomCode,
+            lateCheckoutFee: $scope.invoiceDetail.lateCheckoutFee
         }).then(function (resp) {
             $scope.isLoading = false;
             alert("Trả phòng thành công!");

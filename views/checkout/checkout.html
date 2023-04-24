@@ -101,7 +101,7 @@
                                     <td class="border-0 text-end">{{totalRoom() | currency: '' : 0}}₫</td>
                                 </tr>
                                 <tr>
-                                    <td colspan="5" class="border-0 text-end">Trả trước</td>
+                                    <td colspan="5" class="border-0 text-end">Tiền trả trước</td>
                                     <td class="border-0 text-end">{{invoiceDetail.deposit  | currency: '' : 0}}₫</td>
                                 </tr>
                                 <tr>
@@ -128,7 +128,7 @@
                                 </tr>
                                 <tr>
                                     <td colspan="5" class="border-0 text-end">
-                                        <strong>Tổng tiền phòng</strong></td>
+                                        <strong>Thành tiền</strong></td>
                                     <td class="border-0 text-end"><h4 class="m-0">{{total() | currency: '' : 0}}₫</h4></td>
                                 </tr>
                             </tbody>
@@ -139,8 +139,8 @@
                     <a ng-href="/#!/hotel-room" class="btn btn-secondary waves-effect waves-light"><i
                         class="mdi mdi-arrow-left"></i> Quay lại</a>
                     <div class="float-end">
-                        <button ng-click="modalUpdateRoom('show')" class="btn btn-primary waves-effect waves-light" title="Chỉnh sửa">
-                            <i class="mdi mdi-pencil-outline"></i>
+                        <button ng-click="modalSurchargeRoom('show')" class="btn btn-primary waves-effect waves-light" title="Phụ phí">
+                            <i class="bx bx-money"></i>
                         </button>
                         <button ng-click="modalHostedAt('show')" class="btn btn-info waves-effect waves-light" title="Người ở">
                             <i class="mdi mdi-account-group-outline"></i>
@@ -154,55 +154,26 @@
         </div>
     </div>
 
-    <div id="modal-update-room" class="modal fade" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+    <div id="modal-surcharge-room" class="modal fade" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Chỉnh sửa phòng {{invoiceDetail.room.code}}</h5>
-                    <button ng-click="modalUpdateRoom('hide')" type="button" class="btn-close"></button>
+                    <h5 class="modal-title">Phụ phí phòng {{invoiceDetail.room.code}}</h5>
+                    <button ng-click="modalSurchargeRoom('hide')" type="button" class="btn-close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-12">
                             <div class="mb-3">
-                                <label for="deposit" class="form-label">Phụ phí khác</label>
-                                <input ng-model="invoiceDetailUpdate.ortherSurcharge" type="number" min="0"
-                                    class="form-control" id="deposit">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="mb-3">
-                                <label for="deposit" class="form-label">Nhận phòng sớm</label>
-                                <input ng-model="invoiceDetailUpdate.earlyCheckinFee" type="number" min="0"
-                                    class="form-control" id="deposit">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="mb-3">
                                 <label for="deposit" class="form-label">Trả phòng muộn</label>
-                                <input ng-model="invoiceDetailUpdate.lateCheckoutFee" type="number" min="0"
+                                <input ng-model="invoiceDetail.lateCheckoutFee" type="number" min="0"
                                     class="form-control" id="deposit">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="mb-3">
-                                <label for="note" class="form-label">Ghi chú</label>
-                                <textarea ng-model="invoiceDetailUpdate.note" class="form-control" id="note"
-                                    rows="3"></textarea>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button ng-click="handlerUpdateRoom()" type="button"
-                        class="btn btn-primary waves-effect">Cập nhật</button>
-                    <button ng-click="modalUpdateRoom('hide')" type="button"
+                    <button ng-click="modalSurchargeRoom('hide')" type="button"
                         class="btn btn-secondary waves-effect">Đóng</button>
                 </div>
             </div>
@@ -211,7 +182,7 @@
     
     <div id="modal-hosted-at" class="modal fade" data-bs-backdrop="static" tabindex="-1" aria-hidden="true"
         data-bs-keyboard="false">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Người ở phòng {{invoiceDetail.room.code}}</h5>

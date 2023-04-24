@@ -3,7 +3,7 @@ app.controller("loginCtrl", function ($scope, $http, $routeParams, $location, $t
 	$scope.isShowPassword = false;
 	$scope.form = {};
 	$scope.loading = false;
-	$scope.myEmail = {}
+	$scope.myEmail = {bookingCode:""}
 	$scope.Pass = { token: $routeParams.token }
 	$scope.initialize = function () {
 	}

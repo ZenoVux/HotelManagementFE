@@ -1,15 +1,23 @@
 app.controller("roomListCtrl", function ($scope, $http) {
     $scope.form = {};
     $scope.rooms = [];
-    $scope.room1 = [];
+
     $scope.supplyRooms = [];
+
+    $scope.bedRoom = {}
     $scope.bedRooms = [];
     $scope.imageRooms = [];
 
+    $scope.isLoading = false;
+
     $scope.initialize = function () {
+        $scope.isLoading = true;
         // Load data rooms
         $http.get("http://localhost:8000/api/rooms").then(resp => {
             $scope.rooms = resp.data;
+            $scope.rooms.forEach(item =>{
+                item.bedRooms = [];
+            })
             $(document).ready(function () {
                 // khởi tạo table id 'datatable-rooms'
                 tableInvoiceDetailHistory = $('#datatable-rooms').DataTable({
@@ -26,8 +34,27 @@ app.controller("roomListCtrl", function ($scope, $http) {
         }).catch(error => {
             console.log("Error", error);
         })
+
+        // Load data bed room
+        $http.get("http://localhost:8000/api/bed-rooms").then(resp => {
+            $scope.bedRooms = resp.data;
+            $scope.rooms.forEach(item1 =>{
+                $scope.bedRooms.forEach(item2 =>{
+                    if (item1.id == item2.room.id) {
+                        item1.bedRooms.push(item2);
+                    }
+                })
+            })
+            $scope.isLoading = false;
+        }).catch(error => {
+            console.log("Error", error);
+        })
     }
 
+    $scope.loadBedRoom = function(room) {
+        $scope.bedRoom = room;
+        console.log($scope.bedRoom);
+    }
     // Load data supply room
     $scope.loadSupplyRoom = function (codeRoom) {
         $http.get("http://localhost:8000/api/supply-rooms/" + codeRoom).then(resp => {
@@ -35,16 +62,7 @@ app.controller("roomListCtrl", function ($scope, $http) {
         }).catch(error => {
             console.log("Error", error);
         })
-    }
-
-    // Load data bed room
-    $scope.loadBedRoom = function (codeRoom) {
-        $http.get("http://localhost:8000/api/bed-rooms/" + codeRoom).then(resp => {
-            $scope.bedRooms = resp.data;
-        }).catch(error => {
-            console.log("Error", error);
-        })
-    }
+    }    
 
     // Load data image room
     $scope.loadImageRoom = function (codeRoom) {

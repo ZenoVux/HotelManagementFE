@@ -6,8 +6,11 @@ app.controller("roomTypeListCtrl", function ($scope, $http, $location) {
     $scope.supplyRoomTypes = [];
 
     $scope.imageRoomTypes = [];
+
+    $scope.isLoading = false;
     // Load data room
     $scope.initialize = function(){
+        $scope.isLoading = true;
         $http.get("http://localhost:8000/api/room-types").then(resp =>{
             $scope.roomTypes = resp.data;
             $(document).ready(function () {
@@ -23,6 +26,7 @@ app.controller("roomTypeListCtrl", function ($scope, $http, $location) {
                     tableInvoiceDetailHistory.search($(this).val()).draw();
                 });
             });
+            $scope.isLoading = false;
         }).catch(error =>{
             alert("Error load data room type")
             console.log("Error", error);

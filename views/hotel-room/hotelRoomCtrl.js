@@ -613,7 +613,7 @@ app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http
         function onScanSuccess(decodedText, decodedResult) {
 
             $scope.$apply(function () {
-                $scope.search.bookingCode = decodedText;
+                $scope.search.keyword = decodedText;
             });
 
             html5QrcodeScanner.clear();

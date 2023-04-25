@@ -118,14 +118,14 @@ app.controller("checkoutCtrl", function ($scope, $routeParams, $location, $http,
     }
 
     $scope.total = function () {
-        if (!$scope.usedServices || !$scope.invoiceDetail) {
+        if (!$scope.usedServices || !$scope.invoiceDetail || !$scope.peopleInRoom) {
             return 0;
         }
         return $scope.totalUsedService() +
             $scope.totalRoom() -
             $scope.invoiceDetail.deposit +
-            $scope.invoiceDetail.adultSurcharge +
-            $scope.invoiceDetail.childSurcharge +
+            $scope.peopleInRoom.adultSurcharge +
+            $scope.peopleInRoom.childSurcharge +
             $scope.invoiceDetail.ortherSurcharge +
             $scope.invoiceDetail.earlyCheckinFee +
             $scope.invoiceDetail.lateCheckoutFee;

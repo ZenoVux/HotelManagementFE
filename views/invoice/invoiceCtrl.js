@@ -413,11 +413,20 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
     }
 
     $scope.getTotalService = function (usedService) {
+        const now = new Date();
+        now.setHours(0, 0, 0, 0);
         const startedTime = new Date(usedService.startedTime);
         startedTime.setHours(0, 0, 0, 0);
         const endedTime = new Date(usedService.endedTime);
         endedTime.setHours(0, 0, 0, 0);
-        const days = (endedTime.getTime() - startedTime.getTime()) / (1000 * 3600 * 24);
+        var days;
+        if (now.getTime() === startedTime.getTime()) {
+            days = 0;
+        } else if (now.getTime() > endedTime.getTime()) {
+            days = (endedTime.getTime() - startedTime.getTime()) / (1000 * 3600 * 24);
+        } else {
+            days = (now.getTime() - startedTime.getTime()) / (1000 * 3600 * 24);
+        }
         return usedService.servicePrice * days;
     }
 

@@ -53,6 +53,7 @@ app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http
         gender: false
     };
     $scope.booking = {};
+    $scope.promotionRoomType = {};
     $scope.search = {
         status: null,
         keyword: ""
@@ -146,6 +147,12 @@ app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http
     $scope.loadCustomers = async function () {
         await $http.get("http://localhost:8000/api/customers").then(function (resp) {
             $scope.customers = resp.data;
+        });
+    }
+
+    $scope.loadPromotionRoomType = async function (code) {
+        await $http.get("http://localhost:8000/api/promotion-rooms/curr-by-room-type/" + code).then(function (resp) {
+            $scope.promotionRoomType = resp.data;
         });
     }
 
@@ -437,15 +444,17 @@ app.controller("hotelRoomCtrl", function ($scope, $routeParams, $location, $http
         $location.path("/checkout/" + room.code);
     }
 
-    $scope.modalInfoRoom = async function (action, room) {
-        $scope.selectRoom = room;
+    $scope.modalInfoRoom = async function (action, _room) {
+        $scope.selectRoom = _room;
         if (action == 'show') {
             await $scope.loadRoom();
+            await $scope.loadPromotionRoomType($scope.room.roomType.code)
             if ($scope.selectRoom.bookingCode !== '') {
                 await $scope.loadBooking();
             }
         } else {
             $scope.room = {};
+            $scope.promotionRoomType = {};
         }
         $('#modal-info-room').modal(action);
     }

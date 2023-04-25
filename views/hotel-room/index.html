@@ -696,10 +696,10 @@
                                 <th scope="row" style="width: 300px;">Loại phòng</th>
                                 <td>{{room.roomType.name}}</td>
                             </tr>
-                            <!-- <tr>
+                            <tr>
                                 <th scope="row">Giá phòng</th>
-                                <td>{{room.roomType.price | currency: '' : 0}}₫</td>
-                            </tr> -->
+                                <td>{{(promotionRoomType ? ((room.roomType.price / 100 * promotionRoomType.promotion.percent) >= promotionRoomType.promotion.maxDiscount ? (room.roomType.price - promotionRoomType.promotion.maxDiscount) : (room.roomType.price - (room.roomType.price / 100 * promotionRoomType.promotion.percent))) : room.roomType.price) | currency: '' : 0}}₫</td>
+                            </tr>
                             <tr>
                                 <th scope="row">Diện tích</th>
                                 <td>{{room.roomType.area}}m²</td>

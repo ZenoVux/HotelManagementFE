@@ -480,8 +480,7 @@ app.controller("invoiceDetailCtrl", function ($scope, $routeParams, $http, $wind
             return 0;
         }
         return $scope.getTotalUsedService(usedServices) + 
-        $scope.getTotalRoom(invoiceDetail) - 
-        invoiceDetail.deposit + 
+        $scope.getTotalRoom(invoiceDetail) +
         invoiceDetail.peopleInRoom.adultSurcharge +
         invoiceDetail.peopleInRoom.childSurcharge +
         invoiceDetail.ortherSurcharge +

@@ -122,8 +122,7 @@ app.controller("checkoutCtrl", function ($scope, $routeParams, $location, $http,
             return 0;
         }
         return $scope.totalUsedService() +
-            $scope.totalRoom() -
-            $scope.invoiceDetail.deposit +
+            $scope.totalRoom() +
             $scope.peopleInRoom.adultSurcharge +
             $scope.peopleInRoom.childSurcharge +
             $scope.invoiceDetail.ortherSurcharge +

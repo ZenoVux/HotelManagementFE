@@ -214,24 +214,9 @@ app.controller("checkinCtrl", function ($scope, $routeParams, $http, $location) 
     }
 
     $scope.handlerCreateCustomer = async function () {
-        if (!$scope.customer.peopleId) {
-            alert("Vui lòng nhập CCCD/CMND!");
-            $("#peopleId").focus();
-            return;
-        }
         if (!$scope.customer.fullName) {
             alert("Vui lòng nhập họ và tên!");
             $("#fullName").focus();
-            return;
-        }
-        if (!$scope.customer.phoneNumber) {
-            alert("Vui lòng nhập SĐT!");
-            $("#phoneNumber").focus();
-            return;
-        }
-        if (!$scope.customer.email) {
-            alert("Vui lòng nhập email!");
-            $("#email").focus();
             return;
         }
         if (!$scope.customer.dateOfBirth) {

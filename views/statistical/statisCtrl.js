@@ -19,7 +19,7 @@ app.controller("statisCtrl", function ($rootScope, $scope, $http, _) {
 
         var data = response.data
         var transposedData = _.zip.apply(_, data);
-        var days = ['Week', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        var days = ['Week', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ nhật'];
         var googleChart = [];
         for (var i = 0; i < transposedData.length; i++) {
           var row = [];
@@ -48,7 +48,7 @@ app.controller("statisCtrl", function ($rootScope, $scope, $http, _) {
           chart: {
             title: 'Sơ đồ tăng trưởng của loại phòng',
           },
-          height: 415,
+          height: 485,
           axes: {
             x: {
               0: { side: 'top' }

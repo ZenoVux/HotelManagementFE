@@ -105,11 +105,11 @@
                                     <td class="border-0 text-end">{{invoiceDetail.deposit  | currency: '' : 0}}₫</td>
                                 </tr>
                                 <tr>
-                                    <td colspan="5" class="border-0 text-end">Phụ phí người lớn ({{peopleInRoom.numAdults}}/{{invoiceDetail.room.roomType.numAdults}})</td>
+                                    <td colspan="5" class="border-0 text-end">Phụ phí người lớn {{peopleInRoom.numAdults - invoiceDetail.room.roomType.numAdults > 0 ? '(' + (peopleInRoom.numAdults - invoiceDetail.room.roomType.numAdults) + ' người)' : ''}}</td>
                                     <td class="border-0 text-end">{{peopleInRoom.adultSurcharge  | currency: '' : 0}}₫</td>
                                 </tr>
                                 <tr>
-                                    <td colspan="5" class="border-0 text-end">Phụ phí trẻ em ({{peopleInRoom.numChilds}}/{{invoiceDetail.room.roomType.numChilds}})</td>
+                                    <td colspan="5" class="border-0 text-end">Phụ phí trẻ em {{peopleInRoom.numChilds - invoiceDetail.room.roomType.numChilds > 0 ? '(' + (peopleInRoom.numChilds - invoiceDetail.room.roomType.numChilds) + ' người)' : ''}}</td>
                                     <td class="border-0 text-end">{{peopleInRoom.childSurcharge  | currency: '' : 0}}₫</td>
                                 </tr>
                                 <tr>

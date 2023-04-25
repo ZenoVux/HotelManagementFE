@@ -160,7 +160,6 @@
          <div class="card mb-3">
             <div class="d-flex align-items-center justify-content-center h-100">
                <div class="card-body">
-                  <div class="table-responsive mb-3" style="height: 380px;">
                      <table class="table align-middle mb-0">
                         <thead>
                            <tr>
@@ -171,9 +170,7 @@
                         <tbody>
                            <tr ng-repeat="data in statisticalData1">
                               <td>
-                                 <span
-                                    ng-class="{'text-danger': data[0] === 'Superior', 'text-primary': data[0] === 'Standard', 'text-warning': data[0] === 'Deluxe', 'text-success': data[0] === 'Suite'}">
-                                    <i class="bx bxs-square-rounded"></i> </span>{{ data[0]}}
+                                 {{ data[0]}}
                               </td>
                               <td>{{ data[1] }}</td>
                            </tr>
@@ -196,7 +193,7 @@
                            </tr>
                         </tbody>
                      </table> -->
-                     <table class="table align-middle mb-0">
+                     <table class="table align-middle mb-2">
                         <thead>
                            <tr>
                               <th>Top 4 Dịch vụ</th>
@@ -229,8 +226,6 @@
                           </tr>
                         </tbody>
                       </table> -->
-                      
-                  </div>
                   <div class="float-end">
                      <button type="button" class="btn btn-success" ng-click="exportToExcel()">Xuất Excel
                     </button>

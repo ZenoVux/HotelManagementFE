@@ -117,11 +117,11 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td colspan="5" class="border-0 text-end">Phụ phí người lớn ({{invoiceDetail.peopleInRoom.numAdults}}/{{invoiceDetail.room.roomType.numAdults}})</td>
+                                    <td colspan="5" class="border-0 text-end">Phụ phí người lớn {{invoiceDetail.peopleInRoom.numAdults - invoiceDetail.room.roomType.numAdults > 0 ? '(' + (invoiceDetail.peopleInRoom.numAdults - invoiceDetail.room.roomType.numAdults) + ' người)' : ''}}</td>
                                     <td class="border-0 text-end">{{invoiceDetail.peopleInRoom.adultSurcharge  | currency: '' : 0}}₫</td>
                                 </tr>
                                 <tr>
-                                    <td colspan="5" class="border-0 text-end">Phụ phí trẻ em ({{invoiceDetail.peopleInRoom.numChilds}}/{{invoiceDetail.room.roomType.numChilds}})</td>
+                                    <td colspan="5" class="border-0 text-end">Phụ phí trẻ em {{invoiceDetail.peopleInRoom.numChilds - invoiceDetail.room.roomType.numChilds > 0 ? '(' + (invoiceDetail.peopleInRoom.numChilds - invoiceDetail.room.roomType.numChilds) + ' người)' : ''}}</td>
                                     <td class="border-0 text-end">{{invoiceDetail.peopleInRoom.childSurcharge  | currency: '' : 0}}₫</td>
                                 </tr>
                                 <tr>

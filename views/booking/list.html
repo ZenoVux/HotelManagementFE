@@ -402,7 +402,12 @@
                                                                             </a>
                                                                         </button>
                                                                     </td>
-                                                                    <td ng-if="bk.status != 1">
+                                                                    <td ng-if="bk.status == 0">
+                                                                        <span
+                                                                            class="badge badge-pill badge-soft-danger font-size-16">Đã
+                                                                            huỷ</span>
+                                                                    </td>
+                                                                    <td ng-if="bk.status ==2">
                                                                         <span
                                                                             class="badge badge-pill badge-soft-primary font-size-16">Đã
                                                                             xử lý</span>

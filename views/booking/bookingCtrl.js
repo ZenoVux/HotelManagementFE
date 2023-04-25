@@ -288,6 +288,8 @@ app.controller("listBookingCtrl", function ($scope, $http, $window, $filter) {
                 }
             }).then(function (response) {
                 $scope.listRoomForPendingBooking = response.data;
+                console.log($scope.listRoomForPendingBooking);
+                console.log($scope.pendingBooking.bkList);
                 $scope.pending = [];
                 for (var i = 0; i < $scope.pendingBooking.bkList.length; i++) {
                     var room = $scope.pendingBooking.bkList[i].room;
@@ -763,6 +765,8 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
     $scope.backIdCardDisplay = null;
     $scope.isFrontImageCaptured = false;
     $scope.bookingByRangeDay = [];
+    $scope.numRoomPending = [];
+    $scope.checkNumberRoomPending = true;
 
     $scope.closeDropdown = function () {
         $('.dropdown-menu').removeClass('show');
@@ -774,16 +778,20 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
                 alert("Vui lòng chọn phòng!");
                 return;
             }
-        }
-        if ($scope.currentSection == 1) {
-            if ($scope.frontIdCardDisplay == null
-                || $scope.backIdCardDisplay == null
-                || $scope.customer.phoneNumber == null
-                || $scope.customer.email == null) {
-                alert("Vui lòng nhập đủ thông tin khách hàng!");
+            if ($scope.checkNumberRoomPending == false) {
+                alert("Vui lòng kiểm tra lại số lượng phòng đặt!");
                 return;
             }
         }
+        // if ($scope.currentSection == 1) {
+        //     if ($scope.frontIdCardDisplay == null
+        //         || $scope.backIdCardDisplay == null
+        //         || $scope.customer.phoneNumber == null
+        //         || $scope.customer.email == null) {
+        //         alert("Vui lòng nhập đủ thông tin khách hàng!");
+        //         return;
+        //     }
+        // }
         $scope.currentSection++;
     };
 
@@ -837,9 +845,28 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
                     checkoutDate: $filter('date')($scope.booking.checkoutDate, 'dd-MM-yyyy'),
                     roomType: $scope.booking.roomType
                 }
-            }).then(function (response) {
+            }).then(async function (response) {
                 $scope.bookings = response.data;
+
+                await $http.get("http://localhost:8000/api/booking-online/get-number-room/pending", {
+                    params: {
+                        checkinDate: $filter('date')($scope.booking.checkinDate, 'dd-MM-yyyy'),
+                        checkoutDate: $filter('date')($scope.booking.checkoutDate, 'dd-MM-yyyy'),
+                    }
+                }).then(function (resp) {
+                    $scope.numRoomPending = resp.data;
+                }).catch(function (error) {
+                    console.error('Error fetching data payment method:', error);
+                });
+
                 for (var i = 0; i < $scope.bookings.length; i++) {
+
+                    for (var j = 0; j < $scope.numRoomPending.length; j++) {
+                        if ($scope.bookings[i].name == $scope.numRoomPending[j].type) {
+                            $scope.bookings[i].quantity = $scope.bookings[i].quantity - $scope.numRoomPending[j].numberPending;
+                        }
+                    }
+
                     if ($scope.bookings[i].promotion != null) {
                         var percent = $scope.bookings[i].promotion.percent;
                         var price = $scope.bookings[i].price;
@@ -1034,7 +1061,10 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
     };
 
     $scope.updateSelectedRooms = function (info) {
+
+        $scope.checkNumberRoomPending = true;
         $scope.rooms = [];
+        var inforRoomSelected = [];
         var numAdults = $scope.booking.adults;
         var numChildren = $scope.booking.children;
         var maxAdults = 0;
@@ -1060,6 +1090,37 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
                 }
             }
         }
+        $scope.rooms.forEach(async function (room) {
+            await $http.get('http://localhost:8000/api/rooms/get-name-type/' + room.code).then(function (response) {
+
+                var isExist = false;
+                for (var i = 0; i < inforRoomSelected.length; i++) {
+                    if (inforRoomSelected[i].type == response.data.type) {
+                        inforRoomSelected[i].number++;
+                        isExist = true;
+                        break;
+                    }
+                }
+                if (!isExist) {
+                    inforRoomSelected.push({
+                        number: 1,
+                        type: response.data.type
+                    });
+                }
+            }).catch(function (error) {
+                console.error('Error fetching data:', error);
+            });
+        });
+
+        console.log(info);
+        console.log(inforRoomSelected);
+
+        if (info.roomCount > info.quantity) {
+            alert('Số phòng ' + info.name + ' đã chọn vượt quá số phòng còn lại! Vui lòng kiểm tra lại!');
+            $scope.checkNumberRoomPending = false;
+            return;
+        }
+
         if (numAdults > maxAdults && numChildren > maxChildren) {
             $scope.showAlert = true;
             $scope.alertMessage = 'Đã chọn ' + $scope.rooms.length + ' phòng. Bạn cần chọn thêm cho ' + (numAdults - maxAdults) + ' người lớn và ' + (numChildren - maxChildren) + ' trẻ em nữa!';

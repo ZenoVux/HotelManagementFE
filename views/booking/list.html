@@ -145,6 +145,131 @@
         </div>
     </div>
 
+    <!-- Pending booking modal -->
+
+    <div class="modal fade" id="pending-booking-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="customer-modal-label">{{ pendingBooking.code }}</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                        ng-click="closeModal()"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-nowrap mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 20%;">Khách hàng</th>
+                                                    <th>{{pendingBooking.customer.fullName}}</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Số điện thoại</td>
+                                                    <td>
+                                                        {{pendingBooking.customer.phoneNumber}}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Email</td>
+                                                    <td>
+                                                        {{pendingBooking.customer.email}}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Ngày đặt</td>
+                                                    <td>
+                                                        {{currentBooking.createdDate | date:'HH:mm dd-MM-yyyy'}}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Số người lớn</td>
+                                                    <td>{{currentBooking.adults}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Số trẻ em</td>
+                                                    <td>
+                                                        {{currentBooking.childs}}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Check in</td>
+                                                    <td>
+                                                        {{pendingBooking.checkinDate| date:'dd-MM-yyyy'}}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Check out</td>
+                                                    <td>
+                                                        {{pendingBooking.checkoutDate | date:'dd-MM-yyyy'}}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Tiền cọc</td>
+                                                    <td>
+                                                        {{currentBooking.deposit | currency: '' : 0}}đ
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Ghi chú</td>
+                                                    <td>
+                                                        <textarea class="form-control" rows="3"
+                                                            ng-model="currentBooking.note"></textarea>
+                                                    </td>
+                                                </tr>
+                                                <tr ng-repeat="bk in pending">
+                                                    <td>{{bk.roomType}} ({{bk.number}} phòng)</td>
+                                                    <td class="row">
+                                                        <div class="col-sm-1 form-check" ng-repeat="room in bk.rooms"
+                                                            style="margin-right: 15px;">
+                                                            <input class="form-check-input" type="checkbox"
+                                                                id="{{room.id}}" ng-value="{{room}}"
+                                                                ng-model="room.selected"
+                                                                ng-change="getSelectedRoomPending(bk)">
+                                                            <label class="form-check-label"
+                                                                for="{{room.id}}">{{room.code}}</label>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="row mb-2">
+                                        <div class="col-sm-11">
+                                            <div class="text-sm-end" ng-if="currentBooking.status == 1">
+                                                <a class="btn btn-primary btn-lg" ng-click="confirmBooking()"
+                                                    role="button">
+                                                    Xác nhận</a>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-1">
+                                            <div class="text-sm-end">
+                                                <a class="btn btn-danger btn-lg" ng-click="cancelBooking()"
+                                                    role="button">
+                                                    Huỷ</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <!-- Booking modal -->
 
     <div class="modal fade" id="booking-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
@@ -1051,7 +1176,7 @@
                                 </td>
                                 <td>
                                     <a class="btn btn-outline-secondary btn-sm edit" title="Xem chi tiết"
-                                        ng-click="viewBooking(booking)">
+                                        ng-click="viewPendingBooking(booking)">
                                         <i class="fas fa-eye font-size-16"></i>
                                     </a>
                                 </td>

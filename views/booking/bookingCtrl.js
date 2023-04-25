@@ -16,6 +16,13 @@ app.controller("listBookingCtrl", function ($scope, $http, $window, $filter) {
     $scope.listRoomEditBkd = [];
     $scope.addBookings = [];
     $scope.search = {};
+    $scope.pendingBooking = {};
+    $scope.pendingBooking.checkinDate = null;
+    $scope.pendingBooking.checkoutDate = null;
+    $scope.listRoomForPendingBooking = [];
+    $scope.pending = [];
+    $scope.roomsSelected = [];
+    $scope.pendingRoom = true;
 
     $scope.clearTableBooking = function () {
         $(document).ready(function () {
@@ -56,7 +63,6 @@ app.controller("listBookingCtrl", function ($scope, $http, $window, $filter) {
 
         var startDate = $filter('date')($scope.search.startDate, "dd-MM-yyyy");
         var endDate = $filter('date')($scope.search.endDate, "dd-MM-yyyy");
-
 
         $http.get("http://localhost:8000/api/bookings?startDate=" + startDate + "&endDate=" + endDate).then(function (resp) {
             $scope.bookings = resp.data;
@@ -260,6 +266,70 @@ app.controller("listBookingCtrl", function ($scope, $http, $window, $filter) {
         }).catch(function (error) {
             console.error('Error fetching data:', error);
         });
+    };
+
+    $scope.viewPendingBooking = function (booking) {
+        $scope.loading = true;
+        $scope.currentBooking = booking;
+        $http.get("http://localhost:8000/api/bookings/" + booking.code).then(function (resp) {
+            $scope.pendingBooking = resp.data;
+            for (var i = 0; i < $scope.pendingBooking.bkList.length; i++) {
+                var bk = $scope.pendingBooking.bkList[i];
+                $scope.pendingBooking.checkinDate = new Date(bk.checkinExpected);
+                $scope.pendingBooking.checkoutDate = new Date(bk.checkoutExpected);
+                $scope.pendingBooking.roomType = bk.room.roomType.name;
+            }
+
+            $http.get('http://localhost:8000/api/bookings/info', {
+                params: {
+                    checkinDate: $filter('date')($scope.pendingBooking.checkinDate, 'dd-MM-yyyy'),
+                    checkoutDate: $filter('date')($scope.pendingBooking.checkoutDate, 'dd-MM-yyyy'),
+                    roomType: $scope.pendingBooking.roomType,
+                }
+            }).then(function (response) {
+                $scope.listRoomForPendingBooking = response.data;
+                $scope.pending = [];
+                for (var i = 0; i < $scope.pendingBooking.bkList.length; i++) {
+                    var room = $scope.pendingBooking.bkList[i].room;
+                    for (var j = 0; j < $scope.listRoomForPendingBooking.length; j++) {
+                        var roomType = $scope.listRoomForPendingBooking[j].name;
+                        var rooms = $scope.listRoomForPendingBooking[j].listRooms;
+                        var count = 0;
+                        for (var k = 0; k < rooms.length; k++) {
+                            if (rooms[k].id == room.id) {
+                                count++;
+                                var check = false;
+                                for (var l = 0; l < $scope.pending.length; l++) {
+                                    if ($scope.pending[l].roomType == roomType) {
+                                        check = true;
+                                        $scope.pending[l].number += count;
+                                        break;
+                                    }
+                                }
+                                if (!check) {
+                                    $scope.pending.push({
+                                        roomType: roomType,
+                                        number: count,
+                                        rooms: rooms
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+                $scope.loading = false;
+            }).catch(function (error) {
+                console.error('Error fetching data:', error);
+                $scope.loading = false;
+            });
+
+            $('#pending-booking-modal').modal('show');
+            $scope.loading = false;
+        }).catch(function (error) {
+            console.error('Error fetching data:', error);
+            $scope.loading = false;
+        });
+
     };
 
     $scope.addRoom = function () {
@@ -570,23 +640,82 @@ app.controller("listBookingCtrl", function ($scope, $http, $window, $filter) {
 
     };
 
+    $scope.getSelectedRoomPending = function () {
+        var selectedRooms = [];
+        $scope.pendingRoom = true;
+        for (var i = 0; i < $scope.pending.length; i++) {
+            var bk = $scope.pending[i];
+            var roomList = bk.rooms.filter(function (room) {
+                return room.selected;
+            }).map(function (room) {
+                return room;
+            });
+            selectedRooms.push({
+                roomType: bk.roomType,
+                rooms: roomList
+            });
+            if (roomList.length > bk.number) {
+                $scope.pendingRoom = false;
+                alert('Số lượng phòng đã chọn vượt quá số lượng phòng đã đặt! Vui lòng kiểm tra lại.');
+                return;
+            }
+            if (roomList.length < bk.number) {
+                $scope.pendingRoom = false;
+            }
+        }
+        $scope.roomsSelected = selectedRooms;
+    };
+
+
     $scope.confirmBooking = function () {
+
+        if ($scope.roomsSelected == null || $scope.roomsSelected.length == 0) {
+            alert('Hãy chọn phòng!');
+            return;
+        }
+
+        if (!$scope.pendingRoom) {
+            alert('Số lượng phòng đã chọn chưa khớp! Vui lòng kiểm tra lại.');
+            return;
+        }
+
         var r = confirm("Xác nhận Booking " + $scope.currentBooking.code);
         if (r != true) {
             return;
         }
 
-        $scope.loading = true;
-        $http.post("http://localhost:8000/api/bookings/confirm/" + $scope.currentBooking.code).then(function (resp) {
-            $('#booking-modal').modal('hide');
-            alert('Xác nhận booking thành công!');
-            $scope.loading = false;
-            $window.location.reload();
-        }).catch(function (error) {
-            console.error('Error fetching data:', error);
-            $scope.loading = false;
+        const bookingConfirmJson = JSON.stringify({
+            bookingCode: $scope.currentBooking.code,
+            note: $scope.currentBooking.note,
+            rooms: $scope.roomsSelected.reduce((accumulator, currentValue) => {
+                return accumulator.concat(currentValue.rooms.map(({ selected, $$hashKey, ...room }) => room));
+            }, []),
         });
 
+        const formData = new FormData();
+        formData.append('bookingConfirmJson', bookingConfirmJson);
+
+        $http.post('http://localhost:8000/api/booking-online/confirm', formData, {
+            transformRequest: angular.identity,
+            headers: {
+                'Content-Type': undefined
+            }
+        }).then(function (response) {
+            if (response.status == 200) {
+                alert('Xác nhận booking thành công!');
+                $scope.loading = false;
+                $window.location.reload();
+            }
+        }).catch(function (error) {
+            if (error.data && error.data.error) {
+                alert(error.data.error);
+                $scope.loading = false;
+            } else {
+                alert('Xác nhận booking thất bại!');
+                console.error('Error fetching data:', error);
+                $scope.loading = false;
+            }
+        });
     }
 
     $scope.cancelBooking = function () {
@@ -597,10 +726,14 @@ app.controller("listBookingCtrl", function ($scope, $http, $window, $filter) {
         $scope.currentBooking.note = $scope.currentBooking.note + " ----- Lí do huỷ: "
             + reason;
         $scope.loading = true;
-        $http.put("http://localhost:8000/api/bookings/cancel", $scope.currentBooking).then(function (resp) {
-            $http.get("http://localhost:8000/api/bookings").then(function (resp) {
-                $scope.bookings = resp.data;
-            });
+
+        const data = {
+            code: $scope.currentBooking.code,
+            note: $scope.currentBooking.note
+        };
+        $scope.clearTableBooking();
+        $http.put("http://localhost:8000/api/bookings/cancel", data).then(function (resp) {
+            $scope.init();
             $('#booking-modal').modal('hide');
             alert('Huỷ booking thành công!');
             $scope.loading = false;
@@ -659,11 +792,20 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
     };
 
     $scope.init = function () {
+        //room type
         $http.get("http://localhost:8000/api/room-types").then(function (resp) {
             $scope.roomTypes = resp.data;
         }).catch(function (error) {
             console.error('Error fetching data room type:', error);
         });
+
+        //payment
+        $http.get("http://localhost:8000/api/payment-methods").then(function (resp) {
+            $scope.paymentMethods = resp.data;
+        }).catch(function (error) {
+            console.error('Error fetching data payment method:', error);
+        });
+
     }
     $scope.init();
 
@@ -975,6 +1117,7 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
                     })
                 }
             }),
+            paymentCode: $scope.booking.paymentMethod,
             note: $scope.booking.note
         });
 
@@ -1021,6 +1164,7 @@ app.controller("createBookingCtrl", function ($scope, $http, $location, $filter)
                 $scope.loading = false;
             } else {
                 console.error('Error fetching data:', error);
+                $scope.loading = false;
             }
         });
 

@@ -726,6 +726,14 @@
                                 <th scope="row">Mô tả</th>
                                 <td>{{room.description}}</td>
                             </tr>
+                            <tr>
+                                <th scope="row">Chính sách huỷ</th>
+                                <td>{{room.roomType.cancellationPolicy}}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Chính sách khác</th>
+                                <td><textarea class="form-control" rows="3" ng-value="room.roomType.otherPolicy" readonly></textarea></td>
+                            </tr>
                         </tbody>
                     </table>
                     <table ng-show="selectRoom.status == 2 || selectRoom.status == 4 || selectRoom.status == 5"
